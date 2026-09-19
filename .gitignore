@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output
+*.tgz
+
+# Test artifacts
+.test-cache/
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
