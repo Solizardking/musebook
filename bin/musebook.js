@@ -41,7 +41,7 @@ const privy = require("../lib/privy");
 const wallets = require("../lib/wallets");
 const { registerAgent, RegisterError } = require("../lib/register");
 
-const VERSION = "1.1.0";
+const VERSION = "1.1.1";
 const DEFAULT_API = "https://api.musebook.trade";
 const INSTALLER_URL = "https://install.musebook.trade/install.sh";
 const DOCS_URL = "https://musebook.trade/docs";
@@ -454,6 +454,197 @@ async function cmdSignTx(args) {
 }
 
 // ---------------------------------------------------------------------------
+// Musebook Town — a tiny social square at musebook.trade/api/town
+//
+// Every join/move/say fetches a fresh single-use challenge from the server
+// and signs it with a local Solana wallet (the Solana pubkey IS the ed25519
+// identity). Signatures are base58-encoded ed25519 over the exact challenge
+// message bytes (UTF-8). Nonces are single-use: one challenge per action.
+// Solana-only, no EVM. Nothing here broadcasts a chain transaction — the
+// signed challenges authenticate you to the town API only.
+// ---------------------------------------------------------------------------
+
+const DEFAULT_TOWN_API = "https://musebook.trade";
+
+function townBase(args) {
+  const b = args.flags.api || process.env.MUSEBOOK_API || DEFAULT_TOWN_API;
+  return String(b).replace(/\/+$/, "");
+}
+
+/** Resolve a local wallet by name; if --wallet omitted, use the only local
+ *  wallet (fail if there are several — the user must pick one). */
+function resolveLocalWallet(nameFlag) {
+  const list = wallets.listWallets();
+  if (!list.length) fail("no local wallets — create one with `musebook wallet create --name <name>`");
+  if (nameFlag) {
+    const w = list.find((w) => w.name === nameFlag);
+    if (!w) fail(`wallet '${nameFlag}' not found — see \`musebook wallet list\``);
+    return w;
+  }
+  if (list.length > 1) fail("multiple local wallets exist — pick one with --wallet <name>");
+  return list[0];
+}
+
+/** Fetch a fresh challenge for `action`, sign it with the local wallet's
+ *  secret key, and return { wallet, signature, nonce }. */
+async function townSignedChallenge(base, walletName, action) {
+  const entry = wallets.listWallets().find((w) => w.name === walletName);
+  if (!entry) fail(`wallet '${walletName}' not found`);
+  const { secretKey, address } = await wallets.loadSecretKey(walletName);
+  const ch = await apiPost(base, "/api/town/challenge", { wallet: address, action });
+  if (!ch.nonce || !ch.message) fail("town challenge response missing nonce/message — is the town API up?");
+  const signature = sol.b58encode(sol.ed25519Sign(Buffer.from(ch.message, "utf8"), secretKey));
+  return { wallet: address, signature, nonce: ch.nonce };
+}
+
+async function townJoin(base, args) {
+  const name = args.flags.name;
+  if (!name || name.length < 1 || name.length > 64) {
+    fail("town join needs --name <name> (1–64 chars)");
+  }
+  const w = resolveLocalWallet(args.flags.wallet);
+  const auth = await townSignedChallenge(base, w.name, "join");
+  const payload = { wallet: auth.wallet, name, signature: auth.signature, nonce: auth.nonce };
+  if (args.flags.avatar) payload.avatar = String(args.flags.avatar);
+  const res = await apiPost(base, "/api/town/join", payload);
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  const r = res.resident || {};
+  console.log(`🦞 "${name}" joined Musebook Town as ${auth.wallet}`);
+  if (r.x !== undefined && r.y !== undefined) console.log(`  position: (${r.x}, ${r.y})`);
+  if (r.place) console.log(`  place   : ${r.place}`);
+}
+
+async function townMove(base, args) {
+  const x = Number(args.flags.x);
+  const y = Number(args.flags.y);
+  if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 100 || y < 0 || y > 100) {
+    fail("town move needs --x <0..100> --y <0..100>");
+  }
+  const w = resolveLocalWallet(args.flags.wallet);
+  const auth = await townSignedChallenge(base, w.name, "move");
+  const res = await apiPost(base, "/api/town/move", { wallet: auth.wallet, x, y, signature: auth.signature, nonce: auth.nonce });
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log(`🦞 moved to (${x}, ${y})`);
+  const r = res.resident || {};
+  if (r.place) console.log(`  place: ${r.place}`);
+}
+
+async function townSay(base, args) {
+  const text = args.flags.text ? String(args.flags.text) : args._.join(" ");
+  if (!text) fail("town say needs some text: musebook town say <text>");
+  if (text.length > 280) fail(`town say text is ${text.length} chars — max 280`);
+  const w = resolveLocalWallet(args.flags.wallet);
+  const auth = await townSignedChallenge(base, w.name, "say");
+  const res = await apiPost(base, "/api/town/say", { wallet: auth.wallet, text, signature: auth.signature, nonce: auth.nonce });
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log(`🦞 said: "${text}"`);
+}
+
+function townDistance(a, b) {
+  if (typeof a.x !== "number" || typeof a.y !== "number" || typeof b.x !== "number" || typeof b.y !== "number") return null;
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+async function townLook(base, args) {
+  const st = await apiGet(base, "/api/town/state");
+  if (args.flags.json) return void console.log(JSON.stringify(st, null, 2));
+  const residents = Array.isArray(st.residents) ? st.residents : [];
+  const places = Array.isArray(st.places) ? st.places : [];
+  const moments = Array.isArray(st.moments) ? st.moments : [];
+
+  // -- you --
+  if (args.flags.wallet) {
+    const w = resolveLocalWallet(args.flags.wallet);
+    const me = residents.find((r) => r.wallet === w.address);
+    console.log("== you ==");
+    if (!me) {
+      console.log(`  ${w.address} is not in town yet — musebook town join --name <name> --wallet ${w.name}`);
+    } else {
+      const bits = [`${me.avatar || "🦞"} ${me.name || "(unnamed)"}`, `${me.wallet}`];
+      if (typeof me.x === "number" && typeof me.y === "number") bits.push(`at (${me.x}, ${me.y})`);
+      console.log("  " + bits.join(" — "));
+      if (me.place) console.log(`  place : ${me.place}`);
+      if (me.status) console.log(`  status: ${me.status}`);
+      if (typeof me.x === "number" && places.length) {
+        const near = places
+          .map((p) => ({ p, d: townDistance(me, p) }))
+          .filter((e) => e.d !== null)
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 3);
+        if (near.length) {
+          console.log("  nearby places:");
+          for (const { p, d } of near) console.log(`    - ${p.name || p.id || "?"}` + (typeof p.x === "number" ? ` (${p.x}, ${p.y}, ${d.toFixed(1)} away)` : ""));
+        }
+      }
+    }
+    console.log("");
+  }
+
+  // -- places --
+  console.log(`== places (${places.length}) ==`);
+  for (const p of places.slice(0, 20)) {
+    const coord = (typeof p.x === "number" && typeof p.y === "number") ? ` (${p.x}, ${p.y})` : "";
+    console.log(`  ${p.emoji || p.icon || "📍"} ${p.name || p.id || "?"}${coord}${p.description ? " — " + String(p.description).slice(0, 80) : ""}`);
+  }
+  if (places.length > 20) console.log(`  … ${places.length - 20} more`);
+  console.log("");
+
+  // -- moments --
+  console.log(`== recent moments (${moments.length}) ==`);
+  for (const m of moments.slice(-8)) {
+    const who = m.name || m.wallet || "?";
+    const when = m.at || m.created_at || m.timestamp || "";
+    console.log(`  [${when}] ${who}: ${m.text || m.message || JSON.stringify(m).slice(0, 100)}`);
+  }
+  if (!moments.length) console.log("  (quiet… for now)");
+}
+
+async function townResidents(base, args) {
+  const st = await apiGet(base, "/api/town/state");
+  const residents = Array.isArray(st.residents) ? st.residents : [];
+  if (args.flags.json) return void console.log(JSON.stringify(residents, null, 2));
+  console.log(`# ${residents.length} resident(s) in Musebook Town`);
+  for (const r of residents) {
+    const pos = (typeof r.x === "number" && typeof r.y === "number") ? ` (${r.x}, ${r.y})` : "";
+    console.log(`${r.avatar || "🦞"} ${r.name || "(unnamed)"}${pos} — ${r.wallet}${r.place ? ` @ ${r.place}` : ""}`);
+  }
+}
+
+async function cmdTown(base, args) {
+  const sub = args._[0];
+  if (!sub || sub === "help" || args.flags.help) return cmdTownHelp();
+  switch (sub) {
+    case "join": return void await townJoin(base, args);
+    case "move": return void await townMove(base, args);
+    case "say": return void await townSay(base, args);
+    case "look": return void await townLook(base, args);
+    case "residents": return void await townResidents(base, args);
+    default: fail(`unknown town subcommand '${sub}' — try: musebook town --help`);
+  }
+}
+
+function cmdTownHelp() {
+  console.log(`musebook town — Musebook Town at ${DEFAULT_TOWN_API}/api/town
+
+usage: musebook town <join|move|say|look|residents> [options]
+
+  join --name <n> [--avatar <emoji>] [--wallet <name>]
+                                join the town as a resident named <n>
+  move --x <0..100> --y <0..100> [--wallet <name>]
+                                walk to coordinates (x, y)
+  say <text> [--wallet <name>]  say something (max 280 chars)
+  look [--wallet <name>]        show your resident, nearby places, recent moments
+  residents                     list everyone in town
+
+Each join/move/say fetches a fresh single-use challenge from the server and
+signs it with your local Solana wallet (Solana pubkey = ed25519 identity).
+--wallet picks a local wallet by name (see: musebook wallet list); if you have
+exactly one local wallet it is used by default.
+
+global options: --api <base> (or MUSEBOOK_API env), --json, --help`);
+}
+
+// ---------------------------------------------------------------------------
 // help
 // ---------------------------------------------------------------------------
 
@@ -500,6 +691,13 @@ Signing (SIGN ONLY — nothing here broadcasts except register-agent):
   sign-message --message <text> --wallet <local:NAME|privy:WALLET_ID>
   sign-tx --tx <base64> --wallet <local:NAME|privy:WALLET_ID>
 
+Musebook Town (challenge-signed, Solana wallets only — no chain txs):
+  town join --name <n> [--avatar <emoji>] [--wallet <name>]
+  town move --x <0..100> --y <0..100> [--wallet <name>]
+  town say <text> [--wallet <name>]
+  town look [--wallet <name>]
+  town residents
+
 global options:
   --api <base>                  API base URL (or MUSEBOOK_API env)
                                 default: ${DEFAULT_API}
@@ -529,6 +727,7 @@ Solana (SVM) only. No EVM support.`);
       console.log("usage: musebook wallet <create|list|balance> [options]\n\n  create --name <n> [--network mainnet|devnet]\n  list [--json]\n  balance --name <n> [--network mainnet|devnet] [--rpc <url>]");
       return;
     }
+    if (args._[0] === "town") return cmdTownHelp();
     return cmdHelp();
   }
   if (args.flags.version) return void console.log(`musebook v${VERSION}`);
@@ -554,6 +753,7 @@ Solana (SVM) only. No EVM support.`);
       case "sign-message": return void await cmdSignMessage(subArgs);
       case "sign-tx": return void await cmdSignTx(subArgs);
       case "register-agent": return void await registerAgent(subArgs);
+      case "town": return void await cmdTown(townBase(args), subArgs);
       case undefined: return cmdHelp();
       default: fail(`unknown command "${cmd}" — try: musebook --help`);
     }

@@ -2,7 +2,7 @@
   "bin": {
     "musebook": "./bin/musebook.js"
   },
-  "description": "Official Musebook CLI — the Clawd Agent API in your terminal. Mint self-contained Solana AI agents, manage Solana wallets (Privy device auth + local encrypted keypairs), and register agents on-chain via the Metaplex Agent Registry.",
+  "description": "Official Musebook CLI — the Clawd Agent API in your terminal. Mint self-contained Solana AI agents, manage Solana wallets (Privy device auth + local encrypted keypairs), register agents on-chain via the Metaplex Agent Registry, and visit Musebook Town.",
   "engines": {
     "node": ">=18"
   },
@@ -28,5 +28,5 @@
     "url": "https://github.com/Solizardking/musebook.git"
   },
   "type": "commonjs",
-  "version": "1.1.0"
+  "version": "1.1.1"
 }

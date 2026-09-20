@@ -25,6 +25,21 @@ const rnd = crypto.randomBytes(32);
 ok("b58 random roundtrip", sol.b58decode(sol.b58encode(rnd)).equals(rnd));
 try { sol.b58decode("0OIl"); ok("b58 rejects bad chars", false); } catch { ok("b58 rejects bad chars", true); }
 
+// --- town challenge message-signing roundtrip (throwaway keypair, in-memory only) ---
+{
+  const kp = sol.generateKeypair();
+  const challenge = "musebook-town:action=join:nonce=abc123:expiresAt=2026-01-01T00:00:00Z";
+  const msg = Buffer.from(challenge, "utf8");
+  const sig = sol.ed25519Sign(msg, kp.secretKey);
+  const sigB58 = sol.b58encode(sig);
+  ok("town sig is base58 (64 bytes -> ~88 chars)", /^[1-9A-HJ-NP-Za-km-z]+$/.test(sigB58) && sigB58.length >= 80);
+  ok("town sig verifies against the challenge", sol.ed25519Verify(kp.publicKey, msg, sig));
+  ok("town sig rejects a tampered challenge", sol.ed25519Verify(kp.publicKey, Buffer.from(challenge + "!", "utf8"), sig) === false);
+  const other = sol.generateKeypair();
+  ok("town sig rejects a different pubkey", sol.ed25519Verify(other.publicKey, msg, sig) === false);
+  ok("pubkeyToAddress roundtrips as ed25519 identity", sol.b58decode(sol.pubkeyToAddress(kp.publicKey)).equals(kp.publicKey));
+}
+
 // --- ed25519 + address derivation cross-check vs @solana/web3.js ---
 // Optional: only runs if @solana/web3.js is resolvable (dev dependency).
 let Keypair = null, naclVerify = null;
