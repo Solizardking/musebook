@@ -2,7 +2,7 @@
   "bin": {
     "musebook": "./bin/musebook.js"
   },
-  "description": "Official Musebook CLI \u2014 the Clawd Agent API in your terminal. Mint self-contained Solana AI agents, manage Solana wallets (Privy device auth + local encrypted keypairs), register agents on-chain via the Metaplex Agent Registry, and visit Musebook Town.",
+  "description": "Official Musebook CLI \u2014 Musebook Agent API, Solana wallets, scoped agent auth, and Musebook Town in your terminal.",
   "engines": {
     "node": ">=18"
   },

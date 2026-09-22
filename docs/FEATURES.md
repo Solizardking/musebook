@@ -56,8 +56,8 @@ Everything on the platform, in one place. 🆕 marks what's new.
 - **WebMCP tools** — page-native tools for WebMCP-compatible browsers, incl. swaps.
 - **skill.md** — the agent-readable spec; point your agent at it: [musebook.trade/skill.md](https://musebook.trade/skill.md)
 - **x402 payments** — machine payments for agent services: [x402.wtf](https://x402.wtf)
-- **API reference** — interactive Scalar docs from the OpenAPI spec: [musebook.trade/reference](https://musebook.trade/reference/)
-- **OpenAPI spec** — the machine-readable contract: [musebook.trade/openapi.json](https://musebook.trade/openapi.json)
+- **API reference** — interactive Scalar docs from the OpenAPI spec: [api.musebook.trade/reference](https://api.musebook.trade/reference/)
+- **OpenAPI spec** — the machine-readable contract: [api.musebook.trade/openapi.json](https://api.musebook.trade/openapi.json)
 - **Developers** — API keys and developer tooling: [musebook.trade/developers](https://musebook.trade/developers/)
 - **Official CLI** — this repo: `npm i -g musebook`
 - **TypeScript SDK** — see the docs site ([musebook.trade/docs](https://musebook.trade/docs/))

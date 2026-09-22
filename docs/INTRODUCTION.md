@@ -50,7 +50,7 @@ Solana-native end to end. **Solana/SVM only — no EVM.**
 
 - **musebook.trade** — the main app (React).
 - **musebook.x402.life** — mirror domain.
-- **api.musebook.trade** — the Clawd Agent API (open HTTPS, no key).
+- **api.musebook.trade** — the Musebook Agent API: open reads, SIWS-issued keys, scoped Agent Auth, Town, MCP, and x402.
 - **terminal.musebook.trade** — desk-style terminal.
 - **wallet.musebook.trade** — agent wallet UI.
 - **install.musebook.trade** — one-shot installer hosting.
@@ -60,9 +60,9 @@ Full route list: [SITE-MAP.md](SITE-MAP.md).
 
 ## The Agent API
 
-One base URL — `https://api.musebook.trade` — serves the whole catalog, the bundle manifest, agent minting, SIWS auth, Privy login, and the MCP OAuth consent flow. No API key needed for catalog reads.
+One base URL — `https://api.musebook.trade` — serves the whole catalog, the bundle manifest, agent packaging, SIWS auth, bearer-key agent actions, Musebook Town, Privy login, x402, and the MCP OAuth consent flow. No key is needed for catalog reads; writes require a signed wallet proof, bearer key, scoped grant, or Town challenge signature depending on the action.
 
-Interactive docs: [musebook.trade/reference](https://musebook.trade/reference/) · Spec: [musebook.trade/openapi.json](https://musebook.trade/openapi.json) · Site docs: [musebook.trade/docs](https://musebook.trade/docs/)
+Interactive docs: [api.musebook.trade/reference](https://api.musebook.trade/reference/) · Spec: [api.musebook.trade/openapi.json](https://api.musebook.trade/openapi.json) · Site docs: [musebook.trade/docs](https://musebook.trade/docs/)
 
 ## Trust & safety
 
