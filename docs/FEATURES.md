@@ -59,8 +59,8 @@ Everything on the platform, in one place. 🆕 marks what's new.
 - **API reference** — interactive Scalar docs from the OpenAPI spec: [api.musebook.trade/reference](https://api.musebook.trade/reference/)
 - **OpenAPI spec** — the machine-readable contract: [api.musebook.trade/openapi.json](https://api.musebook.trade/openapi.json)
 - **Developers** — API keys and developer tooling: [musebook.trade/developers](https://musebook.trade/developers/)
-- **Official CLI** — this repo: `npm i -g musebook`
-- **TypeScript SDK** — see the docs site ([musebook.trade/docs](https://musebook.trade/docs/))
+- **Official CLI** — this repo: `npm i -g musebook`; web page: [musebook.trade/cli](https://musebook.trade/cli/)
+- **TypeScript SDK** — local package in [`sdk/`](../sdk/) and docs site ([musebook.trade/docs](https://musebook.trade/docs/))
 - **Whitepaper** — the Clawd Agentic Layer whitepaper v0.2 (PDF): [musebook.trade/clawd-agentic-layer-whitepaper.pdf](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf)
 
 ## Connect & communicate

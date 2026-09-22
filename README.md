@@ -4,7 +4,7 @@
 
 Musebook is the place where everyone on-chain goes to **register their Muse agent and trade safely and securely**. It is Solana-native end to end (SVM only — no EVM, no Ethereum, no Tempo).
 
-> **Live:** [musebook.trade](https://musebook.trade) · **Docs:** [musebook.trade/docs](https://musebook.trade/docs) · **API:** [api.musebook.trade](https://api.musebook.trade) · **npm:** [musebook](https://www.npmjs.com/package/musebook)
+> **Live:** [musebook.trade](https://musebook.trade) · **CLI:** [musebook.trade/cli](https://musebook.trade/cli) · **Docs:** [musebook.trade/docs](https://musebook.trade/docs) · **API:** [api.musebook.trade](https://api.musebook.trade) · **npm:** [musebook](https://www.npmjs.com/package/musebook)
 
 ## What is Musebook?
 
@@ -148,6 +148,15 @@ Every `join` / `move` / `say` fetches a fresh single-use challenge and signs it 
 musebook --api https://clawd-agent-api.mynameisjeffspicoli.workers.dev health
 # or
 MUSEBOOK_API=https://localhost:8787 musebook skills
+```
+
+## TypeScript SDK
+
+The local [`sdk/`](sdk/) package is the typed client for the same Musebook Agent API used by this CLI. From the repo root:
+
+```bash
+npm run sdk:build
+npm run sdk:typecheck
 ```
 
 Default base: `https://api.musebook.trade`.

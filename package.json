@@ -30,6 +30,8 @@
   "type": "commonjs",
   "version": "1.1.1",
   "scripts": {
+    "sdk:build": "npm --prefix sdk run build",
+    "sdk:typecheck": "npm --prefix sdk run typecheck",
     "test": "node --test test/lib.test.js"
   }
 }
