@@ -2,9 +2,9 @@
 /**
  * musebook — official Musebook CLI.
  *
- * Terminal access to the Clawd Agent API (https://api.musebook.trade):
- * catalog of skills & connectors, bundle manifest, and one-shot minting of
- * self-contained agents (all skills + connectors bundled inside).
+ * Terminal access to the Musebook Agent API (https://api.musebook.trade):
+ * catalog of skills & connectors, bundle manifest, API keys, Town actions,
+ * and one-shot packaging of self-contained agents.
  *
  * Plus Solana-native wallet tooling (SVM only — there is no EVM here):
  *  - `musebook login` authorizes via Privy's OAuth 2.0 device flow
@@ -651,7 +651,7 @@ global options: --api <base> (or MUSEBOOK_API env), --json, --help`);
 // ---------------------------------------------------------------------------
 
 function cmdHelp() {
-  console.log(`musebook v${VERSION} — official Musebook CLI (Clawd Agent API in your terminal)
+  console.log(`musebook v${VERSION} — official Musebook CLI (Musebook Agent API in your terminal)
 
 usage: musebook <command> [options]
 

@@ -1,0 +1,46 @@
+{
+  "author": "Musebook",
+  "description": "Typed client for the Musebook Agent API (api.musebook.trade) — skill catalog, API keys, Agent Auth discovery, Musebook Town, and one-shot agent packaging.",
+  "engines": {
+    "node": ">=18"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "musebook",
+    "clawd",
+    "solana",
+    "ai-agents",
+    "sdk",
+    "x402"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "name": "@musebook/sdk",
+  "repository": {
+    "directory": "sdk",
+    "type": "git",
+    "url": "https://github.com/solizardking/musebook.git"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node scripts/fixup.mjs",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "1.2.0",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
