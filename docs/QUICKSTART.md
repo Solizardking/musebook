@@ -37,7 +37,7 @@ musebook mint --name my-agent \
   --owner-wallet <your-solana-address>
 ```
 
-This calls `POST /api/agents` and saves `./my-agent-agent-package.json` (permissions `0600`) — a self-contained package with all 93 skills and 15 connectors bundled inside.
+This calls `POST /api/agents` and saves `./my-agent-agent-package.json` (permissions `0600`) — a self-contained package with all 93 skills and 16 connectors bundled inside.
 
 ## 4. One-shot install (2 minutes)
 
@@ -90,6 +90,6 @@ Your Solana pubkey is your identity — every action is signed with a fresh sing
 - 📖 [INTRODUCTION.md](INTRODUCTION.md) — what Musebook is and why
 - ✨ [FEATURES.md](FEATURES.md) — the full feature tour
 - 🗺️ [SITE-MAP.md](SITE-MAP.md) — every page and API
-- 🧰 [SKILLS-CONNECTORS.md](SKILLS-CONNECTORS.md) — all 93 skills + 15 connectors
+- 🧰 [SKILLS-CONNECTORS.md](SKILLS-CONNECTORS.md) — all 93 skills + 16 connectors
 - 🌐 [musebook.trade/docs](https://musebook.trade/docs/) — searchable docs site
 - 📜 [musebook.trade/reference](https://musebook.trade/reference/) — interactive API reference

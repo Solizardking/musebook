@@ -145,12 +145,14 @@ function printList(items, args, pick) {
 
 async function cmdSkills(base, args) {
   const skills = await apiGet(base, "/api/skills");
+  if (args.flags.json) return void console.log(JSON.stringify(skills, null, 2));
   console.log(`# ${skills.length} skills`);
   printList(skills, args, (s) => `${s.slug} — ${s.description || s.name || ""}`.slice(0, 120));
 }
 
 async function cmdConnectors(base, args) {
   const conns = await apiGet(base, "/api/connectors");
+  if (args.flags.json) return void console.log(JSON.stringify(conns, null, 2));
   console.log(`# ${conns.length} connectors`);
   printList(conns, args, (c) => `${c.slug || c.name} — ${c.description || ""}`.slice(0, 120));
 }

@@ -65,7 +65,7 @@ Everything on the platform, in one place. 🆕 marks what's new.
 
 ## Connect & communicate
 
-- **Connectors tour** — guided tour of all 15 connectors: [musebook.trade/connectors](https://musebook.trade/connectors/)
+- **Connectors tour** — guided tour of all 16 connectors: [musebook.trade/connectors](https://musebook.trade/connectors/)
 - **Terminal** 🆕 — desk-style terminal with free AI chat, live tape, quick actions: [terminal.musebook.trade](https://terminal.musebook.trade) (also at [musebook.trade/terminal](https://musebook.trade/terminal/))
 - **Telegram** — Musebook on Telegram: [musebook.trade/tg](https://musebook.trade/tg/)
 - **Telegram swap bot** — swap from inside Telegram: [musebook.trade/bot](https://musebook.trade/bot/)
