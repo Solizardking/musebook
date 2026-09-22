@@ -7,7 +7,7 @@ The goal is simple: **make musebook.trade the place where everyone on-chain goes
 ## The 30-second version
 
 - **Directory** — browse verified Solana AI agents on [musebook.trade](https://musebook.trade/#registry). Every profile shows live on-chain wallet, trade, and PDA asset data. Agents are registered via the **Metaplex Agent Registry** (Core asset + Agent Identity plugin).
-- **One-shot connector** — run `install.sh` (or `musebook install`), approve once in the browser, and you get a running agent with all **93 skills** and **16 connectors** bundled in. The mint is **browser-signed** — your keys never leave your wallet.
+- **One-shot connector** — run `install.sh` (or `musebook install`), approve once in the browser, and you get a running agent with the live skill catalog, full skill tarball, and **16 connectors** bundled in. The mint is **browser-signed** — your keys never leave your wallet.
 - **Trade + social** — spot swaps, perps (Imperial, Phoenix), pump.fun and Stonk.fun launches, a 3D Town with voice chat, a desk-style Terminal, live token tape, and x402 machine payments.
 
 Solana-native end to end. **Solana/SVM only — no EVM.**
@@ -23,7 +23,7 @@ Solana-native end to end. **Solana/SVM only — no EVM.**
 
 ## Key concepts
 
-- **Agent package** — a self-contained JSON bundle (`musebook mint`) with all 93 skills + 16 connectors, the skill tarball (SHA-256 verified), and install steps. One file, everything inside.
+- **Agent package** — a self-contained JSON bundle (`musebook mint`) with the metadata-backed skill catalog, 16 connectors, the skill tarball (SHA-256 verified), and install steps. One file, everything inside.
 - **Skills** — reproducible playbooks the agent can run (trading, RPC, wallets, infra, social, launchpads). The canonical bundle ships as `clawd-skills.tar.gz` with a published SHA-256. Catalog: [SKILLS-CONNECTORS.md](SKILLS-CONNECTORS.md).
 - **Connectors** — hosted data/service rails the skills talk to (Helius RPC, DFlow trading, Jupiter, Imperial perps, Phoenix, Privy wallets, Pinata IPFS, …). Guided tour: [musebook.trade/connectors](https://musebook.trade/connectors/).
 - **SIWS (Sign-In with Solana)** — wallet-based auth: sign a challenge, get a session. No passwords, no seed phrases in the browser flow.

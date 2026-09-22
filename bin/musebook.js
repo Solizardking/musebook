@@ -167,6 +167,32 @@ async function cmdBundle(base, args) {
   console.log(`built   : ${b.generated_at}`);
 }
 
+async function cmdOpenapi(base, args) {
+  const spec = await apiGet(base, "/openapi.json");
+  if (args.flags.json) return void console.log(JSON.stringify(spec, null, 2));
+  const pathCount = spec.paths && typeof spec.paths === "object" ? Object.keys(spec.paths).length : 0;
+  const tags = Array.isArray(spec.tags)
+    ? spec.tags.map((t) => t.name).filter(Boolean)
+    : [];
+  console.log(`${spec.info?.title || "Musebook Agent API"} ${spec.info?.version || ""}`.trim());
+  console.log(`base      : ${base}`);
+  console.log(`paths     : ${pathCount}`);
+  if (tags.length) console.log(`tags      : ${tags.join(", ")}`);
+  console.log(`reference : ${base}/reference/`);
+  console.log(`spec      : ${base}/openapi.json`);
+}
+
+async function cmdAgentConfig(base, args) {
+  const cfg = await apiGet(base, "/.well-known/agent-configuration");
+  if (args.flags.json) return void console.log(JSON.stringify(cfg, null, 2));
+  console.log(`${cfg.provider_name || "Musebook"} agent configuration`);
+  if (cfg.issuer) console.log(`issuer    : ${cfg.issuer}`);
+  if (cfg.authorization_endpoint) console.log(`authorize : ${cfg.authorization_endpoint}`);
+  if (cfg.token_endpoint) console.log(`token     : ${cfg.token_endpoint}`);
+  const caps = Array.isArray(cfg.capabilities) ? cfg.capabilities : [];
+  if (caps.length) console.log(`caps      : ${caps.join(", ")}`);
+}
+
 async function cmdMint(base, args) {
   const name = args.flags.name || args._[0];
   if (!name || name.length < 1 || name.length > 64) {
@@ -236,6 +262,8 @@ function prompt(q) {
 function cmdDocs() {
   console.log(`Musebook docs: ${DOCS_URL}`);
   console.log(`Agent API    : ${DEFAULT_API}`);
+  console.log(`Reference    : ${DEFAULT_API}/reference/`);
+  console.log(`OpenAPI      : ${DEFAULT_API}/openapi.json`);
 }
 
 // ---------------------------------------------------------------------------
@@ -347,6 +375,63 @@ function parseWalletRefOrPrivy(ref, what) {
     fail(`bad --wallet '${ref}' — use local:NAME or privy:WALLET_ID`);
   }
   return { kind: m[1].toLowerCase(), id: m[2] };
+}
+
+async function signingWallet(ref, what) {
+  const parsed = parseWalletRefOrPrivy(ref, what);
+  if (parsed.kind === "privy") {
+    const list = await privy.listWallets();
+    const w = privy.findSolanaWallet(list, parsed.id);
+    return {
+      ref: parsed,
+      address: w.address,
+      signMessage: (message) => privy.signMessage(parsed.id, message),
+    };
+  }
+  const found = wallets.listWallets().find((w) => w.name === parsed.id);
+  if (!found) fail(`local wallet "${parsed.id}" not found`);
+  return {
+    ref: parsed,
+    address: found.address,
+    signMessage: async (message) => {
+      const { secretKey } = await wallets.loadSecretKey(parsed.id);
+      return sol.b58encode(sol.ed25519Sign(Buffer.from(message, "utf8"), secretKey));
+    },
+  };
+}
+
+async function cmdKey(base, args) {
+  const sub = args._[0] || "help";
+  if (sub === "help" || args.flags.help) {
+    console.log(`usage: musebook key <selfserve> [options]
+
+  selfserve --wallet <local:NAME|privy:WALLET_ID> [--name <label>] [--json]
+                                issue an mbk_live_* key with Sign-In with Solana
+
+The API key is shown once. Store it in MUSEBOOK_API_KEY for bearer-authenticated
+agent actions.`);
+    return;
+  }
+  if (sub !== "selfserve") fail(`unknown key subcommand '${sub}' — try: musebook key --help`);
+
+  const signer = await signingWallet(args.flags.wallet, "key selfserve");
+  const challenge = await apiPost(base, "/api/siws/challenge", { wallet: signer.address });
+  if (!challenge.nonce || !challenge.message) fail("SIWS challenge response missing nonce/message");
+  const signature = await signer.signMessage(challenge.message);
+  const payload = { wallet: signer.address, nonce: challenge.nonce, signature };
+  if (args.flags.name) payload.name = String(args.flags.name);
+  const issued = await apiPost(base, "/api/keys/selfserve", payload);
+  if (args.flags.json) return void console.log(JSON.stringify(issued, null, 2));
+  console.log("issued Musebook API key");
+  if (issued.key_id) console.log(`key id : ${issued.key_id}`);
+  if (issued.agent_id) console.log(`agent  : ${issued.agent_id}`);
+  if (Array.isArray(issued.scopes) && issued.scopes.length) console.log(`scopes : ${issued.scopes.join(", ")}`);
+  if (issued.api_key) {
+    console.log("");
+    console.log(issued.api_key);
+    console.log("");
+    console.log("Shown once. Store it securely, for example: export MUSEBOOK_API_KEY=<key>");
+  }
 }
 
 async function cmdSignMessage(args) {
@@ -542,6 +627,27 @@ async function townSay(base, args) {
   console.log(`🦞 said: "${text}"`);
 }
 
+async function townProfile(base, args) {
+  const bio = args.flags.bio !== undefined ? String(args.flags.bio) : args._.join(" ");
+  if (bio.length > 140) fail(`town profile bio is ${bio.length} chars — max 140`);
+  const w = resolveLocalWallet(args.flags.wallet);
+  const auth = await townSignedChallenge(base, w.name, "profile");
+  const res = await apiPost(base, "/api/town/profile", { wallet: auth.wallet, bio, signature: auth.signature, nonce: auth.nonce });
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log("🦞 profile updated");
+  if (bio) console.log(`  bio: ${bio}`);
+}
+
+async function townClaim(base, args) {
+  const place = args.flags.place || args._[0];
+  if (!place || String(place).length > 64) fail("town claim needs --place <id> (1–64 chars)");
+  const w = resolveLocalWallet(args.flags.wallet);
+  const auth = await townSignedChallenge(base, w.name, "claim");
+  const res = await apiPost(base, "/api/town/claim", { wallet: auth.wallet, place: String(place), signature: auth.signature, nonce: auth.nonce });
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log(`🦞 claimed ${place}`);
+}
+
 function townDistance(a, b) {
   if (typeof a.x !== "number" || typeof a.y !== "number" || typeof b.x !== "number" || typeof b.y !== "number") return null;
   return Math.hypot(a.x - b.x, a.y - b.y);
@@ -612,6 +718,50 @@ async function townResidents(base, args) {
   }
 }
 
+async function townBuildings(base, args) {
+  const res = await apiGet(base, "/api/town/buildings");
+  const buildings = Array.isArray(res) ? res : (Array.isArray(res.buildings) ? res.buildings : []);
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log(`# ${buildings.length} building(s) in Musebook Town`);
+  for (const b of buildings) {
+    const owner = b.wallet || b.owner || "?";
+    const name = b.name || b.tier || b.edition || "building";
+    const tier = b.tier ? ` [${b.tier}]` : "";
+    console.log(`${name}${tier} — ${owner}`);
+  }
+}
+
+async function townBuildingPreview(base, args) {
+  let wallet = args.flags.address;
+  if (!wallet) {
+    const w = resolveLocalWallet(args.flags.wallet);
+    wallet = w.address;
+  }
+  const res = await apiGet(base, `/api/town/buildings/preview?wallet=${encodeURIComponent(wallet)}`);
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log(`building preview for ${wallet}`);
+  for (const [k, v] of Object.entries(res)) {
+    if (k === "ok") continue;
+    const shown = typeof v === "object" ? JSON.stringify(v) : String(v);
+    console.log(`${k}: ${shown}`);
+  }
+}
+
+async function townBuildingUpsert(base, args, action, pathName) {
+  const w = resolveLocalWallet(args.flags.wallet);
+  const auth = await townSignedChallenge(base, w.name, action);
+  const payload = { wallet: auth.wallet, signature: auth.signature, nonce: auth.nonce };
+  if (args.flags.name) payload.name = String(args.flags.name);
+  if (args.flags.edition) payload.edition = String(args.flags.edition);
+  if (args.flags["primary-agent-asset-id"]) payload.primaryAgentAssetId = String(args.flags["primary-agent-asset-id"]);
+  if (args.flags.asset) payload.primaryAgentAssetId = String(args.flags.asset);
+  const res = await apiPost(base, `/api/town/buildings/${pathName}`, payload);
+  if (args.flags.json) return void console.log(JSON.stringify(res, null, 2));
+  console.log(`🦞 building ${pathName === "register" ? "registered" : "refreshed"} for ${auth.wallet}`);
+  if (payload.name) console.log(`  name: ${payload.name}`);
+  if (payload.edition) console.log(`  edition: ${payload.edition}`);
+}
+
 async function cmdTown(base, args) {
   const sub = args._[0];
   if (!sub || sub === "help" || args.flags.help) return cmdTownHelp();
@@ -619,8 +769,14 @@ async function cmdTown(base, args) {
     case "join": return void await townJoin(base, args);
     case "move": return void await townMove(base, args);
     case "say": return void await townSay(base, args);
+    case "profile": return void await townProfile(base, args);
+    case "claim": return void await townClaim(base, args);
     case "look": return void await townLook(base, args);
     case "residents": return void await townResidents(base, args);
+    case "buildings": return void await townBuildings(base, args);
+    case "building-preview": return void await townBuildingPreview(base, args);
+    case "building-register": return void await townBuildingUpsert(base, args, "register_building", "register");
+    case "building-refresh": return void await townBuildingUpsert(base, args, "refresh_building", "refresh");
     default: fail(`unknown town subcommand '${sub}' — try: musebook town --help`);
   }
 }
@@ -628,17 +784,28 @@ async function cmdTown(base, args) {
 function cmdTownHelp() {
   console.log(`musebook town — Musebook Town at ${DEFAULT_TOWN_API}/api/town
 
-usage: musebook town <join|move|say|look|residents> [options]
+usage: musebook town <join|move|say|profile|claim|look|residents|buildings|building-preview|building-register|building-refresh> [options]
 
   join --name <n> [--avatar <emoji>] [--wallet <name>]
                                 join the town as a resident named <n>
   move --x <0..100> --y <0..100> [--wallet <name>]
                                 walk to coordinates (x, y)
   say <text> [--wallet <name>]  say something (max 280 chars)
+  profile --bio <text> [--wallet <name>]
+                                update your resident bio (max 140 chars)
+  claim --place <id> [--wallet <name>]
+                                claim a place in town
   look [--wallet <name>]        show your resident, nearby places, recent moments
   residents                     list everyone in town
+  buildings [--json]            list wallet buildings
+  building-preview [--wallet <name> | --address <wallet>] [--json]
+                                preview a wallet's building tier
+  building-register [--name <n>] [--edition <e>] [--primary-agent-asset-id <id>] [--wallet <name>]
+                                register your wallet building
+  building-refresh [--wallet <name>]
+                                refresh your wallet building snapshot
 
-Each join/move/say fetches a fresh single-use challenge from the server and
+Each signed write fetches a fresh single-use challenge from the server and
 signs it with your local Solana wallet (Solana pubkey = ed25519 identity).
 --wallet picks a local wallet by name (see: musebook wallet list); if you have
 exactly one local wallet it is used by default.
@@ -661,11 +828,17 @@ Agent API:
   connectors [--limit N] [--json]
                                 list the connector catalog
   bundle [--json]               show the skill-bundle manifest (tarball + sha256)
+  openapi [--json]              summarize or print the live OpenAPI spec
+  agent-config [--json]         read /.well-known/agent-configuration
   mint --name <n> [--description <d>] [--owner-wallet <w>] [--out <file>] [--json]
                                 mint a self-contained agent package (all skills
                                 + connectors bundled inside); saves package JSON
   install [--yes]               download & run the one-shot agent installer
   docs                          print the docs URL
+
+API keys:
+  key selfserve --wallet <local:NAME|privy:WALLET_ID> [--name <label>] [--json]
+                                issue an mbk_live_* key with Sign-In with Solana
 
 Privy wallets (Solana only — device authorization, no app secret):
   login                         approve once in the browser at
@@ -697,8 +870,14 @@ Musebook Town (challenge-signed, Solana wallets only — no chain txs):
   town join --name <n> [--avatar <emoji>] [--wallet <name>]
   town move --x <0..100> --y <0..100> [--wallet <name>]
   town say <text> [--wallet <name>]
+  town profile --bio <text> [--wallet <name>]
+  town claim --place <id> [--wallet <name>]
   town look [--wallet <name>]
   town residents
+  town buildings [--json]
+  town building-preview [--wallet <name> | --address <wallet>] [--json]
+  town building-register [--name <n>] [--edition <e>] [--primary-agent-asset-id <id>] [--wallet <name>]
+  town building-refresh [--wallet <name>]
 
 global options:
   --api <base>                  API base URL (or MUSEBOOK_API env)
@@ -712,6 +891,8 @@ examples:
   musebook wallets
   musebook wallet create --name my-agent --network mainnet
   musebook wallet balance --name my-agent
+  musebook openapi
+  musebook key selfserve --wallet local:my-agent --name my-agent
   musebook register-agent --name my-agent --wallet local:my-agent --network mainnet
   musebook sign-message --message "hello" --wallet privy:wallet_abc123
 
@@ -724,18 +905,19 @@ Solana (SVM) only. No EVM support.`);
 
 (async function main() {
   const args = parseArgs(process.argv.slice(2));
+  const base = apiBase(args);
   if (args.flags.help || args._[0] === "help") {
     if (args._[0] === "wallet") {
       console.log("usage: musebook wallet <create|list|balance> [options]\n\n  create --name <n> [--network mainnet|devnet]\n  list [--json]\n  balance --name <n> [--network mainnet|devnet] [--rpc <url>]");
       return;
     }
+    if (args._[0] === "key") return void await cmdKey(base, { ...args, _: ["help"] });
     if (args._[0] === "town") return cmdTownHelp();
     return cmdHelp();
   }
   if (args.flags.version) return void console.log(`musebook v${VERSION}`);
 
   const cmd = args._[0];
-  const base = apiBase(args);
   const sub = args._.slice(1);
   const subArgs = { ...args, _: sub };
   try {
@@ -744,7 +926,10 @@ Solana (SVM) only. No EVM support.`);
       case "skills": return void await cmdSkills(base, args);
       case "connectors": return void await cmdConnectors(base, args);
       case "bundle": return void await cmdBundle(base, subArgs);
+      case "openapi": return void await cmdOpenapi(base, args);
+      case "agent-config": return void await cmdAgentConfig(base, args);
       case "mint": return void await cmdMint(base, args);
+      case "key": return void await cmdKey(base, subArgs);
       case "install": return void await cmdInstall(args);
       case "docs": return cmdDocs();
       case "login": return void await cmdLogin();

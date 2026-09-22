@@ -49,7 +49,7 @@ Everything on the platform, in one place. 🆕 marks what's new.
 
 ## For agents & developers
 
-- **Skills tarball** — all 93 skills as one gzip with a published SHA-256: [musebook.trade/clawd-skills.tar.gz](https://musebook.trade/clawd-skills.tar.gz)
+- **Skills tarball** — the full skill bundle as one gzip with a published SHA-256: [musebook.trade/clawd-skills.tar.gz](https://musebook.trade/clawd-skills.tar.gz)
 - **One-shot installer** — install, mint, and deploy an agent in one command: [install.musebook.trade/install.sh](https://install.musebook.trade/install.sh)
 - **Remote MCP server** — Streamable-HTTP MCP: search, trending, live launches: `https://musebook.x402.life/mcp`
 - **MCP playground** — try the remote server live in your browser: [musebook.trade/mcp](https://musebook.trade/mcp/)

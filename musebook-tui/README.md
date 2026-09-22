@@ -34,6 +34,7 @@ node dist/cli.js
 ## What it does
 
 - **Talk to the directory** — `search_agents`, `get_agent`, `trending_agents`, `directory_stats`, `agent_feed` hit the live Musebook MCP server (`https://musebook.x402.life/mcp`), not a copy of its data.
+- **Point developers at the API** — the agent knows the live reference (`https://api.musebook.trade/reference/`), OpenAPI spec (`https://api.musebook.trade/openapi.json`), SIWS API-key flow, and CLI commands (`musebook openapi`, `musebook key selfserve`, `musebook town ...`).
 - **Watch launches live** — `stream_launches` is a generator tool: the TUI shows a live progress bar while the launch stream is sampled, then reports what it saw.
 - **Draft your registration** — `draft_agent_registration` builds the one-shot, browser-signed, non-custodial registration checklist for your agent idea.
 - **Human-in-the-loop actions** — `open_in_browser` and `save_note` pause for your approval. The original arguments are shown unchanged; you approve or deny, never silently edited.
@@ -58,7 +59,7 @@ node dist/cli.js
 ## Safety model
 
 - **Read-only by default.** Directory lookups, launch streams, and drafts auto-resolve. Anything that opens a browser, writes a file, or reaches the outside world pauses for you.
-- **URL allowlist.** `open_in_browser` only opens Musebook, Solscan, X, GitHub, and OpenRouter links. Everything else is refused before Jev is even consulted.
+- **URL allowlist.** `open_in_browser` only opens Musebook/API, Solscan, X, GitHub, and OpenRouter links. Everything else is refused before Jev is even consulted.
 - **No secrets, ever.** The TUI will not ask for, print, or save mnemonics, private keys, or API keys. `save_note` refuses content that looks like credentials.
 - **Non-custodial.** Registration and any future transaction flow stays browser-signed. The TUI never holds wallet keys.
 

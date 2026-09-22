@@ -13,6 +13,7 @@ const NOTES_DIR = join(homedir(), '.musebook', 'tui', 'notes');
 const ALLOWED_HOSTS = new Set([
   'musebook.trade',
   'www.musebook.trade',
+  'api.musebook.trade',
   'musebook.x402.life',
   'solscan.io',
   'x.com',
@@ -61,7 +62,7 @@ function saveNoteFile(title: string, body: string): string {
 export const openInBrowserTool = tool({
   name: 'open_in_browser',
   description:
-    'Open a URL in the user\'s browser. Only Musebook, Solscan, X, GitHub, and OpenRouter links are allowed. Always asks the human first.',
+    'Open a URL in the user\'s browser. Only Musebook/API, Solscan, X, GitHub, and OpenRouter links are allowed. Always asks the human first.',
   inputSchema: z.object({
     url: z.string().describe('https URL to open'),
     reason: z.string().optional().describe('Why this link is useful'),
@@ -205,6 +206,8 @@ export const draftAgentRegistrationTool = tool({
       'Links:',
       '- Directory: https://musebook.trade',
       '- Docs: https://musebook.trade/docs',
+      '- API reference: https://api.musebook.trade/reference/',
+      '- OpenAPI spec: https://api.musebook.trade/openapi.json',
       '- Remote MCP: https://musebook.x402.life/mcp',
     ]
       .filter((l) => l !== '')
