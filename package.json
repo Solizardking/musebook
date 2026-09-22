@@ -8,6 +8,7 @@
   },
   "files": [
     "bin/",
+    "docs/",
     "lib/",
     "README.md",
     "LICENSE",
@@ -28,7 +29,7 @@
     "url": "https://github.com/Solizardking/musebook.git"
   },
   "type": "commonjs",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "scripts": {
     "sdk:build": "npm --prefix sdk run build",
     "sdk:typecheck": "npm --prefix sdk run typecheck",

@@ -41,7 +41,7 @@ const privy = require("../lib/privy");
 const wallets = require("../lib/wallets");
 const { registerAgent, RegisterError } = require("../lib/register");
 
-const VERSION = "1.1.1";
+const VERSION = "1.2.0";
 const DEFAULT_API = "https://api.musebook.trade";
 const INSTALLER_URL = "https://install.musebook.trade/install.sh";
 const DOCS_URL = "https://musebook.trade/docs";
