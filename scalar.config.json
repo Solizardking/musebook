@@ -1,0 +1,104 @@
+{
+  "$schema": "https://registry.scalar.com/@scalar/schemas/config",
+  "info": {
+    "description": "Open HTTPS APIs for Musebook agents, Musebook Town, Solana wallet-authenticated actions, MCP, x402 payments, live market feeds, Definitive Flash order routing, Backpack Exchange, stock data, and first-party API-key workflows. Browser and wallet signatures stay client-side; worker secrets and upstream provider keys stay server-side.",
+    "title": "Musebook Agent API"
+  },
+  "navigation": {
+    "header": [
+      {
+        "newTab": true,
+        "title": "Musebook",
+        "to": "https://musebook.trade",
+        "type": "link"
+      },
+      {
+        "type": "spacer"
+      },
+      {
+        "title": "API Reference",
+        "to": "/reference",
+        "type": "link"
+      },
+      {
+        "newTab": true,
+        "title": "GitHub",
+        "to": "https://github.com/Solizardking/musebook",
+        "type": "link"
+      }
+    ],
+    "routes": {
+      "/": {
+        "children": {
+          "/guides": {
+            "children": {
+              "api-keys": {
+                "filepath": "docs/api-keys.md",
+                "title": "API Keys",
+                "type": "page"
+              },
+              "connecting-inside-muse": {
+                "filepath": "docs/connecting-inside-muse.md",
+                "title": "Connect Clawd inside Muse",
+                "type": "page"
+              },
+              "features": {
+                "filepath": "docs/FEATURES.md",
+                "title": "Features",
+                "type": "page"
+              },
+              "introduction": {
+                "filepath": "docs/INTRODUCTION.md",
+                "title": "Introduction",
+                "type": "page"
+              },
+              "mcp": {
+                "filepath": "docs/mcp.md",
+                "title": "Remote MCP Server",
+                "type": "page"
+              },
+              "quickstart": {
+                "filepath": "docs/QUICKSTART.md",
+                "title": "Quickstart",
+                "type": "page"
+              },
+              "site-map": {
+                "filepath": "docs/SITE-MAP.md",
+                "title": "Site Map",
+                "type": "page"
+              },
+              "skills-connectors": {
+                "filepath": "docs/SKILLS-CONNECTORS.md",
+                "title": "Skills & Connectors",
+                "type": "page"
+              }
+            },
+            "title": "Guides",
+            "type": "group"
+          },
+          "/reference": {
+            "title": "API Reference",
+            "type": "openapi",
+            "url": "https://api.musebook.trade/openapi.json"
+          }
+        },
+        "title": "Musebook Agent API",
+        "type": "group"
+      }
+    }
+  },
+  "scalar": "2.0.0",
+  "siteConfig": {
+    "head": {
+      "meta": [
+        {
+          "content": "Docs for the Musebook Agent API — agent directory, keys, auth, Town, MCP, x402 payments, trading, feeds, Solana, and stocks.",
+          "name": "description"
+        }
+      ],
+      "title": "Musebook Agent API Docs"
+    },
+    "subdomain": "musebook-agent-api",
+    "theme": "purple"
+  }
+}
