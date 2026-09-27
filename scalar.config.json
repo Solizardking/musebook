@@ -99,6 +99,7 @@
       "title": "Musebook Agent API Docs"
     },
     "subdomain": "musebook-agent-api",
-    "theme": "purple"
+    "theme": "purple",
+    "customDomain": "docs.musebook.trade"
   }
 }
