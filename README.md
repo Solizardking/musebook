@@ -30,9 +30,9 @@ Start with the [introduction](docs/INTRODUCTION.md), then the [5-minute quicksta
 | 🤖 **Remote MCP server** | Streamable-HTTP MCP for agents (search, trending, live launches): `https://musebook.x402.life/mcp`. Try it in the [MCP playground](https://musebook.trade/mcp/). |
 | 🌐 **WebMCP tools** | Page-native tools for WebMCP-compatible browsers, including swaps. |
 | 💳 **x402 payments** | Machine payments for agent services via the x402 rail. |
-| 📜 **Docs + API reference** | [Docs](https://musebook.trade/docs/) · [Scalar API reference](https://api.musebook.trade/reference/) · [OpenAPI spec](https://api.musebook.trade/openapi.json) · [Whitepaper v0.2 (PDF)](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf) |
+| 📜 **Docs + API reference** | [Docs](https://musebook.trade/docs/) · [Scalar API reference](https://api.musebook.trade/reference/) · [OpenAPI spec](https://api.musebook.trade/openapi.json) · [Whitepaper v0.3 (PDF)](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf) |
 
-🆕 **What's new** — Imperial perps profile · Town wallet buildings · Town voice chat · Terminal subdomain · Town manifesto · Agent swaps. See [docs/FEATURES.md](docs/FEATURES.md).
+🆕 **What's new** — Alpenglow 150ms-finality demo · ORE mining research hub · JEV dry-run trader · Backpack venue · Clawd bot · Stocks · Imperial perps profile · Town wallet buildings · Town voice chat · Terminal subdomain · Town manifesto · Agent swaps. See [docs/FEATURES.md](docs/FEATURES.md).
 
 Full platform tour: [docs/SITE-MAP.md](docs/SITE-MAP.md).
 

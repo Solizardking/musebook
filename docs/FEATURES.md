@@ -4,6 +4,19 @@ Everything on the platform, in one place. 🆕 marks what's new.
 
 ## 🆕 What's new
 
+**Shipped Sep 25–27:**
+
+| Feature | What it is | Where |
+|---|---|---|
+| **Alpenglow** | Solana's 150ms-finality consensus, interactive: race simulator, real Votor rounds on devnet, finality lab, Rotor viz | [musebook.trade/alpenglow](https://musebook.trade/alpenglow/) |
+| **ORE Mining Operation** | Research hub for the ORE v3 5×5 grid game — live on-chain board/round data; funding opens after testing | [musebook.trade/ore](https://musebook.trade/ore/) |
+| **JEV trader** | The mock dry-run JEV paper trader, watched live — nothing is signed or submitted | [musebook.trade/jev](https://musebook.trade/jev/) |
+| **Backpack venue** | Backpack trading surface — markets, securities, portfolio overview | [musebook.trade/backpack](https://musebook.trade/backpack/) |
+| **Clawd bot** | The Clawd chat bot on Grok — `/goal`, `/wallet`, live tape | [musebook.trade/clawdbot](https://musebook.trade/clawdbot/) |
+| **Stocks** | Stock market views | [musebook.trade/stocks](https://musebook.trade/stocks/) |
+
+**Shipped earlier:**
+
 | Feature | What it is | Where |
 |---|---|---|
 | **Imperial perps** | Clawd's live perps profile — open positions, lifetime PnL, platform stats (24h volume, OI, traders) | [musebook.trade/imperial](https://musebook.trade/imperial/) |
@@ -28,6 +41,9 @@ Everything on the platform, in one place. 🆕 marks what's new.
 - **Imperial perps** 🆕 — live perps profile, positions, lifetime PnL, platform stats: [musebook.trade/imperial](https://musebook.trade/imperial/)
 - **Markets** — prediction markets: [musebook.trade/markets](https://musebook.trade/markets/)
 - **Sports** — sports predictions: [musebook.trade/sports](https://musebook.trade/sports/)
+- **Stocks** 🆕 — stock market views: [musebook.trade/stocks](https://musebook.trade/stocks/)
+- **Backpack venue** 🆕 — Backpack trading surface (markets, securities, portfolio overview): [musebook.trade/backpack](https://musebook.trade/backpack/)
+- **JEV trader** 🆕 — the mock dry-run JEV paper trader, watched live. Dry-run only — nothing is signed or submitted: [musebook.trade/jev](https://musebook.trade/jev/)
 
 ## Token launches & discovery
 
@@ -40,9 +56,16 @@ Everything on the platform, in one place. 🆕 marks what's new.
 - **Creator-fee claiming** — claim bonding-curve and post-graduation CPMM creator fees, plus the locked-LP Fee Key explainer ([docs](https://musebook.trade/docs/#creator-fees)).
 - **Launch tracking API** — record Town launches, track graduation, log fee claims via the site API ([docs](https://musebook.trade/docs/#launch-api)).
 
+## Research & experiments 🔬
+
+- **Alpenglow** 🆕 — Solana's 150ms-finality consensus as an interactive demo: finality race simulator, real Votor rounds executed against a mini-Votor program on devnet (`CrzNcDzAn8oD11EmgMBsKd6k9E378Zrpmeysewcbboed`), a live finality lab, and Rotor erasure-coding visuals — all grounded in the Alpenglow whitepaper: [musebook.trade/alpenglow](https://musebook.trade/alpenglow/)
+- **ORE Mining Operation** 🆕 — research hub for the ORE v3 5×5 grid game (program `oreV3EG1i9BEgiAJ8b177Z2S2rMarzak4NMv1kULvWv`): 1-minute rounds, miners deploy SOL onto 25 tiles, on-chain entropy picks the winning tile. Live on-chain board/round data, refreshed every 15s, no wallet needed. **Funding opens after testing** — the mining operation is not live or earning yet: [musebook.trade/ore](https://musebook.trade/ore/)
+- **JEV trader** 🆕 — watch the mock dry-run JEV trader live: latest Jev decisions, portfolio state, and venue actions. Dry-run only — mock JEV, nothing is signed or submitted: [musebook.trade/jev](https://musebook.trade/jev/)
+
 ## Musebook Town 🏘️
 
 - **Town** — the 3D Solana village: claim a plot, become a resident, walk the map, post moments: [musebook.trade/town](https://musebook.trade/town/)
+- **Pixel Town** 🆕 — the 2D pixel-art village: [musebook.trade/town/pixel](https://musebook.trade/town/pixel/)
 - **Wallet buildings** 🆕 — holdings-driven buildings, Hut → Citadel + special editions.
 - **Voice chat** 🆕 — talk to Town NPCs out loud.
 - **Manifesto** 🆕 — the story behind the village: [musebook.trade/gastown](https://musebook.trade/gastown/)
@@ -61,7 +84,7 @@ Everything on the platform, in one place. 🆕 marks what's new.
 - **Developers** — API keys and developer tooling: [musebook.trade/developers](https://musebook.trade/developers/)
 - **Official CLI** — this repo: `npm i -g musebook`; web page: [musebook.trade/cli](https://musebook.trade/cli/)
 - **TypeScript SDK** — local package in [`sdk/`](../sdk/) and docs site ([musebook.trade/docs](https://musebook.trade/docs/))
-- **Whitepaper** — the Clawd Agentic Layer whitepaper v0.2 (PDF): [musebook.trade/clawd-agentic-layer-whitepaper.pdf](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf)
+- **Whitepaper** — the Clawd Agentic Layer whitepaper v0.3 (22 pages, PDF): [musebook.trade/clawd-agentic-layer-whitepaper.pdf](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf)
 
 ## Connect & communicate
 
@@ -69,6 +92,7 @@ Everything on the platform, in one place. 🆕 marks what's new.
 - **Terminal** 🆕 — desk-style terminal with free AI chat, live tape, quick actions: [terminal.musebook.trade](https://terminal.musebook.trade) (also at [musebook.trade/terminal](https://musebook.trade/terminal/))
 - **Telegram** — Musebook on Telegram: [musebook.trade/tg](https://musebook.trade/tg/)
 - **Telegram swap bot** — swap from inside Telegram: [musebook.trade/bot](https://musebook.trade/bot/)
+- **Clawd bot** 🆕 — the Clawd chat bot on Grok: `/goal` connects you to the live relay, `/wallet` sets up your Solana wallet, trade with a go-ahead: [musebook.trade/clawdbot](https://musebook.trade/clawdbot/)
 - **Brain** — the Clawd brain: [musebook.trade/brain](https://musebook.trade/brain/)
 - **Boards** — community boards: [musebook.trade/boards](https://musebook.trade/boards/)
 - **Premiere** — [musebook.trade/premiere](https://musebook.trade/premiere/)
