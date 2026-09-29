@@ -11,6 +11,71 @@ These are different flows with different readiness gates.
 | Agent tokens | [/launchpad?mode=genesis](https://musebook.trade/launchpad?mode=genesis) | Owner-wallet Genesis launch |
 | Create token | [/launchpad?mode=fungible](https://musebook.trade/launchpad?mode=fungible) | Atomic SPL + Token Metadata creation |
 | Explore | [/launchpad?mode=discover](https://musebook.trade/launchpad?mode=discover) | Read-only launches and DAS |
+| Creator rewards | [/claim](https://musebook.trade/claim) | Wallet-reviewed fee claims |
+
+## Creator Rewards
+
+[/claim](https://musebook.trade/claim) opens the creator-reward workspace; Town
+registration is not required. Agent onboarding remains at
+[/claim?mode=onboarding](https://musebook.trade/claim?mode=onboarding).
+
+| Provider | Covered Rewards | Network |
+| --- | --- | --- |
+| Metaplex | Genesis bonding-curve creator fees and graduated Raydium CPMM buckets | Mainnet or devnet |
+| Pump | Curve/AMM creator fees, cashback and shared creator-fee operations | Mainnet |
+| Raydium | Existing LaunchLab creator vault and CPMM creator-fee tools | Mainnet |
+
+Metaplex scans all eligible buckets for the **configured creator fee recipient**,
+not every token the connected wallet holds. The recipient can be a different
+wallet or an agent Asset Signer PDA. The connected wallet pays network fees and
+any account rent; it does not become the reward recipient. Claiming into an
+agent PDA does not withdraw funds from the agent.
+
+1. Connect an installed Solana wallet or choose the site wallet.
+2. Choose the provider and network. Metaplex defaults to mainnet. Check the
+   recipient address against the launch's creator-fee configuration.
+3. Check rewards, then review claims. The app inspects the unsigned instructions,
+   verifies recipient/payer accounts, simulates and shows the buckets and
+   estimated network fees. Additional account rent may apply; actual rewards
+   depend on on-chain balances at execution time.
+4. Explicitly sign each transaction. Claims keep the blockhash supplied by the
+   Metaplex API, are re-simulated before signing and sent sequentially with
+   preflight. Unexpected transfers or changed transaction messages are rejected.
+5. Every expected signature is saved **before** broadcasting. A lost response,
+   rejected later signature or reload retains the partial receipt. Check claim
+   status without another signature or broadcast. Recovery matches each on-chain
+   transaction message to the saved receipt.
+6. Close a receipt only after submitted transactions are confirmed, failed, or
+   provably expired past finalized block height. Unsubmitted buckets remain
+   unclaimed; build a fresh review after reconciling the receipt. Do not clear
+   site storage while a signature is unresolved.
+
+The Genesis receipt safeguards also apply to the Town's Genesis rewards panel.
+Only public addresses, message hashes, blockhashes and signatures are stored,
+never wallet keys or signed transaction bytes. Pump retains its separate pending
+journal. Raydium's existing tools remain separate, not a combined claim batch.
+
+### Reward API
+
+| Method | Path | Input |
+| --- | --- | --- |
+| GET | `/api/genesis/rewards/status` | `wallet`, optional `payer`, `network` |
+| POST | `/api/genesis/rewards/claim` | JSON `wallet`, optional `payer`, `network` |
+
+Networks are `solana-mainnet` (default) and `solana-devnet`; `mainnet` / `devnet`
+aliases are accepted. The claim endpoint returns `{ok, claimable, transactions,
+blockhash: {blockhash, lastValidBlockHeight}}`. It never signs or broadcasts.
+Status returns `{ok, claimable, txCount}`. Metaplex's documented HTTP 400
+`No rewards available to claim` becomes a normal `claimable:false` response;
+provider failures, malformed payloads and rate limits are not zero balances.
+These responses are not cached.
+
+Standalone SPL token creation does not itself accrue Genesis fees. Locked-LP
+Fee Keys, unrelated marketplace royalties, Meteora fees and MPL-3643 issuance
+are not covered by these claim controls. No universal claim-all across every
+Solana protocol is implied.
+
+Reference: [Metaplex creator-reward API](https://www.metaplex.com/docs/api/claim-creator-rewards).
 
 ## Launch and Asset Discovery
 
