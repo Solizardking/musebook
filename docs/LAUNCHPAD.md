@@ -1,8 +1,100 @@
 # Launchpad
 
 [Open the launchpad](https://musebook.trade/launchpad/).
-The workspace separates permissioned-asset planning from browser-signed Genesis
-agent-token launches. These are different flows with different readiness gates.
+The workspace separates permissioned-asset planning, browser-signed Genesis
+agent-token launches, standalone fungible tokens, and Metaplex discovery.
+These are different flows with different readiness gates.
+
+| Workspace | Direct Link | Execution |
+| --- | --- | --- |
+| Permissioned assets | [/launchpad?mode=mpl3643](https://musebook.trade/launchpad?mode=mpl3643) | Draft-only; alpha access required |
+| Agent tokens | [/launchpad?mode=genesis](https://musebook.trade/launchpad?mode=genesis) | Owner-wallet Genesis launch |
+| Create token | [/launchpad?mode=fungible](https://musebook.trade/launchpad?mode=fungible) | Atomic SPL + Token Metadata creation |
+| Explore | [/launchpad?mode=discover](https://musebook.trade/launchpad?mode=discover) | Read-only launches and DAS |
+
+## Launch and Asset Discovery
+
+Explore lists the public Metaplex Genesis index. Filter by network, live/upcoming/
+graduated status, and curated spotlight. Look up one Genesis address or all
+campaigns associated with a token mint. One token may have multiple campaigns;
+Musebook preserves the array rather than choosing an arbitrary launch.
+The upstream list is not paginated; the UI pages the returned list locally.
+
+The Assets / DAS view supports exact asset lookup and paginated wallet-owner
+discovery, with an optional Core-only filter. It uses the official
+`@metaplex-foundation/digital-asset-standard-api` Umi plugin and
+`@metaplex-foundation/mpl-core-das` conversion/collection-plugin derivation.
+Core collection reads use normal RPC while indexed DAS reads use a separate
+read-only gateway. Registered agents can be opened in the Genesis workspace,
+where fresh on-chain owner checks still apply before signing.
+
+Indexed ownership, canonical agent tokens and external adapters are labeled as
+indexed data, not authorization or proof of current on-chain state. Fungible
+inspection additionally uses the Token Metadata SDK to read exact on-chain
+supply, decimals, mint/freeze authorities and metadata update authority.
+Missing provider data is an error/unavailable state, not a zero balance.
+
+### Public Read API
+
+| Method | Path | Parameters |
+| --- | --- | --- |
+| GET | `/api/metaplex/launches` | `network`, `status`, `spotlight` |
+| GET | `/api/metaplex/launches/{genesis}` | `network` |
+| GET | `/api/metaplex/tokens/{mint}` | `network` |
+| POST | `/api/metaplex/das` | `network=mainnet` or `devnet`; JSON-RPC body |
+
+REST launch reads use `network=solana-mainnet` (default) or `solana-devnet`.
+Spotlight is `/launches?spotlight=true`, not a separate endpoint. Listing data
+is returned inside `data`, following the Metaplex REST API.
+
+```bash
+curl 'https://api.musebook.trade/api/metaplex/launches?spotlight=true&network=solana-mainnet'
+
+curl 'https://api.musebook.trade/api/metaplex/das?network=mainnet' \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getAsset","params":{"id":"BDvrsTy4Rugy7doh4h23HqdRtPjZ4n6fwhocQV4DgMdM"}}'
+```
+
+The gateway allows `getAsset`, `getAssets` (1-50 IDs), `getAssetsByOwner`, and
+owner-scoped `searchAssets` with `interface=MplCoreAsset`. Owner queries use
+`ownerAddress`, page 1-1000 and limit 1-50. Arbitrary RPC methods, transaction
+broadcasts, arbitrary upstream URLs and JSON-RPC request batches are rejected.
+Rate limits, timeouts, body limits and redacted provider errors apply.
+
+Server configuration uses the existing `HELIUS_API_KEY`, or optional
+`SOLANA_DAS_RPC_URL` / `SOLANA_DEVNET_DAS_RPC_URL` overrides. These are server
+secrets, never `VITE_` values. A provider may need DAS enabled for its endpoint.
+
+## Standalone Fungible Tokens
+
+Create token uses official Token Metadata and Toolbox SDK builders. It creates
+a legacy SPL mint with Metaplex metadata and mints the exact initial supply to
+the creator wallet's associated token account in **one atomic transaction**.
+This does not create a Genesis sale, market/liquidity pool, RWA compliance layer
+or canonical agent-token binding.
+
+1. Choose a network (devnet by default), name, symbol, hosted HTTPS metadata
+   JSON URI, decimals (0-9) and initial supply as a decimal string.
+2. Connect the creator wallet. Token name/URI limits are checked in UTF-8 bytes;
+   supply uses integer base units and must fit SPL's u64 range.
+3. Mint and freeze authorities remain with the creator by default. Optional
+   permanent revocation requires a separate acknowledgement. Metadata remains
+   mutable with the creator as its update authority.
+4. Review the exact generated mint, associated account, network, supply and
+   authority settings. Review simulates without prompting for a signature.
+   Rent and network-fee estimates include the new token account; additional
+   [Metaplex protocol fees](https://www.metaplex.com/docs/protocol-fees) may apply.
+5. Explicitly sign and create. The app rebuilds with a fresh blockhash,
+   simulates again, signs with the temporary mint signer and browser wallet,
+   saves the expected signature, then broadcasts with preflight enabled.
+6. A pending receipt blocks duplicate creation. Check status after a reload
+   without signing or rebroadcasting. Confirmation is matched to the recorded
+   wallet and newly created mint, not just any successful transaction.
+
+The temporary mint key is held in memory only and is never exported or saved.
+Receipts contain public parameters and signatures, not wallet keys or signed
+transaction bytes. Unknown receipts stay pending; retain an export before
+manual reconciliation or clearing site storage.
 
 ## Permissioned Assets
 
@@ -84,6 +176,18 @@ expiry, wallet rejection/switching, changed transaction messages, confirmation
 errors, pending receipts, and registration-only recovery. Browser tests use
 isolated RPC/API and wallet fixtures for signing and broadcasting behavior.
 Live read checks and draft planning are separate evidence from a funded launch.
+
+Additional tests cover DAS method/parameter limits, server credential redaction,
+upstream errors, exact fungible amounts and atomic SDK instructions. Token
+creation browser fixtures cover success, rejected signing, failed simulation,
+and reload recovery with no second signature or broadcast.
+
+Optional X/Twitter verification is not enabled in this workspace. It requires
+an application OAuth consent flow with `users.read` before calling Metaplex's
+`/twitter/verify`; a typed social link alone is not verified. Launch registration
+continues without a verification token. No OAuth access token is requested or
+stored by these new controls. Existing creator-reward operations remain on
+[/claim](https://musebook.trade/claim).
 
 **No funded mainnet launch was performed as part of this upgrade.** Neither the
 UI nor passing tests imply Metaplex approval, successful issuance of a real
