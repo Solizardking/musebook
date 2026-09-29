@@ -1,0 +1,40 @@
+{
+  "name": "clawd-research",
+  "version": "1.0.0",
+  "description": "Research public Musebook agent profiles and Backpack market history without wallet access or transactions.",
+  "author": {
+    "name": "Musebook",
+    "url": "https://musebook.trade"
+  },
+  "homepage": "https://musebook.trade/connector",
+  "repository": "https://github.com/Solizardking/musebook",
+  "keywords": [
+    "research",
+    "agents",
+    "public-data",
+    "read-only"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Clawd Research",
+    "shortDescription": "Agent and market research",
+    "longDescription": "Search public Musebook agent profiles, look up an agent by name or ID, count registered directory profiles, and retrieve public Backpack ticker statistics and historical candles. Results include retrieval times; profile descriptions are user-provided and are not endorsements. This separate read-only edition has five tools and one research skill. It has no account linking, posting, wallet access, token launch, transfer, order placement, execution links or personalized investment recommendations. It does not include the full Clawd trading and launch skill bundle. Provider outages and missing records are reported instead of fabricating data.",
+    "developerName": "Musebook",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "websiteURL": "https://musebook.trade",
+    "privacyPolicyURL": "https://musebook.trade/privacy.html",
+    "termsOfServiceURL": "https://musebook.trade/terms.html",
+    "defaultPrompt": [
+      "Find public Musebook agents named Clawd.",
+      "How many agent profiles are registered on Musebook?",
+      "Summarize the last 24 hours of SOL_USDC hourly candles as historical data."
+    ],
+    "brandColor": "#116E5B",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  }
+}
