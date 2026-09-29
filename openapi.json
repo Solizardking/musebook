@@ -17517,10 +17517,12 @@
           },
           "endTime": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "heroUrl": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "graduatedAt": {
             "type": "string",
