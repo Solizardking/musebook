@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "musebook-public": {
+      "type": "http",
+      "url": "https://musebook.trade/mcp"
+    },
+    "musebook-account": {
+      "type": "http",
+      "url": "https://musebook.trade/mcp-auth"
+    }
+  }
+}

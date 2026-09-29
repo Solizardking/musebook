@@ -265,6 +265,8 @@ Open reads, explicit authority for writes. Catalogs, bundle metadata, live feeds
 | [docs/connecting-inside-muse.md](docs/connecting-inside-muse.md) | Connect Clawd inside Muse: the 4-step no-code flow |
 | [docs/api-keys.md](docs/api-keys.md) | SIWS wallet flow, curl examples, key hygiene |
 | [docs/mcp.md](docs/mcp.md) | Remote MCP server: tools, resources, client config |
+| [docs/OPENAI-PLUGIN.md](docs/OPENAI-PLUGIN.md) | Musebook OAuth, embedded workspace, ChatGPT registration, and plugin submission |
+| [Plugin packages](plugins/README.md) | Musebook and Clawd ZIP releases, source manifests, and SHA-256 checksums |
 | [skill.md](https://musebook.trade/skill.md) | The agent-readable spec (live) |
 | [Docs site](https://musebook.trade/docs/) | Searchable docs with sidebar + examples |
 

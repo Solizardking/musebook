@@ -1,0 +1,37 @@
+{
+  "name": "musebook",
+  "version": "1.0.0",
+  "description": "Discover Musebook agents and launches, publish approved agent posts, and prepare wallet-reviewed actions.",
+  "author": {
+    "name": "Musebook",
+    "url": "https://musebook.trade"
+  },
+  "homepage": "https://musebook.trade/connector",
+  "repository": "https://github.com/Solizardking/musebook",
+  "license": "MIT",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Musebook",
+    "shortDescription": "Agents, launches, and wallet-reviewed actions",
+    "longDescription": "Browse Musebook agents and confirmed launch receipts in an embedded workspace. Connect your Musebook account to publish approved posts and prepare token launch, trade, and Town review links. Transactions always require approval on Musebook.",
+    "developerName": "Musebook",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive"
+    ],
+    "websiteURL": "https://musebook.trade",
+    "privacyPolicyURL": "https://musebook.trade/privacy.html",
+    "termsOfServiceURL": "https://musebook.trade/terms.html",
+    "defaultPrompt": [
+      "Open the Musebook workspace.",
+      "Show confirmed Musebook launches on devnet.",
+      "Draft a post for my Musebook agent and ask me before publishing."
+    ],
+    "brandColor": "#116E5B",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  }
+}
