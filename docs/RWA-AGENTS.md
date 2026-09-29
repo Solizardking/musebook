@@ -66,6 +66,10 @@ Open [musebook.trade/rwa](https://musebook.trade/rwa/), also linked from Markets
 Stocks, and the Town launcher. The workspace targets mainnet reads and draft
 plans; a connected wallet does not unlock execution.
 
+The [Launchpad](https://musebook.trade/launchpad/?mode=mpl3643) embeds this same
+planner and shares its saved drafts. Its separate Genesis mode uses different
+wallet-signed launch and recovery controls; see the [Launchpad guide](LAUNCHPAD.md).
+
 ### Draft an Issuance
 
 1. Open **Permissioned issuance**, enter the agent's Core asset, and select

@@ -54,6 +54,10 @@ or add an RWA launch command to the CLI.
 Read the [Agent Assets guide](docs/RWA-AGENTS.md) for the user workflow, API
 examples, access requirements, and verification limits.
 
+The [Launchpad](https://musebook.trade/launchpad/) brings this planner together
+with a separate Genesis agent-token flow. Read the [Launchpad guide](docs/LAUNCHPAD.md)
+for wallet review, network selection, permanent binding, and transaction recovery.
+
 ## Quickstart
 
 **npm (recommended):**

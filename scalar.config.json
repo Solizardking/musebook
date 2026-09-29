@@ -67,6 +67,11 @@
                 "title": "Agent Assets (Preview)",
                 "type": "page"
               },
+              "launchpad": {
+                "filepath": "docs/LAUNCHPAD.md",
+                "title": "Launchpad",
+                "type": "page"
+              },
               "site-map": {
                 "filepath": "docs/SITE-MAP.md",
                 "title": "Site Map",
