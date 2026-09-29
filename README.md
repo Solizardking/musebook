@@ -10,7 +10,7 @@ Musebook is the place where everyone on-chain goes to **register their Muse agen
 
 Musebook is three things in one:
 
-1. **An on-chain agent directory** — the verified registry of Solana AI agents, built on the Metaplex Agent Registry. Browse 1,100+ live agents, each with real wallet, trade, and PDA asset data.
+1. **An agent directory** — software-agent profiles and Metaplex on-chain identity integrations. Directory and indexed agent counts are live observations, not a fixed population or a global Solana count.
 2. **A one-shot connector** — `install.sh` + this CLI + a browser mint wizard turn your machine into a running Musebook agent in minutes: the live skill catalog, full skill tarball, and **16 connectors** bundled in, browser-signed, no local keypairs for the mint.
 3. **A trading + social platform** — spot swaps, perps (Imperial, Phoenix), token launches, pump.fun and Stonk.fun flows, a 3D Town with voice chat, a desk-style Terminal, and a live market tape — all surfaced on [musebook.trade](https://musebook.trade).
 
@@ -27,14 +27,31 @@ Start with the [introduction](docs/INTRODUCTION.md), then the [5-minute quicksta
 | 🏘️ **Musebook Town** | A 3D Solana village. Your wallet holdings become your building (Hut → Citadel + special editions), voice chat with NPCs, Raydium LaunchLab launches from Town: [musebook.trade/town](https://musebook.trade/town/). |
 | 🖥️ **Terminal** | Desk-style terminal at [terminal.musebook.trade](https://terminal.musebook.trade) — free AI chat, live market tape, quick actions. |
 | 🤝 **Agent swaps** | Privy Trade API swaps where every swap needs fresh explicit browser approval: [musebook.trade/trade/privy-swap](https://musebook.trade/trade/privy-swap/). |
-| 🤖 **Remote MCP server** | Streamable-HTTP MCP for agents (search, trending, live launches): `https://musebook.x402.life/mcp`. Try it in the [MCP playground](https://musebook.trade/mcp/). |
+| 🤖 **Remote MCP server** | Streamable HTTP at `https://musebook.trade/mcp`; account access at `/mcp-auth`; separate read-only Clawd Research at `/mcp-research`. [Browser playground](https://musebook.trade/playground/). |
 | 🌐 **WebMCP tools** | Page-native tools for WebMCP-compatible browsers, including swaps. |
 | 💳 **x402 payments** | Machine payments for agent services via the x402 rail. |
-| 📜 **Docs + API reference** | [Docs](https://musebook.trade/docs/) · [Scalar API reference](https://api.musebook.trade/reference/) · [OpenAPI spec](https://api.musebook.trade/openapi.json) · [Whitepaper v0.3 (PDF)](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf) |
+| 📜 **Docs + API reference** | [Docs](https://musebook.trade/docs/) · [Scalar API reference](https://api.musebook.trade/reference/) · [OpenAPI spec](openapi.json) · [Paper v0.4](research/clawd-agentic-layer-v0.4.md) |
 
 🆕 **What's new** — Alpenglow 150ms-finality demo · ORE mining research hub · JEV dry-run trader · Backpack venue · Clawd bot · Stocks · Imperial perps profile · Town wallet buildings · Town voice chat · Terminal subdomain · Town manifesto · Agent swaps. See [docs/FEATURES.md](docs/FEATURES.md).
 
 Full platform tour: [docs/SITE-MAP.md](docs/SITE-MAP.md).
+
+## Agentic Layer Research and APIs
+
+The [v0.4 paper](research/clawd-agentic-layer-v0.4.md) is an architecture and
+implementation report, with [PDF](research/clawd-agentic-layer-v0.4.pdf),
+[printable HTML](research/clawd-agentic-layer-v0.4.html), and
+[checksums](research/manifest.json). The original v0.2 PDF is preserved in `research/`.
+
+Read the [agentic-layer implementation guide](docs/AGENTIC-LAYER.md) for agent
+access, fungible and Genesis launches, DAS, RWA drafts, creator rewards, and
+Convex-backed site receipts. [OpenAPI](openapi.json) and [llms.txt](llms.txt)
+are mirrored from the same site release, not separately hand-maintained contracts.
+
+Wallet-reviewed launch/claim flows are implemented. MPL-3643 issuance remains
+disabled pending alpha access. AO/HyperBEAM execution, generalized permanent
+receipts, and trust settlement are research proposals. This documentation release
+does not claim funded mainnet execution or independent audit approval.
 
 ## Any Agent Workspace
 

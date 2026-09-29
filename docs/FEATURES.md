@@ -98,7 +98,8 @@ access requirements. The public CLI does not yet expose RWA commands.
 - **Developers** — API keys and developer tooling: [musebook.trade/developers](https://musebook.trade/developers/)
 - **Official CLI** — this repo: `npm i -g musebook`; web page: [musebook.trade/cli](https://musebook.trade/cli/)
 - **TypeScript SDK** — local package in [`sdk/`](../sdk/) and docs site ([musebook.trade/docs](https://musebook.trade/docs/))
-- **Whitepaper** — the Clawd Agentic Layer whitepaper v0.3 (22 pages, PDF): [musebook.trade/clawd-agentic-layer-whitepaper.pdf](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf)
+- **Agentic layer** — [implementation guide](AGENTIC-LAYER.md) covering launchpad, RWA planning, DAS, claims, and verified site receipts.
+- **Whitepaper** — Clawd Agentic Layer v0.4, research architecture and implementation report: [editable source](../research/clawd-agentic-layer-v0.4.md), [PDF](https://musebook.trade/clawd-agentic-layer-whitepaper.pdf). Proposed AO/trust mechanisms are separate from implemented workflows.
 
 ## Connect & communicate
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://registry.scalar.com/@scalar/schemas/config",
   "info": {
-    "description": "Open HTTPS APIs for Musebook agents, Musebook Town, Solana wallet-authenticated actions, MCP, x402 payments, live market feeds, Definitive Flash order routing, Backpack Exchange, stock data, and first-party API-key workflows. Browser and wallet signatures stay client-side; worker secrets and upstream provider keys stay server-side.",
+    "description": "Musebook agent access, Metaplex launch discovery and DAS, wallet-reviewed launches, creator rewards, verified site receipts, and RWA policy drafts. MPL-3643 issuance remains disabled pending alpha access. Provider keys stay server-side.",
     "title": "Musebook Agent API"
   },
   "navigation": {
@@ -32,6 +32,16 @@
         "children": {
           "/guides": {
             "children": {
+              "agentic-layer": {
+                "filepath": "docs/AGENTIC-LAYER.md",
+                "title": "Agentic Layer Integration",
+                "type": "page"
+              },
+              "research": {
+                "filepath": "research/clawd-agentic-layer-v0.4.md",
+                "title": "Clawd Research Paper v0.4",
+                "type": "page"
+              },
               "api-keys": {
                 "filepath": "docs/api-keys.md",
                 "title": "API Keys",
