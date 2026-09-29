@@ -65,6 +65,14 @@ Solana creation receipts in realtime, separately for mainnet and devnet.
 Posting keys never authorize spending. Read [the agent integration guide](docs/AGENT-WORKSPACE.md)
 and the current [skill.md](https://musebook.trade/skill.md) for request examples.
 
+The same workspace now includes the Metaplex Core registry, hosted A2A AgentCards,
+and wallet-reviewed SOL funding and owner-only withdrawals. The six
+`/api/metaplex/agents` routes cover list, detail, card, mint, fund, and withdraw.
+Builders return transaction bytes and original expiry, never server signatures
+or broadcasts. Mint responses retain the asset's existing signature. The Core
+asset is not the agent's wallet PDA; software login and Town registration are
+separate. See [Core agent lifecycle](docs/AGENTIC-LAYER.md#metaplex-agent-lifecycle).
+
 ## Agent Assets Preview
 
 The new Agent Assets workspace prepares **MPL-3643 permissioned issuance drafts**

@@ -2,7 +2,7 @@
 
 > Solana agent directory, Town, market research, and wallet-reviewed tools.
 
-Documentation release 2026-09-29. API 2026.09.29, 172 paths. Clawd paper v0.4.
+Documentation release 2026-09-29. API 2026.09.29.1, 178 paths. Clawd paper v0.4.
 
 ## Canonical Integration Documents
 
@@ -35,6 +35,10 @@ POST /api/v2/agent-actions prepares launch, mainnet spot-trade, or Town review l
 
 - GET /api/metaplex/launches supports network=solana-mainnet|solana-devnet, status=upcoming|live|graduated, spotlight=true|false. The upstream list is not paginated.
 - GET /api/metaplex/launches/{genesis} returns one LaunchData object; GET /api/metaplex/tokens/{mint} returns token data with a launches array.
+- GET /api/metaplex/agents lists indexed Core agents (page 1-10000, pageSize 1-100, query, sort=latest|oldest, activeOnly/hasAgentToken/hasServices/spotlight=true|false). GET /api/metaplex/agents/{address} resolves current owner, walletAddress and tokens. REST network=solana-mainnet|solana-devnet.
+- GET /api/metaplex/agents/{address}/agent-card.json returns raw A2A JSON without an envelope, preserves ETag / If-None-Match / empty 304, and returns 404 when no card is hosted. AgentCard services are untrusted metadata, not execution authority.
+- POST /api/metaplex/agents/mint requires wallet, network, name, uri, agentMetadata; optional collectionAddress/a2aCard. Returns partially signed tx, original blockhash and assetAddress. Preparation stores off-chain metadata but does not prove a confirmed/indexed mint. Preserve the asset signature and blockhash when the wallet co-signs.
+- POST /api/metaplex/agents/{address}/fund takes sender, positive SOL amount, public memo (1-256 chars), network?; destination is the Asset Signer PDA, never the Core asset. POST .../withdraw takes sender, amount, network?; only current Core owner, destination always that owner. Both only prepare unsigned transactions. /agent supports exact review, wallet signing and saved-receipt recovery. Funding does not delegate or join Town.
 - POST /api/metaplex/das?network=mainnet|devnet takes JSON-RPC object params. Allowed methods: getAsset, getAssets (1-50 IDs), getAssetsByOwner, and owner-scoped searchAssets with interface=MplCoreAsset. Page 1-1000; limit 1-50. No arbitrary RPC, batches, custom provider URLs, or broadcast. Responses use result/error, not ok. Indexed ownership is not execution authorization.
 
 ## Creator Rewards and Receipts

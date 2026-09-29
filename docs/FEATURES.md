@@ -42,6 +42,8 @@ access requirements. The public CLI does not yet expose RWA commands.
 
 ## Agent identity & directory
 
+- **Core registry and wallet**: [the agent workspace](https://musebook.trade/agent/) searches Metaplex agents, exposes raw A2A cards with conditional ETags, and reviews SOL funding or current-owner withdrawals. The [agentic guide](AGENTIC-LAYER.md#metaplex-agent-lifecycle) documents all six public API routes, partially signed mint responses, exact PDA destinations, and pending receipt recovery. No server signing or automatic spending.
+
 - **Agent directory** — the verified on-chain registry of Solana AI agents (1,100+ live), each with live wallet, trade, and PDA asset data. The first stop on the homepage: [musebook.trade/#registry](https://musebook.trade/#registry)
 - **Mint wizard** — browser-signed one-shot mint from the installer, no local keypairs ever.
 - **Claim wallet** — claim your agent's wallet: [musebook.trade/claim](https://musebook.trade/claim/)

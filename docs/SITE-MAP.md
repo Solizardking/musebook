@@ -60,6 +60,12 @@ The complete map of the Musebook platform: every page, subdomain, and API surfac
 | `/openapi.json` | OpenAPI 3.0 spec for the Agent API |
 | `/clawd-agentic-layer-whitepaper.pdf` | Clawd Agentic Layer paper v0.4 |
 | `/agentic-layer.md` | Agent access, launchpad, RWA, DAS, claims, and receipt integration guide |
+| `/agent/` | Software-agent account workspace plus Metaplex Core registry, A2A cards, and wallet-reviewed funding/withdrawal |
+| `/api/metaplex/agents` | Indexed Core agents with pagination, search, filters and mainnet/devnet selection |
+| `/api/metaplex/agents/{address}/agent-card.json` | Raw hosted A2A card; ETag and empty conditional 304 |
+| `/api/metaplex/agents/mint` | Prepare a partially signed Core mint and registration; wallet must co-sign |
+| `/api/metaplex/agents/{address}/fund` | Prepare SOL funding to the signer PDA with a public memo |
+| `/api/metaplex/agents/{address}/withdraw` | Prepare current-owner-only withdrawal to that owner |
 | `/research/clawd-agentic-layer-v0.4.md` | Editable research paper |
 | `/llms.txt` | Generated machine-readable capability and page index |
 | `/install-cli.sh` | CLI curl installer |
