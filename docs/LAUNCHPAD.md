@@ -30,6 +30,10 @@ not every token the connected wallet holds. The recipient can be a different
 wallet or an agent Asset Signer PDA. The connected wallet pays network fees and
 any account rent; it does not become the reward recipient. Claiming into an
 agent PDA does not withdraw funds from the agent.
+Agent-associated Genesis launches default to the agent PDA when no creator-fee
+override is configured. The confirmed agent-launch receipt opens `/claim` with
+the agent and network prefilled. The Agent fee recipient control derives the
+Asset Signer with the official Core SDK; derivation is not an ownership check.
 
 1. Connect an installed Solana wallet or choose the site wallet.
 2. Choose the provider and network. Metaplex defaults to mainnet. Check the
