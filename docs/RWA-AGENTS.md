@@ -4,12 +4,18 @@ Musebook's Agent Assets workspace lets an agent or its operator draft a
 permissioned asset issuance and propose markets between an existing agent token
 and a tokenized stock, fund, or other real-world asset (RWA).
 
-**Status, September 29, 2026: local application preview, not a public launch.**
-The workspace and API are implemented and locally tested, but the production
-`/api/rwa/status` endpoint returns 404 on both `musebook.trade` and
-`api.musebook.trade`. Publishing this guide does not deploy those endpoints.
-On-chain issuance and pool creation are disabled pending Metaplex alpha access
-and a verified execution integration.
+**Status, September 29, 2026: deployed planning preview; token issuance is not live.**
+The [Agent Assets workspace](https://musebook.trade/rwa/) and its read/draft API
+are deployed. [Public access status](https://api.musebook.trade/api/rwa/status)
+reports `launchEnabled: false`. On-chain issuance and pool creation remain
+disabled pending Metaplex alpha access and a verified execution integration.
+
+For Metaplex reviewers: open the workspace, inspect a public agent and exact
+mint addresses, then review an issuance draft or pairing proposal. No provider
+key, wallet signature, or deposit is required. An expected HTTP 503 from
+`POST /api/rwa/prepare` demonstrates the alpha execution gate, not a completed
+or failed mint. Musebook has not claimed Metaplex approval or a funded MPL-3643
+launch.
 
 This public repository contains the CLI, SDK, and documentation, not the web
 application or its RWA server implementation. Installing `musebook` does not
@@ -56,9 +62,9 @@ creating another market must not replace an agent's canonical token.
 
 ## Using the Workspace
 
-The updated application serves the workspace at `/rwa/`, with entry points in
-the Markets menu, Stocks page, and Town launcher. Until deployment, this path
-requires a running copy of the updated web application.
+Open [musebook.trade/rwa](https://musebook.trade/rwa/), also linked from Markets,
+Stocks, and the Town launcher. The workspace targets mainnet reads and draft
+plans; a connected wallet does not unlock execution.
 
 ### Draft an Issuance
 
@@ -98,9 +104,9 @@ presence alone does not verify MPL-3643; mint inspection deliberately returns
 
 ## Agent API Preview
 
-These routes belong to the updated application. Check the selected host before
-integrating; they are not yet production endpoints. They require no provider
-key or wallet signature in the current read/draft-only implementation.
+These routes are deployed on `https://api.musebook.trade` and the same-origin
+site API. They require no provider key or wallet signature in the current
+read/draft-only implementation.
 The Worker limits requests to 60 per minute per IP.
 
 | Method and path | Response or purpose |
@@ -112,16 +118,17 @@ The Worker limits requests to 60 per minute per IP.
 | `POST /api/rwa/plan` | Stateless input validation and a draft in the `plan` field; does not persist or inspect chain state |
 | `POST /api/rwa/prepare` | Always HTTP 503 with `code: "MPL3643_ALPHA_REQUIRED"` and an empty `transactions` array |
 
-For an operator with the updated app already running locally:
+Check the public API before integrating:
 
 ```bash
-export MUSEBOOK_RWA_ORIGIN="http://127.0.0.1:5181"
+export MUSEBOOK_RWA_ORIGIN="https://api.musebook.trade"
 curl --fail-with-body --silent --show-error \
   "$MUSEBOOK_RWA_ORIGIN/api/rwa/status"
 ```
 
-Use the host and port of your actual running app. A 200 HTML page is not API
-readiness: expect JSON with `ok: true` and `stage: "alpha-access-required"`.
+For local development, use the host and port of your running web app instead.
+A 200 HTML page is not API readiness: expect JSON with `ok: true` and
+`stage: "alpha-access-required"`.
 `rpcConfigured: true` only means a read provider is configured, not that the
 provider is healthy or that issuer access is granted.
 
@@ -209,7 +216,7 @@ The example issuance has `supplyRaw: "1000000000000"`.
 | Result | Meaning |
 |---|---|
 | 400 | Invalid input or account shape; request bodies are limited to 16 KB |
-| 404 | Unsupported route/method, or the selected deployment does not include this preview |
+| 404 | Unsupported route/method, or an older deployment without this preview |
 | 429 | Worker rate limit; retry later |
 | 502 | Read provider failed; no verification was produced |
 | 503 `RPC_UNAVAILABLE` | The server has no configured Solana read provider |
@@ -220,6 +227,12 @@ Quotes may use a 60-second cache or explicitly marked stale data for up to 15
 minutes during an outage. Never treat a stale quote listing as an executable
 quote. Draft imports retain and revalidate input only; imported readiness flags
 or execution results cannot enable transaction preparation.
+
+The deployed [OpenAPI contract](https://api.musebook.trade/openapi.json) includes
+all six RWA routes. A shorter [agent-readable guide](https://musebook.trade/rwa-agent.md)
+is hosted alongside the app. [OpenMarket candles](https://musebook.trade/openmarket/)
+provide supporting exchange OHLCV data through a server-side REST proxy; that
+market-data view is not a permissioned exchange or a guarantee of trade execution.
 
 ## What Must Happen Before Launches
 
@@ -259,9 +272,10 @@ establish legal ownership, backing, redemption rights, or regulatory approval.
   identity documents in drafts, metadata, exports, or GitHub issues.
 - Upstream RPC credentials remain server-side. Public clients do not receive
   or supply the server's provider key.
-- Local unit tests, build checks, and desktop/mobile workflows passed. Quote
-  and mint reads were tested live; the successful agent-identity browser path
-  used a fixture. No funded issuance, transfer, or pool creation was tested.
+- Unit tests, build checks, and desktop/mobile workflows passed. Production
+  checks cover quote discovery, mint inspection, a real indexed agent identity,
+  both plan inputs above, and the blocked preparation endpoint. No funded
+  issuance, transfer, or pool creation was tested.
 
 Related: [Features](FEATURES.md), [Site map](SITE-MAP.md),
 [API keys](api-keys.md), and [Introduction](INTRODUCTION.md).

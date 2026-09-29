@@ -43,7 +43,9 @@ and **pairing proposals between existing agent tokens and tokenized stocks or
 other RWAs**. It includes identity and mint inspection, quote discovery, policy
 review, and browser-local drafts with JSON import/export.
 
-**Local preview, not deployed to production as of September 29, 2026.** Minting,
+**Deployed planning preview as of September 29, 2026:**
+[open Agent Assets](https://musebook.trade/rwa/) or check the
+[public access status](https://api.musebook.trade/api/rwa/status). Minting,
 signing, and pool creation remain disabled pending Metaplex alpha access and a
 verified execution integration. Pairings never replace the canonical agent
 token. This public repo documents the workflow; it does not contain the web app

@@ -4,8 +4,8 @@ Everything on the platform, in one place. 🆕 marks what's new.
 
 ## Agent Assets Preview
 
-**September 29, 2026: locally implemented, not yet deployed to production.**
-The `/rwa/` workspace prepares MPL-3643 issuance drafts and proposals to pair
+**September 29, 2026: deployed planning preview; on-chain execution is disabled.**
+The [Agent Assets workspace](https://musebook.trade/rwa/) prepares MPL-3643 issuance drafts and proposals to pair
 existing agent tokens with tokenized stocks, funds, and other RWAs. It includes
 live quote/mint inspection, indexed agent identity checks, eligibility and
 transfer-policy inputs, and browser-local drafts with JSON import/export.

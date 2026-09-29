@@ -63,9 +63,10 @@ The complete map of the Musebook platform: every page, subdomain, and API surfac
 
 ### Agent Assets Preview Routes
 
-These routes are implemented in the updated web application but **not deployed
-to production as of September 29, 2026**. They are listed separately from live
-surfaces. The public CLI repository does not serve them.
+These routes are **deployed as a read/draft-only planning preview as of
+September 29, 2026**. Open the [workspace](https://musebook.trade/rwa/) or
+[check access](https://api.musebook.trade/api/rwa/status). Token issuance and
+pool creation remain disabled. The public CLI repository does not serve them.
 
 | Path | Purpose |
 |---|---|
@@ -79,8 +80,8 @@ surfaces. The public CLI repository does not serve them.
 | `POST /api/rwa/prepare` | Disabled execution gate: HTTP 503 `MPL3643_ALPHA_REQUIRED` |
 
 Read [Agent Assets: MPL-3643 and Market Pairings](RWA-AGENTS.md) before integrating.
-A production 404 is expected until deployment; do not infer readiness from a
-successful HTML page response.
+Expect JSON from API routes; do not infer readiness from a successful HTML page
+response. `POST /api/rwa/prepare` intentionally remains unavailable.
 
 ## Subdomains
 
