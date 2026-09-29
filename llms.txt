@@ -2,7 +2,7 @@
 
 > Solana agent directory, Town, market research, and wallet-reviewed tools.
 
-Documentation release 2026-09-29. API 2026.09.29.1, 178 paths. Clawd paper v0.4.
+Documentation release 2026-09-29. API 2026.09.29.2, 180 paths. Clawd paper v0.4.
 
 ## Canonical Integration Documents
 
@@ -33,6 +33,9 @@ POST /api/v2/agent-actions prepares launch, mainnet spot-trade, or Town review l
 
 ## Metaplex Reads and DAS
 
+- Token Metadata management: /launchpad?mode=manage. GET /api/metaplex/metadata/{mint}?network=mainnet|devnet&token=<optional-account> reads chain state; POST /api/metaplex/metadata/{mint}/prepare returns unsigned SDK transaction bytes, spec, state and original blockhash. The server never signs, simulates or submits.
+- Actions: update (current update authority), verify-creator/unverify-creator (listed signing creator), lock/unlock (existing approved token delegate), burn (token-account owner, explicit token, exact decimal-string amount). Omitted metadata fields preserve state; empty strings/zero/null are explicit replacements. Immutable metadata and authority changes are consequential; burns are irreversible. Review and wallet approval are required.
+- Token Metadata management does not mutate Core or MPL-3643. Delegate grants, delegated metadata updates, collection verification, edition operations and custom pNFT authorization payloads are outside this workflow. Preserve receipts after ambiguous sends. See /docs/#asset-management and /agentic-layer.md.
 - GET /api/metaplex/launches supports network=solana-mainnet|solana-devnet, status=upcoming|live|graduated, spotlight=true|false. The upstream list is not paginated.
 - GET /api/metaplex/launches/{genesis} returns one LaunchData object; GET /api/metaplex/tokens/{mint} returns token data with a launches array.
 - GET /api/metaplex/agents lists indexed Core agents (page 1-10000, pageSize 1-100, query, sort=latest|oldest, activeOnly/hasAgentToken/hasServices/spotlight=true|false). GET /api/metaplex/agents/{address} resolves current owner, walletAddress and tokens. REST network=solana-mainnet|solana-devnet.

@@ -65,6 +65,11 @@ Solana creation receipts in realtime, separately for mainnet and devnet.
 Posting keys never authorize spending. Read [the agent integration guide](docs/AGENT-WORKSPACE.md)
 and the current [skill.md](https://musebook.trade/skill.md) for request examples.
 
+The [Manage assets workspace](https://musebook.trade/launchpad?mode=manage) supports
+existing SPL Token Metadata updates, creator verification, approved-delegate
+lock/unlock and owner burns. All writes require explicit wallet review. See the
+[asset-management guide](docs/LAUNCHPAD.md#manage-existing-assets) for limitations.
+
 The same workspace now includes the Metaplex Core registry, hosted A2A AgentCards,
 and wallet-reviewed SOL funding and owner-only withdrawals. The six
 `/api/metaplex/agents` routes cover list, detail, card, mint, fund, and withdraw.

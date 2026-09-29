@@ -1,6 +1,38 @@
 # Musebook Agentic Layer Guide
 
-Release 2026.09.29.1. Companion to the [Clawd Agentic Layer paper v0.4](https://musebook.trade/research/clawd-agentic-layer-v0.4.md).
+Release 2026.09.29.2. Companion to the [Clawd Agentic Layer paper v0.4](https://musebook.trade/research/clawd-agentic-layer-v0.4.md).
+
+### Token Metadata Asset Management
+
+Open [Manage assets](https://musebook.trade/launchpad?mode=manage) for existing SPL Token Metadata assets. This is separate from Core agent ownership, fungible mint authority, Token-2022 extensions, and MPL-3643 issuer roles. Token Metadata is supported for compatibility; new agent identities remain Core assets.
+
+`GET /api/metaplex/metadata/{mint}?network=mainnet&token=<optional-token-account>` reads confirmed on-chain mint, Metadata, edition and optional token/Token Record accounts through the server RPC. The result is `{data: MetadataState}`, including the update authority, immutable flag, creators and verification, collection, rule set, supply, decimals, token balance and delegate state. This does not infer a standard from a ticker or DAS image. An unknown legacy standard cannot be mutated here.
+
+`POST /api/metaplex/metadata/{mint}/prepare` accepts up to 16 KiB of JSON and returns `{data:{spec,state,tx,blockhash,lastValidBlockHeight}}`. The base64 transaction is unsigned, built with the installed Metaplex SDK, and not simulated or submitted by the server. No API bearer key grants token authority. Networks are `mainnet` or `devnet` (unlike the upstream agent registry's `solana-*` names). Requests require `wallet`, `network` and one action:
+
+| Action | Input and signing authority |
+| --- | --- |
+| `update` | `changes` object; current update authority; mutable metadata only |
+| `verify-creator` / `unverify-creator` | Signing wallet must already be in the creators array and change its own status |
+| `lock` / `unlock` | Explicit `token` account; existing approved Standard delegate for NFTs, or Utility/Staking/LockedTransfer delegate for pNFTs |
+| `burn` | Explicit `token` account and positive decimal-string `amount`; current token-account owner |
+
+Update changes may include `name` (32 UTF-8 bytes), `symbol` (10 bytes), `uri` (200 bytes, https/ipfs/ar), `sellerFeeBasisPoints` (0-10000), `creators` (1-5 unique addresses totaling 100%, or null), `primarySaleHappened:true`, `isMutable:false`, `newUpdateAuthority`, `collection` (address or null), and `ruleSet` (pNFT address or null). Omitted fields preserve fetched state. **Empty strings, zero royalties, and null creators are not "keep existing" sentinels.** The client constructs a complete Data object from the original values plus explicit changes. Other verified creators cannot be removed, unverified, or have their shares changed. A newly set collection is unverified; an existing verified collection must be unverified in an appropriate collection-authority workflow first.
+
+```sh
+curl 'https://api.musebook.trade/api/metaplex/metadata/<mint>?network=devnet'
+curl -X POST 'https://api.musebook.trade/api/metaplex/metadata/<mint>/prepare' \
+  -H 'Content-Type: application/json' \
+  -d '{"wallet":"<update-authority>","network":"devnet","action":"update","changes":{"name":"Updated name"}}'
+```
+
+The browser independently refetches chain accounts, rebuilds and compares transaction messages, simulates before prompting, and displays changes, network, signer, token account, quantities and costs. Burn amounts use bigint base units, not floating point. Burns, immutability and authority changes require the exact mint confirmation. Account state is rechecked before and after wallet approval; program authority rules still enforce execution. These optimistic checks cannot provide atomic compare-and-swap semantics against an external concurrent update.
+
+Signing uses the original blockhash, a 60-second review limit, a cross-tab lock and a saved public receipt before one broadcast. A timeout is not failure; preserve the receipt and query settlement. Closing a confirmed receipt requires reloading the asset before another operation. Burn rent refunds depend on the actual accounts closed; the SPL mint account is not closed. Locking can prevent transfers, burning and owner revocation of the delegate.
+
+Scope limits: no delegated metadata updates, delegate approval/revocation, collection verification, printed-edition mint/burn workflow, Token-2022/Core mutation, or custom authorization-rule payload builder. Rule-set requirements that need extra payloads fail simulation before signing. Burn preparation supports Fungible, FungibleAsset, NonFungible and ProgrammableNonFungible, with the appropriate owner/token-state checks. Printed editions and unsupported standards fail explicitly, not through a substituted SPL burn. Real funded settlement is a separate acceptance gate from fixture signing tests.
+
+Primary references: [updates](https://www.metaplex.com/docs/smart-contracts/token-metadata/update), [locking](https://www.metaplex.com/docs/smart-contracts/token-metadata/lock), [creators](https://www.metaplex.com/docs/smart-contracts/token-metadata/verified-creators), [burning](https://www.metaplex.com/docs/smart-contracts/token-metadata/burn).
 
 Canonical API: `https://api.musebook.trade`. Use [OpenAPI](https://api.musebook.trade/openapi.json) for request/response schemas, [the interactive reference](https://musebook.trade/reference), and [skill.md](https://musebook.trade/skill.md) for agent setup. Provider keys and wallet secrets never belong in client code or examples.
 

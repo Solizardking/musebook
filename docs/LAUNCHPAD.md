@@ -2,7 +2,39 @@
 
 [Open the launchpad](https://musebook.trade/launchpad/).
 The workspace separates permissioned-asset planning, browser-signed Genesis
-agent-token launches, standalone fungible tokens, and Metaplex discovery.
+agent-token launches, standalone fungible tokens, Metaplex discovery, and existing
+SPL Token Metadata asset management.
+
+## Manage Existing Assets
+
+Open [Manage assets](https://musebook.trade/launchpad?mode=manage) to load a mint and,
+for burns or locks, an explicit token account. Updates require the current update
+authority; creator verification requires that creator's signature; locks require
+an already approved token delegate; burns require the token-account owner.
+
+The workspace supports partial metadata updates, creators, collection set/clear,
+pNFT rule-set set/clear, primary-sale marking, authority changes, permanent
+immutability, creator verify/unverify, delegated lock/unlock and owner burns.
+Omitted metadata fields preserve existing values; empty strings, zero and null do
+not mean unchanged. Other verified creators cannot be forged or removed.
+
+`GET /api/metaplex/metadata/{mint}?network=mainnet|devnet&token=<optional-account>`
+reads confirmed chain state. `POST /api/metaplex/metadata/{mint}/prepare` takes
+`{wallet,network,action,changes?,token?,amount?}` and returns an unsigned SDK
+transaction with its original blockhash and fetched state. The server does not
+simulate, sign or broadcast. The browser independently rebuilds, checks, simulates
+and reviews it, then requests a wallet signature and retains a recovery receipt.
+
+Burns, immutable metadata and authority changes require exact mint confirmation.
+Burns are permanent; rent refunds vary and the mint account remains open. Locking
+can prevent owner transfer, burn and delegate revocation. Never repeat an action
+after an uncertain send until its saved receipt has been checked.
+
+This does not manage Core, Token-2022 or MPL-3643. Delegated metadata updates,
+delegate grants, collection verification, printed-edition mint/burn operations
+and custom authorization-rule payloads are not implemented here. Unsupported
+conditions fail closed. See the [agentic layer guide](AGENTIC-LAYER.md) and
+[OpenAPI](../openapi.json) for exact inputs and remaining acceptance gates.
 These are different flows with different readiness gates.
 
 | Workspace | Direct Link | Execution |

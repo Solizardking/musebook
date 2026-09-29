@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Musebook Agent API",
-    "version": "2026.09.29.1",
+    "version": "2026.09.29.2",
     "description": "Open HTTPS APIs for Musebook agents, Town, scoped review handoffs, Metaplex launch discovery and DAS, verified site-launch receipts, creator rewards, and RWA policy planning. MPL-3643 issuance is unavailable pending alpha access. Fungible and Genesis creation use browser SDKs, not a Musebook REST create endpoint. Includes market data, trading helpers, MCP and first-party keys. Wallet signatures stay client-side; provider secrets stay server-side. See /agentic-layer.md for implementation boundaries.",
     "contact": {
       "name": "Musebook",
@@ -85,7 +85,7 @@
     },
     {
       "name": "Metaplex",
-      "description": "Public Genesis index and bounded read-only DAS gateway."
+      "description": "Public Genesis and agent discovery, bounded read-only DAS, and unsigned agent/Token Metadata preparation."
     },
     {
       "name": "Creator Rewards",
@@ -16609,6 +16609,247 @@
           }
         }
       }
+    },
+    "/api/metaplex/metadata/{mint}": {
+      "get": {
+        "tags": [
+          "Metaplex"
+        ],
+        "summary": "Read confirmed Token Metadata and optional token authority state",
+        "description": "SPL Token Metadata only, not Core/Token-2022/MPL-3643. No off-chain URI fetch. Server RPC credentials remain private. Returns no-store data; unknown legacy standards are read-only.",
+        "parameters": [
+          {
+            "name": "mint",
+            "in": "path",
+            "required": true,
+            "description": "SPL mint address",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "network",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mainnet",
+                "devnet"
+              ],
+              "default": "mainnet"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "description": "Optional explicit token account for balance, owner and delegate state",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/MetadataState"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/metaplex/metadata/{mint}/prepare": {
+      "post": {
+        "tags": [
+          "Metaplex"
+        ],
+        "summary": "Prepare an unsigned Token Metadata asset action",
+        "description": "16 KiB JSON limit; wallet authority is enforced by the program, not API credentials. Path mint is authoritative. Builds only: no server simulation, signing or broadcast. Update requires current update authority and mutable metadata; omitted fields preserve fetched values. Creator actions require the listed creator; locks require an existing approved delegate; burns require token-account ownership and exact decimal-string amount. Printed edition burns, delegated updates, collection verification and custom rule payloads are not supported. Independently refetch/rebuild, simulate, review irreversible changes, sign original bytes, retain a receipt and verify settlement. Recheck state and expiry before and after approval; no automatic retries.",
+        "parameters": [
+          {
+            "name": "mint",
+            "in": "path",
+            "required": true,
+            "description": "SPL mint address",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetadataActionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "properties": {
+                        "spec": {
+                          "$ref": "#/components/schemas/MetadataActionInput"
+                        },
+                        "state": {
+                          "$ref": "#/components/schemas/MetadataState"
+                        },
+                        "tx": {
+                          "type": "string"
+                        },
+                        "blockhash": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                          "description": "Exact base58 Solana public key; decoded length is validated by the server."
+                        },
+                        "lastValidBlockHeight": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "required": [
+                        "spec",
+                        "state",
+                        "tx",
+                        "blockhash",
+                        "lastValidBlockHeight"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Request or provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -19496,6 +19737,368 @@
           "success",
           "tx",
           "blockhash"
+        ]
+      },
+      "MetadataActionInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "wallet": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server."
+          },
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server."
+          },
+          "network": {
+            "type": "string",
+            "enum": [
+              "mainnet",
+              "devnet"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "update",
+              "verify-creator",
+              "unverify-creator",
+              "lock",
+              "unlock",
+              "burn"
+            ]
+          },
+          "token": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server."
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "maxLength": 40,
+            "description": "Burn only: positive exact decimal amount; precision must fit mint decimals and u64 units."
+          },
+          "changes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Maximum 32 UTF-8 bytes. Omit to preserve."
+              },
+              "symbol": {
+                "type": "string",
+                "description": "Maximum 10 UTF-8 bytes."
+              },
+              "uri": {
+                "type": "string",
+                "description": "Maximum 200 UTF-8 bytes; https/ipfs/ar without credentials."
+              },
+              "sellerFeeBasisPoints": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "creators": {
+                "type": "array",
+                "nullable": true,
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                      "description": "Exact base58 Solana public key; decoded length is validated by the server."
+                    },
+                    "share": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "share",
+                    "verified"
+                  ]
+                },
+                "description": "Unique shares sum to 100. Null clears; omitted preserves. Other verified creators are protected."
+              },
+              "primarySaleHappened": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "isMutable": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "newUpdateAuthority": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server."
+              },
+              "collection": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server.",
+                "nullable": true
+              },
+              "ruleSet": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server.",
+                "nullable": true
+              }
+            },
+            "minProperties": 1
+          }
+        },
+        "required": [
+          "wallet",
+          "network",
+          "action"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "update"
+                ]
+              }
+            },
+            "required": [
+              "changes"
+            ]
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "verify-creator",
+                  "unverify-creator"
+                ]
+              }
+            }
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "lock",
+                  "unlock"
+                ]
+              }
+            },
+            "required": [
+              "token"
+            ]
+          },
+          {
+            "properties": {
+              "action": {
+                "enum": [
+                  "burn"
+                ]
+              }
+            },
+            "required": [
+              "token",
+              "amount"
+            ]
+          }
+        ]
+      },
+      "MetadataState": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server."
+          },
+          "metadata": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server."
+          },
+          "name": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "sellerFeeBasisPoints": {
+            "type": "integer"
+          },
+          "creators": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                  "description": "Exact base58 Solana public key; decoded length is validated by the server."
+                },
+                "share": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "verified": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "address",
+                "share",
+                "verified"
+              ]
+            }
+          },
+          "updateAuthority": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server."
+          },
+          "isMutable": {
+            "type": "boolean"
+          },
+          "primarySaleHappened": {
+            "type": "boolean"
+          },
+          "standard": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "standardName": {
+            "type": "string"
+          },
+          "decimals": {
+            "type": "integer"
+          },
+          "supply": {
+            "type": "string"
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server."
+              },
+              "verified": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "key",
+              "verified"
+            ],
+            "nullable": true
+          },
+          "ruleSet": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Exact base58 Solana public key; decoded length is validated by the server.",
+            "nullable": true
+          },
+          "token": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "address": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server."
+              },
+              "owner": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server."
+              },
+              "amount": {
+                "type": "string"
+              },
+              "delegate": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server.",
+                "nullable": true
+              },
+              "delegatedAmount": {
+                "type": "string"
+              },
+              "state": {
+                "type": "integer"
+              },
+              "record": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server.",
+                "nullable": true
+              },
+              "recordState": {
+                "type": "integer",
+                "nullable": true
+              },
+              "recordDelegate": {
+                "type": "string",
+                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+                "description": "Exact base58 Solana public key; decoded length is validated by the server.",
+                "nullable": true
+              },
+              "delegateRole": {
+                "type": "integer",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "mint",
+          "metadata",
+          "name",
+          "symbol",
+          "uri",
+          "sellerFeeBasisPoints",
+          "creators",
+          "updateAuthority",
+          "isMutable",
+          "primarySaleHappened",
+          "standard",
+          "standardName",
+          "decimals",
+          "supply",
+          "collection",
+          "ruleSet",
+          "token"
         ]
       }
     }
