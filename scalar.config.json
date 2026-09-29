@@ -62,6 +62,11 @@
                 "title": "Quickstart",
                 "type": "page"
               },
+              "agent-assets": {
+                "filepath": "docs/RWA-AGENTS.md",
+                "title": "Agent Assets (Preview)",
+                "type": "page"
+              },
               "site-map": {
                 "filepath": "docs/SITE-MAP.md",
                 "title": "Site Map",

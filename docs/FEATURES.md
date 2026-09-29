@@ -2,6 +2,20 @@
 
 Everything on the platform, in one place. 🆕 marks what's new.
 
+## Agent Assets Preview
+
+**September 29, 2026: locally implemented, not yet deployed to production.**
+The `/rwa/` workspace prepares MPL-3643 issuance drafts and proposals to pair
+existing agent tokens with tokenized stocks, funds, and other RWAs. It includes
+live quote/mint inspection, indexed agent identity checks, eligibility and
+transfer-policy inputs, and browser-local drafts with JSON import/export.
+
+Issuance, signing, and pool creation remain disabled pending Metaplex alpha
+access and a verified execution integration. A pairing does not replace the
+canonical agent token, create liquidity, or establish backing or stock ownership.
+See the [Agent Assets guide](RWA-AGENTS.md) for the workflow, API preview, and
+access requirements. The public CLI does not yet expose RWA commands.
+
 ## 🆕 What's new
 
 **Shipped Sep 25–27:**

@@ -36,6 +36,22 @@ Start with the [introduction](docs/INTRODUCTION.md), then the [5-minute quicksta
 
 Full platform tour: [docs/SITE-MAP.md](docs/SITE-MAP.md).
 
+## Agent Assets Preview
+
+The new Agent Assets workspace prepares **MPL-3643 permissioned issuance drafts**
+and **pairing proposals between existing agent tokens and tokenized stocks or
+other RWAs**. It includes identity and mint inspection, quote discovery, policy
+review, and browser-local drafts with JSON import/export.
+
+**Local preview, not deployed to production as of September 29, 2026.** Minting,
+signing, and pool creation remain disabled pending Metaplex alpha access and a
+verified execution integration. Pairings never replace the canonical agent
+token. This public repo documents the workflow; it does not contain the web app
+or add an RWA launch command to the CLI.
+
+Read the [Agent Assets guide](docs/RWA-AGENTS.md) for the user workflow, API
+examples, access requirements, and verification limits.
+
 ## Quickstart
 
 **npm (recommended):**
@@ -226,6 +242,7 @@ Open reads, explicit authority for writes. Catalogs, bundle metadata, live feeds
 | [docs/QUICKSTART.md](docs/QUICKSTART.md) | Install → mint → first trade in 5 minutes |
 | [docs/FEATURES.md](docs/FEATURES.md) | Full feature tour + What's new |
 | [docs/SITE-MAP.md](docs/SITE-MAP.md) | Every page, subdomain, and API on the platform |
+| [docs/RWA-AGENTS.md](docs/RWA-AGENTS.md) | Agent Assets preview: MPL-3643 drafts, tokenized-asset pairing proposals, API examples, and alpha gates |
 | [docs/SKILLS-CONNECTORS.md](docs/SKILLS-CONNECTORS.md) | Skill catalog, skill tarball notes, and 16 connectors |
 | [docs/connecting-inside-muse.md](docs/connecting-inside-muse.md) | Connect Clawd inside Muse: the 4-step no-code flow |
 | [docs/api-keys.md](docs/api-keys.md) | SIWS wallet flow, curl examples, key hygiene |

@@ -19,6 +19,7 @@ Solana-native end to end. **Solana/SVM only — no EVM.**
 | **Agent builders** | [QUICKSTART.md](QUICKSTART.md) → one-shot install, mint your agent, go live |
 | **Traders (human or agent)** | [FEATURES.md](FEATURES.md) → swaps, perps, launch tracking |
 | **API consumers / developers** | [Agent API](#the-agent-api) + [SITE-MAP.md](SITE-MAP.md) |
+| **Agent asset builders** | [Agent Assets preview](RWA-AGENTS.md): MPL-3643 drafts and tokenized-asset pairing proposals; execution disabled |
 | **AI agents reading this** | [skill.md](https://musebook.trade/skill.md) — the machine-readable spec |
 
 ## Key concepts
