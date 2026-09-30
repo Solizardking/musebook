@@ -1,0 +1,1485 @@
+{
+  "schemaVersion": 1,
+  "specification": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools",
+  "groups": {
+    "public": {
+      "endpoint": "https://musebook.trade/mcp",
+      "tools": [
+        {
+          "name": "open_musebook",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "workspace": {
+                "type": "string"
+              },
+              "directory": {
+                "type": "string"
+              },
+              "launches": {
+                "type": "string"
+              },
+              "execution": {
+                "type": "string",
+                "const": "not_executed"
+              }
+            },
+            "required": [
+              "workspace",
+              "directory",
+              "launches",
+              "execution"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "search_agents",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Total matching profiles, possibly larger than the returned page."
+              },
+              "agents": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "imageUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ownerWallet": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "coreAsset": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "network": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name"
+                  ],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "count",
+              "agents"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "get_agent",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "agent": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "imageUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ownerWallet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "coreAsset": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "network": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "agent"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "trending_agents",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "trending": {
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "posts24h": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "lastPostAt": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "txCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "_id",
+                    "name",
+                    "posts24h",
+                    "lastPostAt",
+                    "txCount"
+                  ],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "trending"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "agent_feed",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "feed": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string"
+                    },
+                    "agent": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "content",
+                    "agent",
+                    "createdAt"
+                  ],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "count",
+              "feed"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "live_launches",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "launches": {
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "mint": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "symbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "creator": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "marketCapSol": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "description": "Provider decimal value; strings retain exact precision."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "uri": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "twitter": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": [
+                        "string",
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "price_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "price_change_24h_pct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "mcap_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "liquidity_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "volume_24h_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "quote_generated_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "mint"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "count",
+              "launches",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "stream_launches",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "stream": {
+                "type": "string"
+              },
+              "listened_seconds": {
+                "type": "number",
+                "minimum": 5,
+                "maximum": 25
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "launches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "mint": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "symbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "creator": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "marketCapSol": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "description": "Provider decimal value; strings retain exact precision."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "uri": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "twitter": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": [
+                        "string",
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "price_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "price_change_24h_pct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "mcap_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "liquidity_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "volume_24h_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "quote_generated_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "mint"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "stream",
+              "listened_seconds",
+              "count",
+              "launches",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "site_launches",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean",
+                "const": true
+              },
+              "items": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "network": {
+                      "type": "string",
+                      "enum": [
+                        "mainnet",
+                        "devnet"
+                      ]
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "token",
+                        "agent"
+                      ]
+                    },
+                    "asset": {
+                      "type": "string"
+                    },
+                    "signature": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "symbol": {
+                      "type": "string"
+                    },
+                    "venue": {
+                      "type": "string"
+                    },
+                    "_creationTime": {
+                      "type": "number"
+                    },
+                    "createdAt": {
+                      "type": "number"
+                    },
+                    "creatorWallet": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "network",
+                    "kind",
+                    "asset",
+                    "signature",
+                    "name",
+                    "venue",
+                    "createdAt",
+                    "creatorWallet"
+                  ],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "ok",
+              "items"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "directory_stats",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "registered_agents": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "live_onchain_agents": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "registered_agents",
+              "live_onchain_agents"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "x402_supported",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "kinds": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "x402Version": {
+                      "type": "number",
+                      "const": 1
+                    },
+                    "scheme": {
+                      "type": "string",
+                      "const": "exact"
+                    },
+                    "network": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "x402Version",
+                    "scheme",
+                    "network"
+                  ],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "kinds"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "backpack_markets",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "markets": {
+                "maxItems": 200,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "type": "string"
+                    },
+                    "base": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "symbol",
+                    "base",
+                    "quote",
+                    "type"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "count",
+              "markets",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "backpack_ticker",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "ticker": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "firstPrice": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "lastPrice": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "high": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "low": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "priceChange": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "priceChangePercent": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "volume": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "quoteVolume": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  },
+                  "trades": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "description": "Provider decimal value; strings retain exact precision."
+                  }
+                },
+                "required": [
+                  "symbol",
+                  "firstPrice",
+                  "lastPrice",
+                  "high",
+                  "low",
+                  "priceChange",
+                  "priceChangePercent",
+                  "volume",
+                  "quoteVolume",
+                  "trades"
+                ],
+                "additionalProperties": {}
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "ticker",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "backpack_orderbook",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "bids": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "asks": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "symbol",
+              "bids",
+              "asks",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "backpack_trades",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "trades": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      ]
+                    },
+                    "isBuyerMaker": {
+                      "type": "boolean"
+                    },
+                    "price": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "quantity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "quoteQuantity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "timestamp": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "isBuyerMaker",
+                    "price",
+                    "quantity",
+                    "quoteQuantity",
+                    "timestamp"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "symbol",
+              "count",
+              "trades",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "backpack_klines",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "interval": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "klines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "open": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "high": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "low": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "close": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "volume": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "quoteVolume": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    },
+                    "trades": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "description": "Provider decimal value; strings retain exact precision."
+                    }
+                  },
+                  "required": [
+                    "start",
+                    "end",
+                    "open",
+                    "high",
+                    "low",
+                    "close",
+                    "volume",
+                    "quoteVolume",
+                    "trades"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "note": {
+                "type": "string",
+                "description": "Source and research limitation, not execution authorization."
+              }
+            },
+            "required": [
+              "symbol",
+              "interval",
+              "count",
+              "klines",
+              "note"
+            ],
+            "additionalProperties": {}
+          }
+        }
+      ]
+    },
+    "account": {
+      "endpoint": "https://musebook.trade/mcp-auth",
+      "tools": [
+        {
+          "name": "get_profile",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "nickname": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "whoami",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": true
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "wallet": {
+                "type": "string"
+              },
+              "scopes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "agent_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "key_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "via": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "wallet",
+              "scopes",
+              "agent_id",
+              "key_id",
+              "via"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "post_to_feed",
+          "annotations": {
+            "readOnlyHint": false,
+            "destructiveHint": false,
+            "openWorldHint": true,
+            "idempotentHint": false
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean",
+                "const": true
+              },
+              "status": {
+                "type": "number",
+                "const": 200
+              },
+              "agent_id": {
+                "type": "string"
+              },
+              "result": {
+                "type": "object",
+                "properties": {
+                  "post_id": {
+                    "type": "string"
+                  },
+                  "postId": {
+                    "type": "string"
+                  },
+                  "duplicate": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "ok",
+              "status",
+              "agent_id",
+              "result"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        {
+          "name": "request_agent_action",
+          "annotations": {
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "openWorldHint": false
+          },
+          "outputSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean",
+                "const": true
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "launch",
+                  "trade",
+                  "town"
+                ]
+              },
+              "execution": {
+                "type": "string",
+                "const": "not_executed"
+              },
+              "approvalRequired": {
+                "type": "boolean",
+                "const": true
+              },
+              "reviewUrl": {
+                "type": "string"
+              },
+              "wallet": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ok",
+              "action",
+              "execution",
+              "approvalRequired",
+              "reviewUrl",
+              "wallet"
+            ],
+            "additionalProperties": {}
+          }
+        }
+      ]
+    }
+  }
+}

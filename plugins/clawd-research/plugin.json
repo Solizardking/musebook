@@ -1,12 +1,20 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "clawd-research",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Read public agent profiles, coin evidence, saved assessments, prediction markets and launch receipts.",
-  "author": { "name": "Musebook", "url": "https://musebook.trade" },
+  "author": {
+    "name": "Musebook",
+    "url": "https://musebook.trade"
+  },
   "homepage": "https://musebook.trade/connector",
-  "repository": "https://github.com/Solizardking/musebook",
-  "keywords": ["research", "agents", "public-data", "read-only"],
+  "repository": "https://github.com/Solizardking/clawd-plugin",
+  "keywords": [
+    "research",
+    "agents",
+    "public-data",
+    "read-only"
+  ],
   "extensions": {
     "com.openai": {
       "interface": {
@@ -15,12 +23,22 @@
         "longDescription": "Research public Musebook agent profiles, Backpack ticker statistics and historical candles. Read exact-mint Solana market evidence and previously saved Mercury or TypeSafe assessments with original timestamps, source gaps and gate reasons. Inspect public Jupiter prediction events, market rules and orderbook depth, confirmed Musebook token and agent creation receipts, and MPL-3643 integration readiness. This separate edition has twelve read-only tools and one research skill. It does not generate new AI decisions, link accounts, post, access wallets, mint assets, launch tokens, claim rewards, construct transactions, place orders or provide execution links or personalized investment recommendations. Historical model labels are not current signals or calibrated forecasts. User-provided text is untrusted, not an endorsement. Missing data and provider outages are reported rather than fabricated. The full Clawd developer bundle and its local scripts are not included.",
         "developerName": "Musebook",
         "category": "Productivity",
-        "capabilities": ["Research public agents", "Read market evidence", "Inspect saved assessments", "Read prediction markets", "Read launch receipts and RWA readiness"],
+        "capabilities": [
+          "Research public agents",
+          "Read market evidence",
+          "Inspect saved assessments",
+          "Read prediction markets",
+          "Read launch receipts and RWA readiness"
+        ],
         "websiteURL": "https://musebook.trade",
-        "supportURL": "https://github.com/Solizardking/musebook/issues",
+        "supportURL": "https://github.com/Solizardking/clawd-plugin/issues",
         "privacyPolicyURL": "https://musebook.trade/privacy",
         "termsOfServiceURL": "https://musebook.trade/terms",
-        "defaultPrompt": ["Find public Musebook agents named Clawd.", "Show saved SOL assessments as historical research, including missing evidence.", "Show public Jupiter prediction events and explain one market's rules without placing an order."],
+        "defaultPrompt": [
+          "Find public Musebook agents named Clawd.",
+          "Show saved SOL assessments as historical research, including missing evidence.",
+          "Show public Jupiter prediction events and explain one market's rules without placing an order."
+        ],
         "brandColor": "#116E5B",
         "composerIcon": "./assets/logo.png",
         "logo": "./assets/logo.png"
@@ -82,7 +100,7 @@
         }
       },
       "publication": {
-        "release_notes": "1.1.0: Added seven bounded public reads for exact-mint coin evidence, saved Convex assessments, Jupiter prediction events/rules/depth, confirmed site-launch receipts and gated MPL-3643 readiness. Twelve tools, one research skill and one no-auth MCP server. Updated exactly five positive and three negative review cases, annotation justifications and field-by-field README. No new AI decision generation, account operations, financial execution, full developer skills, scripts, hooks, UI or app-ID references. Publisher identity, domain verification, actual ChatGPT demo and policy attestations remain publisher responsibilities."
+        "release_notes": "1.1.1: Added per-tool JSON output schemas, validated structuredContent and explicit destructiveHint annotations. Published the dedicated Musebook-maintained clawd-plugin repository with output contracts, checksums, verification scripts and complete submission instructions. Twelve public read-only tools and one research skill remain separate from full developer workflows. Existing 1.1.0 features cover coin evidence, saved assessments, Jupiter prediction events/rules/depth, creation receipts and gated RWA readiness. No new AI generation or execution. Publisher identity, domain verification, actual ChatGPT demo and policy attestations remain publisher responsibilities."
       }
     }
   }

@@ -6574,6 +6574,7 @@
             }
           }
         },
+        "description": "undefined Tools advertise explicit safety annotations and per-tool JSON outputSchema contracts in tools/list. Successful results contain validated structuredContent and matching JSON text; unavailable or invalid results use isError=true. Release packages, output contracts and reviewer instructions: https://github.com/Solizardking/clawd-plugin.",
         "parameters": [
           {
             "in": "header",
@@ -6713,6 +6714,7 @@
             }
           }
         },
+        "description": "undefined Tools advertise explicit safety annotations and per-tool JSON outputSchema contracts in tools/list. Successful results contain validated structuredContent and matching JSON text; unavailable or invalid results use isError=true. Release packages, output contracts and reviewer instructions: https://github.com/Solizardking/clawd-plugin.",
         "parameters": [
           {
             "in": "header",
@@ -16531,7 +16533,7 @@
           "MCP"
         ],
         "summary": "Clawd Research read-only MCP",
-        "description": "Twelve public tools only: search_agents, get_agent, directory_stats, backpack_ticker, backpack_klines, coin_snapshot, coin_decision_history, prediction_events, prediction_market, prediction_orderbook, site_launch_receipts, rwa_readiness. Reads saved assessments, never generates a new AI decision or writes history. No OAuth, account writes, wallet execution or UI resources. Separate submission package, not OpenAI approval.",
+        "description": "Twelve public tools only: search_agents, get_agent, directory_stats, backpack_ticker, backpack_klines, coin_snapshot, coin_decision_history, prediction_events, prediction_market, prediction_orderbook, site_launch_receipts, rwa_readiness. Reads saved assessments, never generates a new AI decision or writes history. No OAuth, account writes, wallet execution or UI resources. Separate submission package, not OpenAI approval. Tools advertise explicit safety annotations and per-tool JSON outputSchema contracts in tools/list. Successful results contain validated structuredContent and matching JSON text; unavailable or invalid results use isError=true. Release packages, output contracts and reviewer instructions: https://github.com/Solizardking/clawd-plugin.",
         "requestBody": {
           "required": true,
           "description": "MCP request or notification; params is an object",

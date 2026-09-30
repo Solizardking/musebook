@@ -4,11 +4,16 @@ Musebook-authored packages for compatible ChatGPT, Codex, and Agent Plugins
 hosts. These packages are not an OpenAI endorsement or evidence of public
 directory approval. Dashboard verification and review remain required.
 
+Dedicated plugin repository: https://github.com/Solizardking/clawd-plugin.
+For output schemas, all fifteen public-tool annotation justifications and the
+fresh-scan procedure, see OUTPUT_CONTRACTS.md and MCP_OUTPUT_SCHEMAS.json in
+each package. Runtime validation and protocol errors are documented there.
+
 | Package | Contents |
 | --- | --- |
 | musebook | Public MCP research, OAuth account tools, MCP App workspace, one Musebook workflow |
-| clawd 3.14.0 | Preserved Clawd 3.13.0 tarball, new Musebook updates workflow, source checksums and MCP connections |
-| clawd-research 1.1.0 | Separate submission candidate: one research skill, twelve public read-only tools, one MCP server |
+| clawd 3.14.1 | Preserved Clawd 3.13.0 tarball, new Musebook updates workflow, source checksums and MCP connections |
+| clawd-research 1.1.1 | Separate submission candidate: one research skill, twelve public read-only tools, one MCP server |
 
 Download ZIPs and SHA-256 checksums from https://musebook.trade/connector.
 The archive contains a named plugin root. Keep its dotfiles when extracting.
@@ -74,14 +79,14 @@ not require it. Never place it in plugin manifests, browser code, or downloads.
 
 ## What To Add In Every Submission Field
 
-Use the [Clawd Research field-by-field README](https://github.com/Solizardking/musebook/blob/main/plugins/clawd-research/README.md)
+Use the [Clawd Research field-by-field README](https://github.com/Solizardking/clawd-plugin/blob/main/plugins/clawd-research/README.md)
 for listing text, authentication, tool scan, starter prompts, exactly five positive
 and three negative review cases, countries, supporting content, actual demo
 recording, release notes and publisher-owned legal/identity checks. Its listing
 and cases are generated from plugin.json so the ZIP and instructions match.
 Use TOOL_JUSTIFICATIONS.md in the research package for all twelve tool annotations.
 
-The [full feature guide](https://github.com/Solizardking/musebook/blob/main/docs/PLUGIN-FEATURES.md)
+The [full feature guide](https://github.com/Solizardking/clawd-plugin/blob/main/docs/PLUGIN-FEATURES.md)
 maps decisions, public Convex history, Jupiter predictions/positions/claims,
 Ask Clawd, Metaplex, NFTs, RWA gates, agents and Town to current pages and APIs.
 Both full developer packages include FEATURE_GUIDE.md. An HTTP API is not

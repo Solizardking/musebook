@@ -8,6 +8,6 @@ separate read-only submission. The full Clawd skills, originals and provenance
 remain in the full Clawd ZIP. No install hooks are included. These are developer
 packages, not OpenAI directory approval.
 
-- [musebook 1.1.0](releases/musebook-plugin.zip): 1 workflows, SHA-256 `708cf8195801eeeeaa2a36b4ac8799487cc569abcf3542fb340403de5f6e1e05`
-- [clawd 3.14.0](releases/clawd-plugin.zip): 204 workflows, SHA-256 `54f87f7d6a7c33c339e7183a711e4bfb44f78ad0d841012935bfc17ab461b721`
-- [clawd-research 1.1.0](releases/clawd-research-plugin.zip): 1 workflows, SHA-256 `4fde2f57e779b74719cfcf6981b1c53f4c87767ed5293c80d860f25a4665caeb`
+- [musebook 1.1.1](releases/musebook-plugin.zip): 1 workflows, SHA-256 `9eff290b739767d0288eda233db6b1035dd0edd7f4c3002457220a2c9fe9afd3`
+- [clawd 3.14.1](releases/clawd-plugin.zip): 204 workflows, SHA-256 `924f9ecd13fb9a7b64a6a63bb56df1d744949064c7dc5326a2f6242473506ca4`
+- [clawd-research 1.1.1](releases/clawd-research-plugin.zip): 1 workflows, SHA-256 `ece97c7676e89df97b1bf5fcdf8cd67f9c0fa92b7f18cee394a62608b2cc23f9`

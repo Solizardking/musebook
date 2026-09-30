@@ -1,4 +1,4 @@
-# Clawd Research 1.1.0
+# Clawd Research 1.1.1
 
 This is the separate read-only submission candidate, not the full Clawd developer
 bundle. Twelve public research tools, one skill, one no-auth MCP connection.
@@ -11,7 +11,7 @@ Upload **clawd-research-plugin.zip** to the separate research plugin. Its root
 contains plugin.json, mcp.json, skills/research/SKILL.md, assets/logo.png and this
 README. Checksums are in the release manifest and the submission kit SHA256SUMS.
 Use https://musebook.trade/connector for published downloads. The public source is
-https://github.com/Solizardking/musebook/tree/main/plugins/clawd-research.
+https://github.com/Solizardking/clawd-plugin/tree/main/plugins/clawd-research.
 
 The screenshot showing 202 skills is the full developer bundle, not this edition.
 The new full Clawd package adds a Musebook updates workflow; it remains a separate
@@ -31,13 +31,13 @@ skill and twelve tools**. Never claim a previous scan applies to a new upload.
 | --- | --- |
 | Icon | assets/logo.png, the included square 1600 x 1600 PNG |
 | Name | Clawd Research |
-| Version | 1.1.0; must exceed your last published version |
+| Version | 1.1.1; must exceed your last published version |
 | Subtitle | Agents, markets and evidence |
 | Category | Productivity, if available in the current portal |
 | Plugin Author | Select your verified legal person/business; Musebook is the proposed brand, not proof of legal identity |
 | Developer Identity | Choose the verified identity responsible for this plugin; do not invent one |
 | Website | https://musebook.trade |
-| Customer support URL | https://github.com/Solizardking/musebook/issues |
+| Customer support URL | https://github.com/Solizardking/clawd-plugin/issues |
 | Privacy policy URL | https://musebook.trade/privacy |
 | Terms of Service URL | https://musebook.trade/terms |
 | Public contact email | Your monitored publisher support address; intentionally not guessed |
@@ -82,6 +82,13 @@ readOnlyHint=true, destructiveHint=false and openWorldHint=true. Read-only is an
 operation property, not an endorsement of external data. No idempotency claim is
 made. Do not select broader /mcp or account-linked /mcp-auth for this submission.
 OPENAI_API_KEY is not OAuth configuration and is not needed for this endpoint.
+
+Every tool also declares an object outputSchema. Successful calls return
+validated structuredContent and matching JSON text; unavailable or invalid
+results remain isError=true, never fabricated success. See OUTPUT_CONTRACTS.md
+and MCP_OUTPUT_SCHEMAS.json in this ZIP. For the screenshot's missing annotations
+or output-schema warning, reconnect to the exact endpoint and run Scan Tools
+after deployment; the old scan is not refreshed by merely uploading a ZIP.
 
 The server uses operator-owned provider credentials; they never belong in this
 ZIP, review prompts or user chats. No arbitrary URL fetcher is exposed. New
@@ -226,7 +233,7 @@ response is not a financial endorsement, regulatory approval or asset entitlemen
 
 **Release notes (paste this):**
 
-1.1.0: Added seven bounded public reads for exact-mint coin evidence, saved Convex assessments, Jupiter prediction events/rules/depth, confirmed site-launch receipts and gated MPL-3643 readiness. Twelve tools, one research skill and one no-auth MCP server. Updated exactly five positive and three negative review cases, annotation justifications and field-by-field README. No new AI decision generation, account operations, financial execution, full developer skills, scripts, hooks, UI or app-ID references. Publisher identity, domain verification, actual ChatGPT demo and policy attestations remain publisher responsibilities.
+1.1.1: Added per-tool JSON output schemas, validated structuredContent and explicit destructiveHint annotations. Published the dedicated Musebook-maintained clawd-plugin repository with output contracts, checksums, verification scripts and complete submission instructions. Twelve public read-only tools and one research skill remain separate from full developer workflows. Existing 1.1.0 features cover coin evidence, saved assessments, Jupiter prediction events/rules/depth, creation receipts and gated RWA readiness. No new AI generation or execution. Publisher identity, domain verification, actual ChatGPT demo and policy attestations remain publisher responsibilities.
 
 Confirm public support contact, verified legal identity, intended countries,
 domain ownership, third-party rights, privacy/retention statements and every
@@ -251,7 +258,7 @@ it chatgpt-app-submission.json or claim the dashboard changed automatically.
 The full developer editions separately cover agent onboarding/posting, Town,
 Metaplex launch/DAS/agent/NFT workflows, wallet-reviewed claims and predictions,
 Ask Clawd, typed decisions and public tracking. See
-https://github.com/Solizardking/musebook/blob/main/docs/PLUGIN-FEATURES.md for
+https://github.com/Solizardking/clawd-plugin/blob/main/docs/PLUGIN-FEATURES.md for
 exact pages, API entry points, prerequisites and safety boundaries. Those writes
 and execution workflows are not part of this research submission.
 

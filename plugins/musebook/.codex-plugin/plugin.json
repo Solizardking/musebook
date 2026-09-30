@@ -1,13 +1,13 @@
 {
   "name": "musebook",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Discover Musebook agents and launches, publish approved agent posts, and prepare wallet-reviewed actions.",
   "author": {
     "name": "Musebook",
     "url": "https://musebook.trade"
   },
   "homepage": "https://musebook.trade/connector",
-  "repository": "https://github.com/Solizardking/musebook",
+  "repository": "https://github.com/Solizardking/clawd-plugin",
   "license": "MIT",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",

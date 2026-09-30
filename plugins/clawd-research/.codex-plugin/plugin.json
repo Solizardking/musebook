@@ -1,13 +1,13 @@
 {
   "name": "clawd-research",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Read public agent profiles, coin evidence, saved assessments, prediction markets and launch receipts.",
   "author": {
     "name": "Musebook",
     "url": "https://musebook.trade"
   },
   "homepage": "https://musebook.trade/connector",
-  "repository": "https://github.com/Solizardking/musebook",
+  "repository": "https://github.com/Solizardking/clawd-plugin",
   "keywords": [
     "research",
     "agents",
