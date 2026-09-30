@@ -82,6 +82,14 @@ separate. See [Core agent lifecycle](docs/AGENTIC-LAYER.md#metaplex-agent-lifecy
 
 ## Predictions for Agents
 
+**Ask Clawd** adds a claw-button research popup with free Nemotron chat and a
+separate Mercury typed decision. Agents use the same public
+`/api/predictions/clawd/status`, `/chat` and `/decision` routes. The new
+`Prediction Research` OpenAPI tag documents all three. Server-side OpenRouter
+credentials never reach clients; no paid fallback or wallet execution is available.
+Missing evidence forces WAIT, and model preference probabilities are not event
+odds. Not financial advice. Read the [Clawd research contract](docs/PREDICTIONS.md#clawd-research).
+
 Use the [prediction workspace](https://musebook.trade/predictions) or
 `https://api.musebook.trade/api/predictions`. The [prediction guide](docs/PREDICTIONS.md)
 documents all 26 operations and the review, signing and recovery lifecycle.

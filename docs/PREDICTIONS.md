@@ -1,5 +1,82 @@
 # Musebook Jupiter Predictions
 
+## Clawd research
+
+The claw button on `/predictions` opens Ask Clawd. Chat uses
+`nvidia/nemotron-3.5-lightning:free`; Clawd Decision uses
+`inception/mercury-decide:free` through OpenRouter's typed Decisions API,
+not chat or free-form JSON parsing. **Not financial advice.** AI can be wrong.
+
+| Method | Route | Input |
+| --- | --- | --- |
+| GET | `/api/predictions/clawd/status` | None; reports configuration, not live provider availability |
+| POST | `/api/predictions/clawd/chat` | Optional `marketId`, required alternating `messages` with user/assistant roles, starting and ending with user |
+| POST | `/api/predictions/clawd/decision` | Required `marketId`, optional `question` |
+
+These routes are public and usable by agents without a Musebook bearer.
+The OpenAPI tag is `Prediction Research`, separate from the 26 Jupiter gateway
+operations. The SDK's existing prediction methods are unchanged; use HTTP for
+these research routes. This does not add remote MCP tools or change the separate
+read-only plugin submission.
+
+```js
+const response = await fetch('https://api.musebook.trade/api/predictions/clawd/decision', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ marketId: selectedMarketId, question: 'What does the evidence support?' }),
+});
+if (!response.ok) throw new Error(`Clawd unavailable: ${response.status}`);
+const result = await response.json();
+console.log(result.recommendation, result.gates, result.answers);
+// autoExecute is always false. This is not permission to place an order.
+```
+
+Decisions return `answers.direction` (choice and full YES/NO/WAIT distribution),
+`answers.evidence` and `answers.risk` (0-3 scores, confidence, distributions),
+and `answers.sufficient.noul` (0-1 evidence-sufficiency probability).
+`recommendation` is forced to WAIT when server gates fail, even if the raw model
+choice is directional. Gates cover missing/mismatched/closed market data,
+paused or unknown trading status, absent rules, missing two-sided depth/prices,
+snapshots older than 60 seconds, confidence below 0.65, evidence below 2,
+sufficiency below 0.8, or risk at least 2.5. Evidence scores measure corroboration;
+risk scores increase with uncertainty. These are model judgments, not guarantees.
+**Model preference probabilities are not event win probabilities or trading signals.**
+
+Chat returns `message`, `model`, `snapshot`, `generatedAt`, `truncated`,
+`autoExecute: false` and `disclaimer`. Only final answer text is returned, not
+private reasoning or tool calls. Decisions share the metadata fields except
+`message` and `truncated`. Both server-fetch current public market details,
+decimal-dollar depth and trading status when a market is selected. No independent
+news or outcome research is fetched. Retrieval time does not certify provider
+freshness. Source failures remain explicit; they are not converted to zero prices.
+
+Bounds: JSON only; 20,000-byte request; 1-10 chat messages (alternating means at
+most 9 for a request ending with user); each content 1-4,000 characters;
+decision question 1-1,000 characters; unknown fields and custom models rejected.
+POST calls share a six-per-minute per-IP edge limit plus OpenRouter free-tier
+quotas. Respect HTTP 429 `Retry-After`; no automatic retry or paid fallback.
+HTTP 503 means missing configuration or free-model unavailability; 502 includes
+invalid provider output. The browser cancels pending requests on close or market
+change and keeps conversations only in component memory.
+
+Server configuration:
+```dotenv
+OPENROUTER_API_KEY=<server secret>
+OPENROUTER_NEMO_MODEL=nvidia/nemotron-3.5-lightning:free
+OPENROUTER_DECISION_MODEL=inception/mercury-decide:free
+JUPITER_API_KEY=<server secret>
+```
+Do not put these keys in `VITE_*`, browser storage, public examples or agent
+request bodies. The prediction models are pinned to these two free IDs; changing
+them to a paid model fails closed. The existing JEV TypeSafe provider is unchanged.
+Users' questions, bounded conversation history and selected public Jupiter data
+are sent to OpenRouter and its model provider. No wallet or portfolio is
+automatically included; do not send secrets in messages. Research routes have no
+transaction-building, signing or execution capability. Any subsequent order or
+claim still requires separate current review, simulation and owner signature.
+
+Reference: [OpenRouter typed Decisions API](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request).
+
 The mainnet workspace is https://musebook.trade/predictions. REST calls use
 https://musebook.trade/api/predictions, with the same gateway available through
 https://api.musebook.trade/api/predictions. The OpenAPI contract is at

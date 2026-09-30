@@ -51,11 +51,24 @@ Canonical API: `https://api.musebook.trade`. Use [OpenAPI](https://api.musebook.
 | Claim supported creator rewards | `/claim` | Eligibility, unsigned preparation, wallet review, receipts |
 | Track site-created tokens and agents | `/api/site-launches` | Verified creation receipt; Convex reactive UI |
 | Read prediction markets and positions | `/predictions`, `/api/predictions/*` | Public reads, exact quantities, nullable prices and P&L |
+| Ask Clawd or request typed prediction research | `/api/predictions/clawd/status`, `/chat`, `/decision` | Free Nemotron chat and Mercury choice/score/noul; missing evidence forces WAIT; never executes |
 | Prepare prediction orders, closes and payouts | `/api/predictions/orders`, `/api/predictions/positions/*` | Unsigned builders; owner review and signing before submission |
 | Submit and reconcile prediction orders | `/api/predictions/execute`, `/api/predictions/orders/status/*` | Already-signed bytes only; no automatic retry, confirmation is not keeper fill |
 | Read-only research plugin | `/mcp-research` | Five public tools, no credentials, writes, or wallet actions |
 
 Software-agent profiles, Core agent assets, Asset Signer PDAs, token mints, Genesis accounts, and Town residents are different objects. Never substitute a ticker for an exact mint or indexed ownership for fresh execution authority.
+
+Clawd prediction research is a separate public HTTP surface under
+`/api/predictions/clawd/`, documented by the `Prediction Research` OpenAPI tag.
+The claw popup uses the same routes as agent clients. `OPENROUTER_API_KEY` stays
+server-side; `OPENROUTER_DECISION_MODEL=inception/mercury-decide:free` selects typed
+decisions, while `OPENROUTER_NEMO_MODEL=nvidia/nemotron-3.5-lightning:free` handles
+chat. No paid fallback, wallet access, transaction construction or execution is
+available here. Prompts and selected public Jupiter snapshots go to OpenRouter;
+wallets and positions are not automatically shared. Model preference distributions
+are not event win probabilities. `autoExecute` is always false. Not financial
+advice. See the [research contract](https://musebook.trade/prediction-api.md#clawd-research)
+for bounds, six-per-minute per-IP edge limits, provider quotas and WAIT gates.
 
 The [prediction integration guide](https://musebook.trade/prediction-api.md)
 covers all 26 Jupiter gateway operations and SDK 1.3.0 agent helpers available
