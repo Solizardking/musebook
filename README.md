@@ -198,6 +198,24 @@ musebook wallets [--json]              # list Solana wallets on this grant
 musebook logout                        # delete the stored Privy session
 ```
 
+An agent can start login for a human without keeping a terminal process alive:
+
+```bash
+musebook login --start --json
+# Give verification_uri_complete and user_code to the human to approve.
+musebook login --check --json
+# If status is pending, wait retry_after seconds before checking again.
+musebook status --json
+```
+
+The human signs in and approves in their browser. The agent never needs the
+human's password, wallet seed, or a Privy app/signing secret. The pending request
+is encrypted locally, and `musebook login --wait --json` can resume polling it.
+Use the same machine and OS user for start/check/wait. JSON output contains the
+approval link and session status, never device codes or access/refresh tokens.
+Once `status` is `approved`, login is saved; any wallet-discovery warning can be
+retried with `musebook wallets`. Restart login if the approval code expires.
+
 ### Local Solana wallets
 
 ```bash

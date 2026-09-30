@@ -270,9 +270,27 @@ function cmdDocs() {
 // Privy device-auth commands (Solana only)
 // ---------------------------------------------------------------------------
 
-async function cmdLogin() {
-  console.log("Privy device authorization — Solana wallets only.");
-  await privy.deviceLogin();
+async function cmdLogin(args) {
+  try {
+    const modes = ["start", "check", "wait"].filter((mode) => args.flags[mode]);
+    if (modes.length > 1) throw new privy.PrivyError("choose one of --start, --check, or --wait");
+    if (!args.flags.json) console.log("Privy device authorization — Solana wallets only.");
+    const result = await privy.deviceLogin({
+      mode: modes[0] || "wait",
+      resumeOnly: !!args.flags.wait,
+      json: !!args.flags.json,
+    });
+    if (args.flags.json) console.log(JSON.stringify(result, null, 2));
+    else if (modes[0] === "check" && result.status === "pending") {
+      console.log(`Waiting for approval of ${result.user_code}. Check again in ${result.retry_after}s.`);
+    } else if (modes[0] === "check" && result.logged_in) {
+      console.log("Privy session: active. Run `musebook status` for details.");
+    }
+  } catch (e) {
+    if (!args.flags.json) throw e;
+    console.log(JSON.stringify({ status: "error", error: e.message }));
+    process.exitCode = 1;
+  }
 }
 
 async function cmdLogout() {
@@ -283,6 +301,17 @@ async function cmdLogout() {
 async function cmdStatus(args) {
   const sess = privy.sessionLoad();
   if (!sess) {
+    const pending = privy.pendingLoginStatus();
+    if (args.flags.json) {
+      console.log(JSON.stringify(pending || { status: "logged_out", logged_in: false }, null, 2));
+      return;
+    }
+    if (pending) {
+      console.log(`Login pending: ${pending.user_code}`);
+      console.log(pending.verification_uri_complete);
+      console.log("Run `musebook login` to resume waiting or `musebook login --check --json` to check once.");
+      return;
+    }
     console.log("not logged in (no Privy session) — run `musebook login`");
     return;
   }
@@ -843,6 +872,9 @@ API keys:
 Privy wallets (Solana only — device authorization, no app secret):
   login                         approve once in the browser at
                                 ${privy.VERIFY_PAGE}, then sign headlessly
+  login --start --json           return the human's approval link and exit
+  login --check --json           check approval once; respects retry_after
+  login --wait [--json]          resume waiting for the saved login request
   logout                        delete the stored Privy session
   status [--json]               session + token expiry (never prints secrets)
   wallets [--json]              list Solana wallets on this grant
@@ -932,7 +964,7 @@ Solana (SVM) only. No EVM support.`);
       case "key": return void await cmdKey(base, subArgs);
       case "install": return void await cmdInstall(args);
       case "docs": return cmdDocs();
-      case "login": return void await cmdLogin();
+      case "login": return void await cmdLogin(args);
       case "logout": return void await cmdLogout();
       case "status": return void await cmdStatus(args);
       case "wallets": return void await cmdWallets(args);
