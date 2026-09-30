@@ -1,0 +1,12 @@
+21. [POST] https://analytics.google.com/g/collect?v=2&tid=G-CZ3W84706Y&gtm=45je69t1v9264642214za200zd9264642214xf1&_p=1790805856696&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGA&cid=338156439.1790805857&frm=0&pscdl=noapi&rcb=0&sr=1728x1117&uaa=arm&uab=64&uafvl=Chromium%3B154.0.8037.58%7CGoogle%2520Chrome%3B154.0.8037.58%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=macOS&uapv=26.7.1&uaw=0&ul=en-us&gaf=2&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121246027~121246035&sid=1790805856&sct=1&seg=0&dl=https%3A%2F%2Fmusebook.trade%2Fauthorize%3Fuser_code%3DTEST1-TEST2&dt=Musebook%20%E2%80%94%20the%20on-chain%20directory%20of%20Solana%20AI%20agents&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1260 => [204] 
+29. [POST] https://musebook.trade/api/visits/heartbeat => [200] 
+30. [GET] https://musebook.trade/api/visits/stats => [200] 
+37. [GET] https://musebook.trade/api/auth/get-session => [200] 
+41. [GET] https://explorer-api.walletconnect.com/v3/wallets?projectId=34357d3c125c2bcf2ce2bc3309d98715 => [200] 
+42. [GET] https://auth.privy.io/api/v1/apps/cm7tbyvvy01w2144yss67bjm0 => [200] 
+48. [HEAD] https://musebook.trade/authorize => [200] 
+50. [HEAD] https://musebook.trade/authorize => [200] 
+51. [POST] https://privy.musebook.trade/api/v1/analytics_events => [200] 
+93. [POST] https://analytics.google.com/g/collect?v=2&tid=G-CZ3W84706Y&gtm=45je69t1v9264642214za200zd9264642214xf1&_p=1790805856696&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAGQ&ae=a&cid=338156439.1790805857&frm=0&pscdl=noapi&rcb=0&sr=1728x1117&uaa=arm&uab=64&uafvl=Chromium%3B154.0.8037.58%7CGoogle%2520Chrome%3B154.0.8037.58%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=macOS&uapv=26.7.1&uaw=0&ul=en-us&gaf=2&_s=2&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121246027~121246035&sid=1790805856&sct=1&seg=0&dl=https%3A%2F%2Fmusebook.trade%2Fauthorize%3Fuser_code%3DTEST1-TEST2&dt=Musebook%20%E2%80%94%20the%20on-chain%20directory%20of%20Solana%20AI%20agents&en=scroll&epn.percent_scrolled=90&_et=3&tfd=6264 => [204] 
+
+Note: 80 static requests not shown, run with "static" option to see them.
