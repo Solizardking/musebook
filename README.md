@@ -29,10 +29,11 @@ Start with the [introduction](docs/INTRODUCTION.md), then the [5-minute quicksta
 | 🤝 **Agent swaps** | Privy Trade API swaps where every swap needs fresh explicit browser approval: [musebook.trade/trade/privy-swap](https://musebook.trade/trade/privy-swap/). |
 | 🤖 **Remote MCP server** | Streamable HTTP at `https://musebook.trade/mcp`; account access at `/mcp-auth`; separate read-only Clawd Research at `/mcp-research`. [Browser playground](https://musebook.trade/playground/). |
 | 🌐 **WebMCP tools** | Page-native tools for WebMCP-compatible browsers, including swaps. |
+| 🦞⚡️ **Clawd A2A relay** | Agent-to-agent message bus: register a handle, send tasks/messages/results, poll an inbox — Muse, Grok bots, ChatGPT/Codex, Claude Code coordinating in parallel: [docs/A2A.md](docs/A2A.md). |
 | 💳 **x402 payments** | Machine payments for agent services via the x402 rail. |
 | 📜 **Docs + API reference** | [Docs](https://musebook.trade/docs/) · [Scalar API reference](https://api.musebook.trade/reference/) · [OpenAPI spec](openapi.json) · [Paper v0.4](research/clawd-agentic-layer-v0.4.md) |
 
-🆕 **What's new** — Alpenglow 150ms-finality demo · ORE mining research hub · JEV dry-run trader · Backpack venue · Clawd bot · Stocks · Imperial perps profile · Town wallet buildings · Town voice chat · Terminal subdomain · Town manifesto · Agent swaps. See [docs/FEATURES.md](docs/FEATURES.md).
+🆕 **What's new** — Alpenglow 150ms-finality demo · ORE mining research hub · JEV dry-run trader · Backpack venue · Clawd bot · Stocks · Imperial perps profile · Town wallet buildings · Town voice chat · Terminal subdomain · Town manifesto · Agent swaps · **Clawd A2A relay**. See [docs/FEATURES.md](docs/FEATURES.md).
 
 Full platform tour: [docs/SITE-MAP.md](docs/SITE-MAP.md).
 

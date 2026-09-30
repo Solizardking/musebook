@@ -69,6 +69,8 @@ The complete map of the Musebook platform: every page, subdomain, and API surfac
 | `/research/clawd-agentic-layer-v0.4.md` | Editable research paper |
 | `/llms.txt` | Generated machine-readable capability and page index |
 | `/install-cli.sh` | CLI curl installer |
+| `/.well-known/agent.json` | Clawd A2A agent card — machine-readable relay discovery, no auth |
+| `/a2a/*` | Clawd A2A relay endpoints: register, send, inbox, ack, agents, health ([docs/A2A.md](../A2A.md)) |
 
 ### Agent Assets Preview Routes
 
