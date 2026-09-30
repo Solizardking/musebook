@@ -98,6 +98,14 @@ security warnings or grant spending authority.
 
 ## Predictions for Agents
 
+The [/trade page](https://musebook.trade/trade) also supports Jupiter V2 managed
+orders, Auto (RTSE) slippage, advanced Metis builds with simulated compute limits
+and priority-fee caps, token discovery, Price V3 metadata and program-label
+diagnostics. [Jupiter trade integration guide](docs/JUPITER-TRADE.md) lists every
+new endpoint, browser-signing boundary and server-side `JUPITER_API_KEY` setup.
+Market-maker RFQ services require separate Jupiter onboarding and are not
+represented as a retail trading feature.
+
 ### Coin Decisions and Realtime History
 
 Use [Clawd Decide](https://musebook.trade/decide) for exact-mint Solana research

@@ -7607,69 +7607,363 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Quote a swap across configured venues",
+        "summary": "Compare venues or request a Jupiter managed/build quote",
+        "security": [],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Provider result; not proof of signing or settlement",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Ok"
+                  "type": "object",
+                  "properties": {
+                    "quote": {
+                      "type": "object",
+                      "properties": {
+                        "inputMint": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                        },
+                        "outputMint": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                        },
+                        "amount": {
+                          "type": "string",
+                          "pattern": "^[0-9]+$",
+                          "description": "Positive u64 base units, never a floating-point amount."
+                        },
+                        "inAmount": {
+                          "type": "string",
+                          "pattern": "^[0-9]+$",
+                          "description": "Positive u64 base units, never a floating-point amount."
+                        },
+                        "outAmount": {
+                          "type": "string",
+                          "pattern": "^[0-9]+$",
+                          "description": "Positive u64 base units, never a floating-point amount."
+                        },
+                        "otherAmountThreshold": {
+                          "type": "string",
+                          "pattern": "^[0-9]+$",
+                          "description": "Positive u64 base units, never a floating-point amount."
+                        },
+                        "slippageBps": {
+                          "type": "number"
+                        },
+                        "gasless": {
+                          "type": "boolean"
+                        },
+                        "feeBps": {
+                          "type": "number"
+                        },
+                        "router": {
+                          "type": "string"
+                        }
+                      },
+                      "required": []
+                    },
+                    "selectedSource": {
+                      "type": "string"
+                    },
+                    "candidates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": []
                 }
               }
             }
           },
           "400": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "429": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
-          "503": {
-            "description": "Error response",
+          "502": {
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "inputMint",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+            }
+          },
+          {
+            "name": "outputMint",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+            }
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "description": "Positive u64 base units, never a floating-point amount."
+            }
+          },
+          {
+            "name": "taker",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+            }
+          },
+          {
+            "name": "jupiterMode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "smart",
+                "order",
+                "build"
+              ]
+            }
+          },
+          {
+            "name": "slippageMode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fixed",
+                "auto"
+              ]
+            }
+          },
+          {
+            "name": "slippageBps",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000,
+              "default": 50
+            }
+          },
+          {
+            "name": "excludeRouters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Managed orders: comma-separated metis,jupiterz,dflow,okx. Do not exclude all."
+            }
+          },
+          {
+            "name": "excludeDexes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Case-sensitive labels. On managed orders affects Metis only."
+            }
+          },
+          {
+            "name": "dexes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Build only; mutually exclusive with excludeDexes."
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fast"
+              ]
+            }
+          },
+          {
+            "name": "maxAccounts",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            }
+          },
+          {
+            "name": "computeUnitPricePercentile",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "medium",
+                    "high",
+                    "veryHigh"
+                  ]
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000
+                }
+              ]
+            }
+          },
+          {
+            "name": "priorityFeeLamports",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "description": "Positive u64 base units, never a floating-point amount."
+            }
+          },
+          {
+            "name": "jitoTipLamports",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "description": "Positive u64 base units, never a floating-point amount."
+            }
+          },
+          {
+            "name": "broadcastFeeType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "maxCap",
+                "exactFee"
+              ]
+            }
+          },
+          {
+            "name": "inputDecimals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "outputDecimals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "description": "slippageMode=auto omits slippage on /order, sends rtse on /build. Other venue comparisons use fixed slippageBps. Build requires taker. Quotes are never signed or executed; refresh with the real wallet before review."
       }
     },
     "/api/trade/swap": {
@@ -7677,69 +7971,233 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Prepare browser-signed swap order",
+        "summary": "Prepare a fresh wallet-bound transaction",
+        "security": [],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Provider result; not proof of signing or settlement",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Ok"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               }
             }
           },
           "400": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "429": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
-          "503": {
-            "description": "Error response",
+          "502": {
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           }
-        }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "inputMint": {
+                    "type": "string",
+                    "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                  },
+                  "outputMint": {
+                    "type": "string",
+                    "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                  },
+                  "amount": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$",
+                    "description": "Positive u64 base units, never a floating-point amount."
+                  },
+                  "taker": {
+                    "type": "string",
+                    "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                  },
+                  "venue": {
+                    "type": "string",
+                    "enum": [
+                      "jupiter",
+                      "dflow",
+                      "raptor"
+                    ]
+                  },
+                  "jupiterMode": {
+                    "type": "string",
+                    "enum": [
+                      "smart",
+                      "order",
+                      "build"
+                    ]
+                  },
+                  "slippageMode": {
+                    "type": "string",
+                    "enum": [
+                      "fixed",
+                      "auto"
+                    ]
+                  },
+                  "slippageBps": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000,
+                    "default": 50
+                  },
+                  "excludeRouters": {
+                    "type": "string",
+                    "description": "Managed orders: comma-separated metis,jupiterz,dflow,okx. Do not exclude all."
+                  },
+                  "excludeDexes": {
+                    "type": "string",
+                    "description": "Case-sensitive labels. On managed orders affects Metis only."
+                  },
+                  "dexes": {
+                    "type": "string",
+                    "description": "Build only; mutually exclusive with excludeDexes."
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "fast"
+                    ]
+                  },
+                  "maxAccounts": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 64
+                  },
+                  "computeUnitPricePercentile": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "medium",
+                          "high",
+                          "veryHigh"
+                        ]
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 10000
+                      }
+                    ]
+                  },
+                  "priorityFeeLamports": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$",
+                    "description": "Positive u64 base units, never a floating-point amount."
+                  },
+                  "jitoTipLamports": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$",
+                    "description": "Positive u64 base units, never a floating-point amount."
+                  },
+                  "broadcastFeeType": {
+                    "type": "string",
+                    "enum": [
+                      "maxCap",
+                      "exactFee"
+                    ]
+                  }
+                },
+                "required": [
+                  "inputMint",
+                  "outputMint",
+                  "amount",
+                  "taker"
+                ]
+              }
+            }
+          }
+        },
+        "description": "Managed order or existing venue path, not build. Returns a fresh unsigned/partially-signed provider transaction and review details. API keys remain server-side. Review and simulate before signing. Do not silently retry uncertain submissions."
       }
     },
     "/api/trade/execute": {
@@ -7747,69 +8205,172 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Execute signed Jupiter transaction",
+        "summary": "Relay an approved signed Jupiter managed order",
+        "security": [],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Provider result; not proof of signing or settlement",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Ok"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "Success",
+                        "Failed"
+                      ]
+                    },
+                    "signature": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "totalInputAmount": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$",
+                      "description": "Positive u64 base units, never a floating-point amount."
+                    },
+                    "totalOutputAmount": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$",
+                      "description": "Positive u64 base units, never a floating-point amount."
+                    },
+                    "swapEvents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": []
                 }
               }
             }
           },
           "400": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
           "429": {
-            "description": "Error response",
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           },
-          "503": {
-            "description": "Error response",
+          "502": {
+            "description": "Invalid input or upstream unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
                 }
               }
             }
           }
-        }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "signedTransaction": {
+                    "type": "string"
+                  },
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "lastValidBlockHeight": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "signedTransaction",
+                  "requestId"
+                ]
+              }
+            }
+          }
+        },
+        "description": "Only transactions from /order. Preserves Failed status and exact execution amount strings. A timeout is uncertain, not permission to submit a different transaction. Reconcile the signed signature."
       }
     },
     "/api/trade/broadcast": {
@@ -25729,6 +26290,1006 @@
             }
           }
         }
+      }
+    },
+    "/api/trade/jupiter/build": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Get raw Metis instructions for client assembly",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Provider result; not proof of signing or settlement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "inputMint": {
+                      "type": "string",
+                      "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                    },
+                    "outputMint": {
+                      "type": "string",
+                      "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                    },
+                    "amount": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$",
+                      "description": "Positive u64 base units, never a floating-point amount."
+                    },
+                    "inAmount": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$",
+                      "description": "Positive u64 base units, never a floating-point amount."
+                    },
+                    "outAmount": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$",
+                      "description": "Positive u64 base units, never a floating-point amount."
+                    },
+                    "otherAmountThreshold": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$",
+                      "description": "Positive u64 base units, never a floating-point amount."
+                    },
+                    "slippageBps": {
+                      "type": "number"
+                    },
+                    "gasless": {
+                      "type": "boolean"
+                    },
+                    "feeBps": {
+                      "type": "number"
+                    },
+                    "router": {
+                      "type": "string"
+                    },
+                    "computeBudgetInstructions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "programId": {
+                            "type": "string",
+                            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                          },
+                          "data": {
+                            "type": "string",
+                            "description": "Base64"
+                          },
+                          "accounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "pubkey": {
+                                  "type": "string",
+                                  "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                                },
+                                "isSigner": {
+                                  "type": "boolean"
+                                },
+                                "isWritable": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "pubkey",
+                                "isSigner",
+                                "isWritable"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "programId",
+                          "data",
+                          "accounts"
+                        ]
+                      }
+                    },
+                    "setupInstructions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "programId": {
+                            "type": "string",
+                            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                          },
+                          "data": {
+                            "type": "string",
+                            "description": "Base64"
+                          },
+                          "accounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "pubkey": {
+                                  "type": "string",
+                                  "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                                },
+                                "isSigner": {
+                                  "type": "boolean"
+                                },
+                                "isWritable": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "pubkey",
+                                "isSigner",
+                                "isWritable"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "programId",
+                          "data",
+                          "accounts"
+                        ]
+                      }
+                    },
+                    "swapInstruction": {
+                      "type": "object",
+                      "properties": {
+                        "programId": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                        },
+                        "data": {
+                          "type": "string",
+                          "description": "Base64"
+                        },
+                        "accounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "pubkey": {
+                                "type": "string",
+                                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                              },
+                              "isSigner": {
+                                "type": "boolean"
+                              },
+                              "isWritable": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "pubkey",
+                              "isSigner",
+                              "isWritable"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "programId",
+                        "data",
+                        "accounts"
+                      ]
+                    },
+                    "cleanupInstruction": {
+                      "type": "object",
+                      "properties": {
+                        "programId": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                        },
+                        "data": {
+                          "type": "string",
+                          "description": "Base64"
+                        },
+                        "accounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "pubkey": {
+                                "type": "string",
+                                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                              },
+                              "isSigner": {
+                                "type": "boolean"
+                              },
+                              "isWritable": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "pubkey",
+                              "isSigner",
+                              "isWritable"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "programId",
+                        "data",
+                        "accounts"
+                      ],
+                      "nullable": true
+                    },
+                    "otherInstructions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "programId": {
+                            "type": "string",
+                            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                          },
+                          "data": {
+                            "type": "string",
+                            "description": "Base64"
+                          },
+                          "accounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "pubkey": {
+                                  "type": "string",
+                                  "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                                },
+                                "isSigner": {
+                                  "type": "boolean"
+                                },
+                                "isWritable": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "pubkey",
+                                "isSigner",
+                                "isWritable"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "programId",
+                          "data",
+                          "accounts"
+                        ]
+                      }
+                    },
+                    "tipInstruction": {
+                      "type": "object",
+                      "properties": {
+                        "programId": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                        },
+                        "data": {
+                          "type": "string",
+                          "description": "Base64"
+                        },
+                        "accounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "pubkey": {
+                                "type": "string",
+                                "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                              },
+                              "isSigner": {
+                                "type": "boolean"
+                              },
+                              "isWritable": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "pubkey",
+                              "isSigner",
+                              "isWritable"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "programId",
+                        "data",
+                        "accounts"
+                      ],
+                      "nullable": true
+                    },
+                    "addressesByLookupTableAddress": {
+                      "type": "object",
+                      "nullable": true,
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                        }
+                      }
+                    },
+                    "blockhashWithMetadata": {
+                      "type": "object",
+                      "properties": {
+                        "blockhash": {
+                          "type": "array",
+                          "minItems": 32,
+                          "maxItems": 32,
+                          "items": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          }
+                        },
+                        "lastValidBlockHeight": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": []
+                    }
+                  },
+                  "required": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "inputMint",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+            }
+          },
+          {
+            "name": "outputMint",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+            }
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "description": "Positive u64 base units, never a floating-point amount."
+            }
+          },
+          {
+            "name": "taker",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+            }
+          },
+          {
+            "name": "slippageMode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fixed",
+                "auto"
+              ]
+            }
+          },
+          {
+            "name": "slippageBps",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000,
+              "default": 50
+            }
+          },
+          {
+            "name": "dexes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeDexes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fast"
+              ]
+            }
+          },
+          {
+            "name": "maxAccounts",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            }
+          },
+          {
+            "name": "computeUnitPricePercentile",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "medium",
+                    "high",
+                    "veryHigh"
+                  ]
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000
+                }
+              ]
+            }
+          }
+        ],
+        "description": "No server signing. Client caps CU price, simulates at 1.4M CU, applies a 1.2x buffer capped at 1.4M, checks 1232-byte size, reviews and signs. Broadcast via own RPC, never /execute. No alternate payer, receiver, referral fees or extra signer support."
+      }
+    },
+    "/api/trade/jupiter/program-id-to-label": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Map Solana program IDs to Jupiter DEX labels",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Provider result; not proof of signing or settlement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/trade/jupiter/prices": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Read Price V3 values and explicitly missing mints",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Provider result; not proof of signing or settlement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "prices": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "usdPrice": {
+                            "type": "number"
+                          },
+                          "blockId": {
+                            "type": "integer"
+                          },
+                          "decimals": {
+                            "type": "integer"
+                          },
+                          "priceChange24h": {
+                            "type": "number",
+                            "description": "Percentage points, not a fraction."
+                          }
+                        },
+                        "required": []
+                      }
+                    },
+                    "missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$"
+                      }
+                    },
+                    "retrievedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "prices",
+                    "missing",
+                    "retrievedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "1-50 comma-separated exact mints. Unreliable prices are omitted, never zero."
+            }
+          }
+        ]
+      }
+    },
+    "/api/trade/jupiter/tokens": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Discover recent, trending, traded or organic-score tokens",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Provider result; not proof of signing or settlement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tokens": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "interval": {
+                      "type": "string"
+                    },
+                    "retrievedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Invalid input or upstream unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "recent",
+                "toptrending",
+                "toptraded",
+                "toporganicscore"
+              ]
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "5m",
+                "1h",
+                "6h",
+                "24h"
+              ]
+            }
+          }
+        ],
+        "description": "At most 30 tokens. Metadata and audit flags are provider observations, not safety guarantees. Recent means recent pool listing, not necessarily new mint creation."
       }
     }
   },
