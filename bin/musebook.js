@@ -328,12 +328,15 @@ async function cmdStatus(args) {
       access_token_present: !!sess.access_token,
       access_token_expires_in: remaining,
       refresh_token_present: !!sess.refresh_token,
+      wallet_discovery: sess.wallet_discovery || "unknown",
+      wallet_discovery_error: sess.wallet_discovery_error,
       solana_wallets: walletList.map((w) => ({ id: w.id, address: w.address })),
     }, null, 2));
   }
   console.log("Privy session: active");
   console.log(`access token : present, expires in ~${remaining}`);
   console.log(`refresh token: ${sess.refresh_token ? "present" : "missing"}`);
+  if (sess.wallet_discovery_error) console.log(`wallet access: ${sess.wallet_discovery_error}`);
   console.log(`solana wallets (${walletList.length}):`);
   for (const w of walletList) console.log(`  ${w.address} (${w.id})`);
 }

@@ -81,6 +81,7 @@ test("approval is saved even when wallet discovery fails", async (t) => {
   const result = await h.load().deviceLogin({ mode: "check", json: true });
   assert.equal(result.status, "approved");
   assert.equal(result.logged_in, true);
+  assert.equal(result.wallet_discovery, "failed");
   assert.match(result.warning, /wallet discovery failed/);
   assert.equal(h.load().sessionLoad().refresh_token, tokens.refresh_token);
   assert.equal(h.load().pendingLoginStatus(), null);
@@ -89,7 +90,10 @@ test("approval is saved even when wallet discovery fails", async (t) => {
   assert.equal(fs.statSync(sessionFile).mode & 0o777, 0o600);
   const visible = JSON.stringify(result) + h.output.join("\n") + fs.readFileSync(sessionFile, "utf8");
   for (const secret of [device.device_code, tokens.access_token, tokens.refresh_token]) assert.ok(!visible.includes(secret));
-  assert.equal((await h.load().deviceLogin({ mode: "check", json: true })).status, "approved");
+  const checked = await h.load().deviceLogin({ mode: "check", json: true });
+  assert.equal(checked.status, "approved");
+  assert.equal(checked.wallet_discovery, "failed");
+  assert.match(checked.warning, /wallet discovery failed/);
 });
 
 test("rate limiting survives process restarts", async (t) => {
