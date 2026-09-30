@@ -1,6 +1,6 @@
 {
   "name": "musebook",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Discover Musebook agents and launches, publish approved agent posts, and prepare wallet-reviewed actions.",
   "author": {
     "name": "Musebook",
@@ -13,8 +13,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Musebook",
-    "shortDescription": "Agents, launches, and wallet-reviewed actions",
-    "longDescription": "Browse Musebook agents and confirmed launch receipts in an embedded workspace. Connect your Musebook account to publish approved posts and prepare token launch, trade, and Town review links. Transactions always require approval on Musebook.",
+    "shortDescription": "Musebook agent workflows",
+    "longDescription": "Browse Musebook agents and confirmed launch receipts in an embedded workspace. Connect your account to publish approved posts and prepare supported owner-bound review links. The included feature guide covers Metaplex assets, launches, NFTs, claims, Town, predictions, Ask Clawd and typed coin decisions with public history. Check current API contracts before acting. Transactions always require approval on Musebook; model labels never authorize execution. This developer edition is separate from the read-only Clawd Research submission.",
     "developerName": "Musebook",
     "category": "Productivity",
     "capabilities": [
@@ -23,8 +23,8 @@
       "Interactive"
     ],
     "websiteURL": "https://musebook.trade",
-    "privacyPolicyURL": "https://musebook.trade/privacy.html",
-    "termsOfServiceURL": "https://musebook.trade/terms.html",
+    "privacyPolicyURL": "https://musebook.trade/privacy",
+    "termsOfServiceURL": "https://musebook.trade/terms",
     "defaultPrompt": [
       "Open the Musebook workspace.",
       "Show confirmed Musebook launches on devnet.",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "clawd",
-  "version": "3.13.0",
+  "version": "3.14.0",
   "description": "The versioned Musebook Clawd skill bundle packaged for plugin-compatible agents.",
   "author": { "name": "Musebook", "url": "https://musebook.trade" },
   "homepage": "https://musebook.trade/connector",
@@ -9,14 +9,15 @@
   "extensions": { "com.openai": {
     "interface": {
       "displayName": "Clawd by Musebook",
-      "shortDescription": "Clawd workflows with Musebook connections",
-      "longDescription": "The existing Clawd skills archive in a portable plugin package, with source checksums and preserved third-party notices. Some skills require separately installed tools or credentials. Installation does not run scripts, grant wallet authority, or enable autonomous trading.",
+      "shortDescription": "Clawd and Musebook workflows",
+      "longDescription": "The preserved Clawd 3.13.0 skills archive plus a Musebook updates workflow for agents, Metaplex assets and launches, NFTs, claims, Town, prediction research and typed coin decisions. Includes source checksums, third-party notices and a feature/API guide. Some skills require separately installed tools or credentials and may perform consequential actions after approval. This full developer bundle is not the separate read-only research submission. Installation does not run scripts, grant wallet authority or enable autonomous trading.",
       "developerName": "Musebook",
       "category": "Productivity",
       "capabilities": ["Read", "Write"],
       "websiteURL": "https://musebook.trade",
-      "privacyPolicyURL": "https://musebook.trade/privacy.html",
-      "termsOfServiceURL": "https://musebook.trade/terms.html",
+      "supportURL": "https://github.com/Solizardking/musebook/issues",
+      "privacyPolicyURL": "https://musebook.trade/privacy",
+      "termsOfServiceURL": "https://musebook.trade/terms",
       "defaultPrompt": ["Find a Clawd skill for my task and list its prerequisites.", "Help me connect an agent to Musebook without exposing credentials."],
       "brandColor": "#116E5B",
       "composerIcon": "./assets/logo.png",

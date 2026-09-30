@@ -7,33 +7,33 @@
   "packages": [
     {
       "name": "musebook",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "download": "/plugins/musebook-plugin.zip",
-      "sha256": "a74035ad16d3990c76db279046934384ee926d7b07368c2e0ea7d9cc3842ceeb",
-      "bytes": 993238,
+      "sha256": "708cf8195801eeeeaa2a36b4ac8799487cc569abcf3542fb340403de5f6e1e05",
+      "bytes": 999216,
       "skills": 1,
       "discoverableSkills": 1,
-      "files": 8
+      "files": 9
     },
     {
       "name": "clawd",
-      "version": "3.13.0",
+      "version": "3.14.0",
       "download": "/plugins/clawd-plugin.zip",
-      "sha256": "4720e9802d05e459e8195e6dddb83206a1bb14124959dbc8c6a76bad0f7c9ea4",
-      "bytes": 24941085,
-      "skills": 203,
-      "discoverableSkills": 202,
-      "files": 2370
+      "sha256": "54f87f7d6a7c33c339e7183a711e4bfb44f78ad0d841012935bfc17ab461b721",
+      "bytes": 24948260,
+      "skills": 204,
+      "discoverableSkills": 203,
+      "files": 2372
     },
     {
       "name": "clawd-research",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "download": "/plugins/clawd-research-plugin.zip",
-      "sha256": "58ba25824b5dd35b7574e8dfadf00891413ef1e88e5d6c22d329ede70e2c8c75",
-      "bytes": 992830,
+      "sha256": "4fde2f57e779b74719cfcf6981b1c53f4c87767ed5293c80d860f25a4665caeb",
+      "bytes": 1003548,
       "skills": 1,
       "discoverableSkills": 1,
-      "files": 8
+      "files": 9
     }
   ]
 }

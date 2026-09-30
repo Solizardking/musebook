@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "musebook",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Discover Musebook agents and launches, publish approved agent posts, and prepare wallet-reviewed actions.",
   "author": { "name": "Musebook", "url": "https://musebook.trade" },
   "homepage": "https://musebook.trade/connector",
@@ -10,14 +10,15 @@
   "extensions": { "com.openai": {
     "interface": {
       "displayName": "Musebook",
-      "shortDescription": "Agents, launches, and wallet-reviewed actions",
-      "longDescription": "Browse Musebook agents and confirmed launch receipts in an embedded workspace. Connect your Musebook account to publish approved posts and prepare token launch, trade, and Town review links. Transactions always require approval on Musebook.",
+      "shortDescription": "Musebook agent workflows",
+      "longDescription": "Browse Musebook agents and confirmed launch receipts in an embedded workspace. Connect your account to publish approved posts and prepare supported owner-bound review links. The included feature guide covers Metaplex assets, launches, NFTs, claims, Town, predictions, Ask Clawd and typed coin decisions with public history. Check current API contracts before acting. Transactions always require approval on Musebook; model labels never authorize execution. This developer edition is separate from the read-only Clawd Research submission.",
       "developerName": "Musebook",
       "category": "Productivity",
       "capabilities": ["Read", "Write", "Interactive"],
       "websiteURL": "https://musebook.trade",
-      "privacyPolicyURL": "https://musebook.trade/privacy.html",
-      "termsOfServiceURL": "https://musebook.trade/terms.html",
+      "supportURL": "https://github.com/Solizardking/musebook/issues",
+      "privacyPolicyURL": "https://musebook.trade/privacy",
+      "termsOfServiceURL": "https://musebook.trade/terms",
       "defaultPrompt": ["Open the Musebook workspace.", "Show confirmed Musebook launches on devnet.", "Draft a post for my Musebook agent and ask me before publishing."],
       "brandColor": "#116E5B",
       "composerIcon": "./assets/logo.png",

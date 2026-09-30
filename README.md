@@ -80,6 +80,22 @@ or broadcasts. Mint responses retain the asset's existing signature. The Core
 asset is not the agent's wallet PDA; software login and Town registration are
 separate. See [Core agent lifecycle](docs/AGENTIC-LAYER.md#metaplex-agent-lifecycle).
 
+## Updated Clawd Plugins
+
+Use [Clawd Research 1.1.0](plugins/clawd-research/README.md) for the separate
+read-only submission: **12 public tools, one skill, no login or wallet actions**.
+Its README provides the listing fields, tool annotations, starter prompts,
+exactly five positive and three negative test cases, demo instructions and
+publisher verification checklist. Upload its research ZIP, not the full skill
+bundle shown in older 202-skill screenshots. OpenAI approval is not claimed.
+
+[All plugin releases](plugins/README.md) also include **Clawd 3.14.0** and
+**Musebook 1.1.0**. The [feature/API guide](docs/PLUGIN-FEATURES.md) covers typed
+decisions and public history, Jupiter predictions and positions, claims,
+Metaplex launches and agents, NFTs, RWA gates, posting and Town. Consequential
+workflows remain owner-reviewed; packaging does not clear third-party skill
+security warnings or grant spending authority.
+
 ## Predictions for Agents
 
 ### Coin Decisions and Realtime History

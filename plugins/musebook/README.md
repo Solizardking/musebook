@@ -7,8 +7,8 @@ directory approval. Dashboard verification and review remain required.
 | Package | Contents |
 | --- | --- |
 | musebook | Public MCP research, OAuth account tools, MCP App workspace, one Musebook workflow |
-| clawd | Existing Clawd tarball repackaged as skills, source checksums, and Musebook MCP connections |
-| clawd-research | Separate submission candidate: one research skill, five public read-only tools, one MCP server |
+| clawd 3.14.0 | Preserved Clawd 3.13.0 tarball, new Musebook updates workflow, source checksums and MCP connections |
+| clawd-research 1.1.0 | Separate submission candidate: one research skill, twelve public read-only tools, one MCP server |
 
 Download ZIPs and SHA-256 checksums from https://musebook.trade/connector.
 The archive contains a named plugin root. Keep its dotfiles when extracting.
@@ -21,7 +21,9 @@ Clawd preserves every original skill file, with byte-level provenance in SOURCE.
 Invalid unquoted YAML descriptions are normalized for plugin compatibility; the
 original files are retained under originals/. The manual-only review-animations
 skill stays under manual-skills/ instead of silently enabling model invocation.
-There are 203 bundled workflows, of which 202 are automatically discoverable.
+There are 204 bundled workflows, of which 203 are automatically discoverable.
+The added Musebook workflow is separately recorded; the 203 original workflows
+and their source version/checksums remain intact.
 Some workflows require local CLIs,
 accounts, platform-specific capabilities or additional credentials. Packaging
 does not prove every third-party service is available. Review a skill before
@@ -62,13 +64,40 @@ not require it. Never place it in plugin manifests, browser code, or downloads.
    public queries, and an explicitly approved post in a new chat. Verify trades
    and launches only return review links until the owner signs on Musebook.
 5. Upload clawd-research-plugin.zip through the OpenAI plugin developer dashboard.
-   Current public submission supports one MCP server. Declare it in mcp.json;
+   This edition intentionally uses one MCP server, declared in mcp.json;
    archives with .app.json/apps references or lifecycle hooks are not accepted.
    A draft asdk_app_v_ ID is not a registered connection ID and must not be turned
    into one. Complete no-auth configuration, publisher/domain verification, public
    support contact, policy declarations and a reviewer-accessible demo recording.
    Run the five positive and three negative cases included in the research manifest.
    Public availability starts only after OpenAI approval and publisher release.
+
+## What To Add In Every Submission Field
+
+Use the [Clawd Research field-by-field README](https://github.com/Solizardking/musebook/blob/main/plugins/clawd-research/README.md)
+for listing text, authentication, tool scan, starter prompts, exactly five positive
+and three negative review cases, countries, supporting content, actual demo
+recording, release notes and publisher-owned legal/identity checks. Its listing
+and cases are generated from plugin.json so the ZIP and instructions match.
+Use TOOL_JUSTIFICATIONS.md in the research package for all twelve tool annotations.
+
+The [full feature guide](https://github.com/Solizardking/musebook/blob/main/docs/PLUGIN-FEATURES.md)
+maps decisions, public Convex history, Jupiter predictions/positions/claims,
+Ask Clawd, Metaplex, NFTs, RWA gates, agents and Town to current pages and APIs.
+Both full developer packages include FEATURE_GUIDE.md. An HTTP API is not
+automatically exposed as an MCP tool; inspect tools/list first.
+
+The screenshot's 202-skill upload is the older full developer bundle. Its local
+and account-changing workflows are not in the research ZIP. Security warnings
+on that bundle are not resolved by this release or by changing descriptions;
+review the affected scripts, permissions and licenses before using them. For
+the separate read-only submission, replace the archive with clawd-research and
+confirm the fresh scan shows one skill and twelve tools. Do not bypass warnings.
+
+OpenAI supports multiple MCP connections; plugin-level review cases apply only
+to a single-server package. Multi-server review cases belong to their respective
+server configuration. The full developer packages are not reviewed read-only
+candidates and do not inherit the research edition's cases or declarations.
 
 For domain verification, configure the portal's exact public token as the Worker
 variable OPENAI_APPS_VERIFICATION_TOKEN. Musebook serves it as plain text at
