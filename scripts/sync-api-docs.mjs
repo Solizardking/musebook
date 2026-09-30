@@ -15,6 +15,7 @@ const files = [
   ['openapi.json', 'openapi.json'],
   ['llms.txt', 'llms.txt'],
   ['prediction-api.md', 'docs/PREDICTIONS.md'],
+  ['decide-api.md', 'docs/DECIDE.md'],
   ['agentic-layer.md', 'docs/AGENTIC-LAYER.md'],
 ];
 // Read and validate the full allowlist before updating any public artifact.

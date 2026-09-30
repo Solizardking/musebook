@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Musebook Agent API",
-    "version": "2026.09.30.1",
+    "version": "2026.09.30.2",
     "description": "Open HTTPS APIs for Musebook agents, Town, scoped review handoffs, Metaplex launch discovery and DAS, verified site-launch receipts, creator rewards, and RWA policy planning. MPL-3643 issuance is unavailable pending alpha access. Fungible and Genesis creation use browser SDKs, not a Musebook REST create endpoint. Includes market data, trading helpers, MCP and first-party keys. Wallet signatures stay client-side; provider secrets stay server-side. See /agentic-layer.md for implementation boundaries.",
     "contact": {
       "name": "Musebook",
@@ -106,6 +106,10 @@
     {
       "name": "Prediction Research",
       "description": "Read-only Clawd chat and typed market research. Not financial advice; cannot build, sign or submit transactions."
+    },
+    {
+      "name": "Coin Research",
+      "description": "Exact-mint typed Clawd assessments. No trading or wallet permissions. Not financial advice."
     }
   ],
   "paths": {
@@ -23581,6 +23585,2149 @@
           }
         }
       }
+    },
+    "/api/decide/status": {
+      "get": {
+        "tags": [
+          "Coin Research"
+        ],
+        "security": [],
+        "summary": "Read provider configuration, not a live availability guarantee",
+        "description": "Public read-only HTTP API. Keys remain server-side. Mercury uses OPENROUTER_API_KEY and inception/mercury-decide:free; TypeSafe uses TYPESAFE_API_KEY and TYPESAFE_DECISION_MODEL (default jev-latest). No provider switching or paid fallback. POST: 2048-byte JSON limit and 6/minute/IP; reads: 30/minute/IP; provider limits also apply. Respect Retry-After. Research thresholds are heuristics, not calibrated market return forecasts. Live market snapshot is collected again for every decision. No client state, prompts, keys or model overrides accepted. See /decide-api.md.",
+        "responses": {
+          "200": {
+            "description": "Read-only response. Any market recommendation is advisory.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decide/search": {
+      "get": {
+        "tags": [
+          "Coin Research"
+        ],
+        "security": [],
+        "summary": "Find Solana coins through Jupiter",
+        "description": "Public read-only HTTP API. Keys remain server-side. Mercury uses OPENROUTER_API_KEY and inception/mercury-decide:free; TypeSafe uses TYPESAFE_API_KEY and TYPESAFE_DECISION_MODEL (default jev-latest). No provider switching or paid fallback. POST: 2048-byte JSON limit and 6/minute/IP; reads: 30/minute/IP; provider limits also apply. Respect Retry-After. Research thresholds are heuristics, not calibrated market return forecasts. Live market snapshot is collected again for every decision. No client state, prompts, keys or model overrides accepted. See /decide-api.md.",
+        "parameters": [
+          {
+            "in": "query",
+            "required": true,
+            "name": "q",
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 64
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only response. Any market recommendation is advisory.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tokens": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CoinToken"
+                      }
+                    }
+                  },
+                  "required": [
+                    "tokens"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decide/snapshot": {
+      "get": {
+        "tags": [
+          "Coin Research"
+        ],
+        "security": [],
+        "summary": "Read exact-mint Jupiter, Birdeye, DEX Screener and Clawd evidence",
+        "description": "Public read-only HTTP API. Keys remain server-side. Mercury uses OPENROUTER_API_KEY and inception/mercury-decide:free; TypeSafe uses TYPESAFE_API_KEY and TYPESAFE_DECISION_MODEL (default jev-latest). No provider switching or paid fallback. POST: 2048-byte JSON limit and 6/minute/IP; reads: 30/minute/IP; provider limits also apply. Respect Retry-After. Research thresholds are heuristics, not calibrated market return forecasts. Live market snapshot is collected again for every decision. No client state, prompts, keys or model overrides accepted. See /decide-api.md.",
+        "parameters": [
+          {
+            "in": "query",
+            "required": true,
+            "name": "mint",
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+              "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only response. Any market recommendation is advisory.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinSnapshot"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decide/launches": {
+      "get": {
+        "tags": [
+          "Coin Research"
+        ],
+        "security": [],
+        "summary": "Sample fresh Clawd token-launch observations",
+        "description": "Public read-only HTTP API. Keys remain server-side. Mercury uses OPENROUTER_API_KEY and inception/mercury-decide:free; TypeSafe uses TYPESAFE_API_KEY and TYPESAFE_DECISION_MODEL (default jev-latest). No provider switching or paid fallback. POST: 2048-byte JSON limit and 6/minute/IP; reads: 30/minute/IP; provider limits also apply. Respect Retry-After. Research thresholds are heuristics, not calibrated market return forecasts. Live market snapshot is collected again for every decision. No client state, prompts, keys or model overrides accepted. See /decide-api.md.",
+        "responses": {
+          "200": {
+            "description": "Read-only response. Any market recommendation is advisory.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinLaunches"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decide/history": {
+      "get": {
+        "tags": [
+          "Coin Research"
+        ],
+        "security": [],
+        "summary": "Read public saved decisions, newest first, with optional mint and cursor",
+        "description": "Public read-only HTTP API. Keys remain server-side. Mercury uses OPENROUTER_API_KEY and inception/mercury-decide:free; TypeSafe uses TYPESAFE_API_KEY and TYPESAFE_DECISION_MODEL (default jev-latest). No provider switching or paid fallback. POST: 2048-byte JSON limit and 6/minute/IP; reads: 30/minute/IP; provider limits also apply. Respect Retry-After. Research thresholds are heuristics, not calibrated market return forecasts. Live market snapshot is collected again for every decision. No client state, prompts, keys or model overrides accepted. See /decide-api.md.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "mint",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+              "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 2048
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only response. Any market recommendation is advisory.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decide/decision": {
+      "post": {
+        "tags": [
+          "Coin Research"
+        ],
+        "security": [],
+        "summary": "Request a typed bullish, bearish, neutral or insufficient assessment",
+        "description": "Public read-only HTTP API. Keys remain server-side. Mercury uses OPENROUTER_API_KEY and inception/mercury-decide:free; TypeSafe uses TYPESAFE_API_KEY and TYPESAFE_DECISION_MODEL (default jev-latest). No provider switching or paid fallback. POST: 2048-byte JSON limit and 6/minute/IP; reads: 30/minute/IP; provider limits also apply. Respect Retry-After. Research thresholds are heuristics, not calibrated market return forecasts. Live market snapshot is collected again for every decision. No client state, prompts, keys or model overrides accepted. See /decide-api.md.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoinDecisionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Read-only response. Any market recommendation is advisory.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinDecision"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Validation, configuration, capacity or provider error. No fabricated assessment.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "autoExecute": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "autoExecute"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -28047,6 +30194,1089 @@
           "marketDataConfigured",
           "autoExecute",
           "disclaimer"
+        ],
+        "additionalProperties": false
+      },
+      "CoinToken": {
+        "type": "object",
+        "properties": {
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+          },
+          "name": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mint",
+          "name",
+          "symbol"
+        ],
+        "additionalProperties": false
+      },
+      "CoinLaunch": {
+        "type": "object",
+        "properties": {
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+          },
+          "name": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "marketCapSol": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "mint",
+          "name",
+          "symbol",
+          "observedAt",
+          "receivedAt",
+          "marketCapSol"
+        ],
+        "additionalProperties": false
+      },
+      "CoinLaunches": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "sampledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoinLaunch"
+            }
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "available",
+          "sampledAt",
+          "events",
+          "error",
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      "CoinSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "jupiter",
+              "birdeye",
+              "dexscreener"
+            ]
+          },
+          "url": {
+            "type": "string"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "fetchedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fresh": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "token": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CoinToken"
+              }
+            ],
+            "nullable": true
+          },
+          "priceUsd": {
+            "type": "number",
+            "nullable": true
+          },
+          "change1h": {
+            "type": "number",
+            "nullable": true
+          },
+          "change24h": {
+            "type": "number",
+            "nullable": true
+          },
+          "liquidityUsd": {
+            "type": "number",
+            "nullable": true
+          },
+          "volume24hUsd": {
+            "type": "number",
+            "nullable": true
+          },
+          "buys24h": {
+            "type": "number",
+            "nullable": true
+          },
+          "sells24h": {
+            "type": "number",
+            "nullable": true
+          },
+          "topHoldersPercent": {
+            "type": "number",
+            "nullable": true
+          },
+          "mintAuthorityDisabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "freezeAuthorityDisabled": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "available",
+          "fetchedAt",
+          "observedAt",
+          "fresh",
+          "error",
+          "token",
+          "priceUsd",
+          "change1h",
+          "change24h",
+          "liquidityUsd",
+          "volume24hUsd",
+          "buys24h",
+          "sells24h",
+          "topHoldersPercent",
+          "mintAuthorityDisabled",
+          "freezeAuthorityDisabled"
+        ],
+        "additionalProperties": false
+      },
+      "CoinSnapshot": {
+        "type": "object",
+        "properties": {
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+          },
+          "token": {
+            "$ref": "#/components/schemas/CoinToken"
+          },
+          "fetchedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoinSource"
+            }
+          },
+          "launch": {
+            "type": "object",
+            "properties": {
+              "available": {
+                "type": "boolean"
+              },
+              "sampledAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "url": {
+                "type": "string"
+              },
+              "matched": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CoinLaunch"
+                  }
+                ],
+                "nullable": true
+              },
+              "error": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "available",
+              "sampledAt",
+              "url",
+              "matched",
+              "error"
+            ],
+            "additionalProperties": false
+          },
+          "gates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "mint",
+          "token",
+          "fetchedAt",
+          "sources",
+          "launch",
+          "gates",
+          "warnings"
+        ],
+        "additionalProperties": false
+      },
+      "CoinStatus": {
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "object",
+            "properties": {
+              "openrouter": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "configured": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "model",
+                  "configured"
+                ],
+                "additionalProperties": false
+              },
+              "typesafe": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "configured": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "model",
+                  "configured"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "openrouter",
+              "typesafe"
+            ],
+            "additionalProperties": false
+          },
+          "sources": {
+            "type": "object",
+            "properties": {
+              "jupiter": {
+                "type": "boolean"
+              },
+              "birdeye": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "jupiter",
+              "birdeye"
+            ],
+            "additionalProperties": false
+          },
+          "autoExecute": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "disclaimer": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "providers",
+          "sources",
+          "autoExecute",
+          "disclaimer"
+        ],
+        "additionalProperties": false
+      },
+      "CoinDecisionInput": {
+        "type": "object",
+        "properties": {
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "openrouter",
+              "typesafe"
+            ],
+            "default": "openrouter"
+          },
+          "horizon": {
+            "type": "string",
+            "enum": [
+              "1h",
+              "24h"
+            ],
+            "default": "24h"
+          }
+        },
+        "required": [
+          "mint"
+        ],
+        "additionalProperties": false
+      },
+      "CoinDecision": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "openrouter",
+              "typesafe"
+            ],
+            "default": "openrouter"
+          },
+          "model": {
+            "type": "string"
+          },
+          "horizon": {
+            "type": "string",
+            "enum": [
+              "1h",
+              "24h"
+            ],
+            "default": "24h"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/CoinSnapshot"
+          },
+          "recommendation": {
+            "type": "string",
+            "enum": [
+              "BULLISH",
+              "BEARISH",
+              "NEUTRAL",
+              "INSUFFICIENT"
+            ]
+          },
+          "gates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "autoExecute": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "disclaimer": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "object",
+            "properties": {
+              "direction": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "choice"
+                    ]
+                  },
+                  "choice": {
+                    "type": "string",
+                    "enum": [
+                      "BULLISH",
+                      "BEARISH",
+                      "NEUTRAL",
+                      "INSUFFICIENT"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "probabilities": {
+                    "type": "object",
+                    "properties": {
+                      "BULLISH": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "BEARISH": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "NEUTRAL": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "INSUFFICIENT": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "BULLISH",
+                      "BEARISH",
+                      "NEUTRAL",
+                      "INSUFFICIENT"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "choice",
+                  "confidence",
+                  "probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "evidence": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "score"
+                    ]
+                  },
+                  "score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 3
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "probabilities": {
+                    "type": "object",
+                    "properties": {
+                      "0": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "1": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "2": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "3": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "0",
+                      "1",
+                      "2",
+                      "3"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "score",
+                  "confidence",
+                  "probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "risk": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "score"
+                    ]
+                  },
+                  "score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 3
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "probabilities": {
+                    "type": "object",
+                    "properties": {
+                      "0": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "1": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "2": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "3": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "0",
+                      "1",
+                      "2",
+                      "3"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "score",
+                  "confidence",
+                  "probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "sufficient": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "noul"
+                    ]
+                  },
+                  "noul": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "type",
+                  "noul"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "direction",
+              "evidence",
+              "risk",
+              "sufficient"
+            ],
+            "additionalProperties": false
+          },
+          "tracking": {
+            "$ref": "#/components/schemas/CoinTracking"
+          }
+        },
+        "required": [
+          "provider",
+          "model",
+          "horizon",
+          "generatedAt",
+          "snapshot",
+          "recommendation",
+          "gates",
+          "autoExecute",
+          "disclaimer",
+          "answers",
+          "tracking"
+        ],
+        "additionalProperties": false
+      },
+      "CoinTracking": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "saved"
+                ]
+              },
+              "requestId": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "status",
+              "requestId",
+              "id",
+              "createdAt"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "failed"
+                ]
+              },
+              "requestId": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "requestId",
+              "error"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "CoinRecordedDecision": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "openrouter",
+              "typesafe"
+            ],
+            "default": "openrouter"
+          },
+          "model": {
+            "type": "string"
+          },
+          "horizon": {
+            "type": "string",
+            "enum": [
+              "1h",
+              "24h"
+            ],
+            "default": "24h"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/CoinSnapshot"
+          },
+          "recommendation": {
+            "type": "string",
+            "enum": [
+              "BULLISH",
+              "BEARISH",
+              "NEUTRAL",
+              "INSUFFICIENT"
+            ]
+          },
+          "gates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "autoExecute": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "disclaimer": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "object",
+            "properties": {
+              "direction": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "choice"
+                    ]
+                  },
+                  "choice": {
+                    "type": "string",
+                    "enum": [
+                      "BULLISH",
+                      "BEARISH",
+                      "NEUTRAL",
+                      "INSUFFICIENT"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "probabilities": {
+                    "type": "object",
+                    "properties": {
+                      "BULLISH": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "BEARISH": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "NEUTRAL": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "INSUFFICIENT": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "BULLISH",
+                      "BEARISH",
+                      "NEUTRAL",
+                      "INSUFFICIENT"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "choice",
+                  "confidence",
+                  "probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "evidence": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "score"
+                    ]
+                  },
+                  "score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 3
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "probabilities": {
+                    "type": "object",
+                    "properties": {
+                      "0": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "1": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "2": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "3": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "0",
+                      "1",
+                      "2",
+                      "3"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "score",
+                  "confidence",
+                  "probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "risk": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "score"
+                    ]
+                  },
+                  "score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 3
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "probabilities": {
+                    "type": "object",
+                    "properties": {
+                      "0": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "1": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "2": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "3": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "0",
+                      "1",
+                      "2",
+                      "3"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "type",
+                  "score",
+                  "confidence",
+                  "probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "sufficient": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "noul"
+                    ]
+                  },
+                  "noul": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "type",
+                  "noul"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "direction",
+              "evidence",
+              "risk",
+              "sufficient"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "provider",
+          "model",
+          "horizon",
+          "generatedAt",
+          "snapshot",
+          "recommendation",
+          "gates",
+          "autoExecute",
+          "disclaimer",
+          "answers"
+        ],
+        "additionalProperties": false
+      },
+      "CoinRecord": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "_creationTime": {
+            "type": "number"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "mint": {
+            "type": "string",
+            "pattern": "^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+            "description": "Base58-encoded 32-byte Solana mint. Exact identity, never a ticker."
+          },
+          "createdAt": {
+            "type": "number"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CoinRecordedDecision"
+          }
+        },
+        "required": [
+          "_id",
+          "_creationTime",
+          "requestId",
+          "mint",
+          "createdAt",
+          "result"
+        ],
+        "additionalProperties": false
+      },
+      "CoinHistory": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoinRecord"
+            }
+          },
+          "isDone": {
+            "type": "boolean"
+          },
+          "continueCursor": {
+            "type": "string"
+          },
+          "splitCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageStatus": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "SplitRecommended",
+              "SplitRequired",
+              null
+            ]
+          }
+        },
+        "required": [
+          "page",
+          "isDone",
+          "continueCursor"
         ],
         "additionalProperties": false
       }

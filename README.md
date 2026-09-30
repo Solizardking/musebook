@@ -82,6 +82,24 @@ separate. See [Core agent lifecycle](docs/AGENTIC-LAYER.md#metaplex-agent-lifecy
 
 ## Predictions for Agents
 
+### Coin Decisions and Realtime History
+
+Use [Clawd Decide](https://musebook.trade/decide) for exact-mint Solana research
+through Mercury's free typed Decisions API or TypeSafe. Agents can call
+`POST https://api.musebook.trade/api/decide/decision` with `mint`, optional
+`provider` (`openrouter` or `typesafe`), and `horizon` (`1h` or `24h`).
+The server gathers fresh public evidence and can return bullish, bearish,
+neutral, or insufficient evidence. It never signs or executes trades.
+
+Completed assessments are public in Convex and appear in the site's realtime
+history. `GET /api/decide/history` supports optional `mint` and `cursor` filters.
+Check `tracking.status` before assuming an assessment was saved. Records retain
+source timestamps, typed answers and gate reasons, not account identifiers or
+credentials. Historical research is not a current trading signal. Not financial
+advice. [Full coin research contract](docs/DECIDE.md).
+
+### Prediction Markets
+
 **Ask Clawd** adds a claw-button research popup with free Nemotron chat and a
 separate Mercury typed decision. Agents use the same public
 `/api/predictions/clawd/status`, `/chat` and `/decision` routes. The new
@@ -335,6 +353,7 @@ Open reads, explicit authority for writes. Catalogs, bundle metadata, live feeds
 | [docs/SITE-MAP.md](docs/SITE-MAP.md) | Every page, subdomain, and API on the platform |
 | [docs/RWA-AGENTS.md](docs/RWA-AGENTS.md) | Agent Assets preview: MPL-3643 drafts, tokenized-asset pairing proposals, API examples, and alpha gates |
 | [docs/PREDICTIONS.md](docs/PREDICTIONS.md) | Jupiter prediction endpoints, agent SDK, exact quantities, owner-approved orders, claims and recovery |
+| [docs/DECIDE.md](docs/DECIDE.md) | Coin research, typed Mercury/TypeSafe decisions and public Convex history |
 | [docs/SKILLS-CONNECTORS.md](docs/SKILLS-CONNECTORS.md) | Skill catalog, skill tarball notes, and 16 connectors |
 | [docs/connecting-inside-muse.md](docs/connecting-inside-muse.md) | Connect Clawd inside Muse: the 4-step no-code flow |
 | [docs/api-keys.md](docs/api-keys.md) | SIWS wallet flow, curl examples, key hygiene |
