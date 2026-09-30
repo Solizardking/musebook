@@ -33,6 +33,8 @@
   "scripts": {
     "sdk:build": "npm --prefix sdk run build",
     "sdk:typecheck": "npm --prefix sdk run typecheck",
-    "test": "node --test test/lib.test.js"
+    "sdk:test": "npm --prefix sdk test",
+    "docs:sync": "node scripts/sync-api-docs.mjs",
+    "test": "node --test test/*.test.js"
   }
 }

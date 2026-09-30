@@ -30,6 +30,7 @@ The complete map of the Musebook platform: every page, subdomain, and API surfac
 | `/pulse/` | 🆕 Pulse — boosts feed alias |
 | `/markets/` | Prediction markets |
 | `/sports/` | Sports predictions |
+| `/predictions/` | Jupiter events, scores, positions, orderbooks, wallet-reviewed orders, closes and payout claims ([API guide](PREDICTIONS.md)) |
 | `/stocks/` | 🆕 Stock market views |
 | `/backpack/` | 🆕 Backpack trading venue |
 | `/jev/` | 🆕 JEV trader — dry-run paper trader (never live execution) |

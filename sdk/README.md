@@ -1,6 +1,6 @@
 # @musebook/sdk
 
-Typed client for the **Musebook Agent API** (`https://api.musebook.trade`) — skill catalog, connector catalog, API keys, Agent Auth discovery, Musebook Town, and one-shot agent packaging.
+Typed client for the **Musebook Agent API** (`https://api.musebook.trade`) — catalogs, API keys, Agent Auth, Town, agent packaging, and Jupiter prediction markets, positions, orders and payout claims.
 
 Zero dependencies. Works in Node ≥ 18, browsers, and edge runtimes — anything with the Fetch API. Ships ESM, CJS, and full TypeScript types.
 
@@ -10,7 +10,17 @@ Zero dependencies. Works in Node ≥ 18, browsers, and edge runtimes — anythin
 npm i @musebook/sdk
 ```
 
-> Publishing is pending npm account policy resolution. Until then: `npm pack` here and `npm i ./musebook-sdk-1.2.0.tgz`, or import from source (`sdk/src/index.ts`).
+Version 1.3.0 is provided in this GitHub checkout; this release has not been
+published to npm. To use these prediction helpers, run the following in `sdk/`,
+then install the resulting tarball in your application:
+
+```sh
+npm ci
+npm test
+npm pack
+# In your application, use the path to that tarball:
+npm i /path/to/musebook/sdk/musebook-sdk-1.3.0.tgz
+```
 
 ## Use
 
@@ -20,8 +30,8 @@ import { MusebookClient } from "@musebook/sdk";
 const musebook = new MusebookClient(); // https://api.musebook.trade
 
 const health = await musebook.health(); // { ok, version, time }
-const openapi = await musebook.openapi(); // 102-path OpenAPI contract
-const skills = await musebook.skills(); // 92 skills
+const openapi = await musebook.openapi(); // current live OpenAPI contract
+const skills = await musebook.skills(); // live skill catalog
 const phoenix = await musebook.skill("phoenix"); // one skill by slug
 const connectors = await musebook.connectors(); // 16 connectors
 const bundle = await musebook.bundle(); // tarball URL + SHA-256
@@ -79,7 +89,8 @@ Point at a different host (staging, local dev):
 const musebook = new MusebookClient({ baseUrl: "http://localhost:8787" });
 ```
 
-Errors throw `MusebookError` with `.status` and `.body`:
+Errors throw `MusebookError` with `.status` and `.body`; prediction responses
+also expose the raw `.retryAfter` header when supplied:
 
 ```ts
 import { MusebookClient, MusebookError } from "@musebook/sdk";
@@ -93,7 +104,88 @@ try {
 }
 ```
 
-## API
+## Predictions
+
+Mainnet gateway: `/api/predictions`. All methods below use it. No Jupiter key or
+Musebook bearer is needed in the client. Prediction calls intentionally omit
+account credentials and custom headers, disable caching, reject redirects and
+time out after 25 seconds. They never retry, including after a lost response.
+Keep the configured base URL trusted; do not replace it with a URL from metadata.
+
+```ts
+import { MusebookClient, PREDICTION_USDC, predictionMicro } from '@musebook/sdk';
+const client = new MusebookClient();
+const status = await client.predictionTradingStatus();
+const events = await client.predictionEvents({ includeMarkets: true, start: 0, end: 5 });
+const positions = await client.predictionPositions({ ownerPubkey: '<owner public key>', start: 0, end: 20 });
+const book = await client.predictionOrderbook('<selected market ID>');
+// null means unavailable, not an empty book or zero price.
+
+if (!status.trading_active) throw new Error('Trading paused');
+const build = await client.predictionBuildOrder({
+  ownerPubkey: '<owner public key>', marketId: '<selected market ID>',
+  isBuy: true, isYes: true, depositAmount: predictionMicro('5'),
+  depositMint: PREDICTION_USDC,
+});
+// UNSIGNED ONLY. Stop for fresh owner review, simulation and wallet approval.
+```
+
+| Method | HTTP route (under `/api/predictions`) |
+| --- | --- |
+| `predictionEvents(query?)` | `GET /events` |
+| `predictionSearch(query, options?)` | `GET /events/search` |
+| `predictionEvent(eventId, options?)` | `GET /events/{eventId}` |
+| `predictionEventMarkets(eventId, page?)` | `GET /events/{eventId}/markets` |
+| `predictionEventMarket(eventId, marketId)` | `GET /events/{eventId}/markets/{marketId}` |
+| `predictionScore(eventId)` / `predictionScores(eventIds)` | `GET /events/{eventId}/score` / `GET /events/scores` |
+| `predictionSuggested(orderPubkey, provider?)` | `GET /events/suggested/{pubkey}` (an order, not owner) |
+| `predictionMarket(marketId)` / `predictionOrderbook(marketId)` | `GET /markets/{marketId}` / `GET /orderbook/{marketId}` |
+| `predictionTradingStatus()` | `GET /trading-status` |
+| `predictionPositions(query)` / `predictionPosition(positionPubkey)` | `GET /positions` / `GET /positions/{positionPubkey}` |
+| `predictionOrders(query)` / `predictionOrder(orderPubkey)` | `GET /orders` / `GET /orders/{orderPubkey}` |
+| `predictionOrderStatus(orderPubkey)` | `GET /orders/status/{orderPubkey}` |
+| `predictionHistory(query)` | `GET /history` |
+| `predictionProfile(ownerPubkey)` / `predictionPnlHistory(ownerPubkey, query?)` | `GET /profiles/{ownerPubkey}` / `GET /profiles/{ownerPubkey}/pnl-history` |
+| `predictionTrades()` / `predictionLeaderboards(query?)` | `GET /trades` / `GET /leaderboards` |
+| `predictionBuildOrder(input)` | `POST /orders` (buy or exact fractional sell, unsigned) |
+| `predictionBuildClose(positionPubkey, ownerPubkey)` | `DELETE /positions/{positionPubkey}` (unsigned) |
+| `predictionBuildCloseAll(ownerPubkey, minSellPriceSlippageBps)` | `DELETE /positions` (unsigned closes/claims) |
+| `predictionBuildClaim(positionPubkey, ownerPubkey)` | `POST /positions/{positionPubkey}/claim` (unsigned) |
+| `predictionExecute(input)` | `POST /execute` (already-signed submission, consequential) |
+
+Account-list queries require `ownerPubkey`. Pages use `start`/`end`, not cursors,
+and span 1-100 items. Pagination `total` is optional; use `hasNext` and `end`
+for continuation. Scores take 1-100 event IDs. Unknown fields are rejected
+by the server. The SDK supplies compile-time types, not complete runtime schema
+validation. Profile, P&L, trades and leaderboard responses retain the provider's
+object structure as `Record<string, unknown>` rather than inventing fields.
+
+Amounts use exact strings: `predictionMicro('1.234567') === '1234567'`.
+Buys accept `PREDICTION_USDC` or `PREDICTION_JUPUSD` with a $5 minimum.
+Forecast (`BISON-`) is 5-250 USDC and the YES side of the selected Up/Down market.
+Sells take `positionPubkey`, `isBuy:false`, `isYes`, and **exactly one** of
+`contractsMicro`, `contractsDecimal`, or legacy whole `contracts`, without a
+marketId or deposit. Prefer exact micro/decimal quantities. Never cast financial
+integer strings to floating-point numbers for request construction.
+
+The SDK is a low-level transport, not the browser's safety layer. Before calling
+`predictionExecute`, independently verify owner, market, side, quantity, fees
+and expiry; simulate, obtain explicit approval and a wallet signature, preserve
+original bytes/co-signatures/blockhash and **all** `build.execution.context`,
+and persist the expected signature before broadcasting. `requestId` is only
+correlation, not idempotency. Neither `ok:true` nor chain confirmation proves a
+keeper fill: poll `predictionOrderStatus`. Forecast swaps settle automatically.
+Never retry an uncertain submission. Reconcile the saved signature and original
+expiry first, even after HTTP errors or client timeouts.
+
+`predictionBuildClaim` does not sign or send. The caller must validate fresh
+ownership/eligibility and payout, review, sign, then send the claim via the
+Solana RPC with preflight enabled and confirm the original expiry. Batch-close
+builds can expire while earlier items are reviewed; prefer fresh individual
+builds. See the [complete agent guide](https://github.com/Solizardking/musebook/blob/main/docs/PREDICTIONS.md) for recovery and
+the distinct browser WebMCP tools. The read-only Research plugin is unchanged.
+
+## Agent API
 
 | Method | Endpoint | Description |
 |---|---|---|

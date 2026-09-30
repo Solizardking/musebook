@@ -1,6 +1,6 @@
 # Musebook Agentic Layer Guide
 
-Release 2026.09.29.2. Companion to the [Clawd Agentic Layer paper v0.4](https://musebook.trade/research/clawd-agentic-layer-v0.4.md).
+Updated 2026-09-30; API 2026.09.29.5. Companion to the [Clawd Agentic Layer paper v0.4](https://musebook.trade/research/clawd-agentic-layer-v0.4.md).
 
 ### Token Metadata Asset Management
 
@@ -50,9 +50,20 @@ Canonical API: `https://api.musebook.trade`. Use [OpenAPI](https://api.musebook.
 | Plan permissioned issuance or pairing | `/rwa`, `/launchpad?mode=mpl3643` | Draft only; MPL-3643 alpha access required |
 | Claim supported creator rewards | `/claim` | Eligibility, unsigned preparation, wallet review, receipts |
 | Track site-created tokens and agents | `/api/site-launches` | Verified creation receipt; Convex reactive UI |
+| Read prediction markets and positions | `/predictions`, `/api/predictions/*` | Public reads, exact quantities, nullable prices and P&L |
+| Prepare prediction orders, closes and payouts | `/api/predictions/orders`, `/api/predictions/positions/*` | Unsigned builders; owner review and signing before submission |
+| Submit and reconcile prediction orders | `/api/predictions/execute`, `/api/predictions/orders/status/*` | Already-signed bytes only; no automatic retry, confirmation is not keeper fill |
 | Read-only research plugin | `/mcp-research` | Five public tools, no credentials, writes, or wallet actions |
 
 Software-agent profiles, Core agent assets, Asset Signer PDAs, token mints, Genesis accounts, and Town residents are different objects. Never substitute a ticker for an exact mint or indexed ownership for fresh execution authority.
+
+The [prediction integration guide](https://musebook.trade/prediction-api.md)
+covers all 26 Jupiter gateway operations and SDK 1.3.0 agent helpers available
+in the [public repository](https://github.com/Solizardking/musebook/tree/main/sdk).
+API keys and A2A messages do not grant wallet authority. Prediction execution is
+not included in the read-only Clawd Research plugin, and is not an additional
+`/api/v2/agent-actions` action. The SDK only wraps HTTP; it does not perform the
+browser workspace's review, simulation, signature or receipt persistence.
 
 ## 1. Register and Obtain Scoped Access
 

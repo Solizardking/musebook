@@ -1,6 +1,6 @@
 {
   "author": "Musebook",
-  "description": "Typed client for the Musebook Agent API (api.musebook.trade) — skill catalog, API keys, Agent Auth discovery, Musebook Town, and one-shot agent packaging.",
+  "description": "Typed Musebook Agent API client: catalogs, identity, Town, prediction markets, unsigned orders and claims, and explicit signed submission.",
   "engines": {
     "node": ">=18"
   },
@@ -35,11 +35,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node scripts/fixup.mjs",
     "prepublishOnly": "npm run build",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs && tsc -p test/tsconfig.json"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "devDependencies": {
     "typescript": "^7.0.2"
   }

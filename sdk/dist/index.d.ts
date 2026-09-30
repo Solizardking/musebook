@@ -112,11 +112,214 @@ export interface SignedTownRequest {
 export interface ApiError {
     error: string;
     slug?: string;
+    code?: string;
 }
+export declare const PREDICTION_USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+export declare const PREDICTION_JUPUSD = "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD";
+export type PredictionProvider = "polymarket" | "kalshi" | "bisonfi";
+export interface PredictionPagination {
+    start?: number;
+    end?: number;
+}
+export interface PredictionPage<T> {
+    data: T[];
+    pagination: {
+        start: number;
+        end: number;
+        total?: number;
+        hasNext: boolean;
+    };
+}
+export interface PredictionQuantities {
+    /** Legacy whole contracts; prefer the exact micro or decimal fields. */
+    contracts?: string;
+    contractsMicro?: string;
+    contractsDecimal?: string;
+}
+export interface PredictionMarket {
+    marketId: string;
+    status: string;
+    eventId?: string;
+    title?: string;
+    provider?: string;
+    tradable?: boolean;
+    result?: string | null;
+    pricing?: {
+        buyYesPriceUsd?: number | null;
+        buyNoPriceUsd?: number | null;
+        sellYesPriceUsd?: number | null;
+        sellNoPriceUsd?: number | null;
+    };
+    marketOptions?: {
+        label: string;
+        buyYes: boolean;
+    }[];
+    rulesPrimary?: string;
+    rulesSecondary?: string;
+    [key: string]: unknown;
+}
+export interface PredictionScore {
+    eventId: string;
+    gameId: string;
+    live: boolean;
+    ended: boolean;
+    updatedAt: string;
+    score?: string | null;
+    homeTeam?: string | null;
+    awayTeam?: string | null;
+    [key: string]: unknown;
+}
+export interface PredictionEvent {
+    eventId: string;
+    metadata?: {
+        title?: string;
+        imageUrl?: string | null;
+        [key: string]: unknown;
+    };
+    markets?: PredictionMarket[];
+    liveScore?: PredictionScore | null;
+    [key: string]: unknown;
+}
+export interface PredictionPosition extends PredictionQuantities {
+    pubkey: string;
+    marketId: string;
+    isYes: boolean;
+    claimable: boolean;
+    claimed: boolean;
+    owner?: string;
+    ownerPubkey?: string;
+    openOrders?: number;
+    /** Micro-USD strings; null or absent means unavailable, not zero. */
+    valueUsd?: string | null;
+    pnlUsd?: string | null;
+    payoutUsd?: string;
+    [key: string]: unknown;
+}
+export interface PredictionOrder extends PredictionQuantities {
+    pubkey: string;
+    marketId: string;
+    status: string;
+    isBuy?: boolean;
+    isYes?: boolean;
+    ownerPubkey?: string;
+    [key: string]: unknown;
+}
+export interface PredictionHistory extends PredictionQuantities {
+    id: number;
+    eventType: string;
+    signature?: string;
+    timestamp?: number;
+    marketId?: string;
+    [key: string]: unknown;
+}
+export interface PredictionOrderbook {
+    yes: [number, number][];
+    no: [number, number][];
+    /** Exact decimal-dollar prices; sizes can be fractional. */
+    yes_dollars: [string, number][];
+    no_dollars: [string, number][];
+}
+export interface PredictionEventsQuery extends PredictionPagination {
+    provider?: PredictionProvider;
+    category?: "all" | "crypto" | "sports" | "politics" | "esports" | "culture" | "economics" | "tech";
+    filter?: "new" | "live" | "trending" | "upcoming";
+    includeMarkets?: boolean;
+    includeAllMarkets?: boolean;
+    sortBy?: "volume" | "beginAt";
+    sortDirection?: "asc" | "desc";
+    tags?: string;
+    subcategory?: string;
+}
+export interface PredictionWalletQuery extends PredictionPagination {
+    ownerPubkey: string;
+}
+export type PredictionOrderInput = {
+    ownerPubkey: string;
+    marketId: string;
+    isBuy: true;
+    isYes: boolean;
+    /** Micro units as an integer string. Minimum 5,000,000; never a float. */
+    depositAmount: string;
+    depositMint: typeof PREDICTION_USDC | typeof PREDICTION_JUPUSD;
+} | ({
+    ownerPubkey: string;
+    positionPubkey: string;
+    isBuy: false;
+    isYes: boolean;
+} & ({
+    contractsMicro: string;
+    contractsDecimal?: never;
+    contracts?: never;
+} | {
+    contractsDecimal: string;
+    contractsMicro?: never;
+    contracts?: never;
+} | {
+    contracts: string;
+    contractsMicro?: never;
+    contractsDecimal?: never;
+}));
+export interface PredictionExpiry {
+    blockhash: string;
+    lastValidBlockHeight: number;
+}
+export interface PredictionBuild {
+    /** Unsigned preparation is not execution. Some builds have no transaction. */
+    transaction: string | null;
+    txMeta: PredictionExpiry | null;
+    requiredSigners?: string[];
+    execution?: {
+        endpoint?: string;
+        context?: Record<string, unknown>;
+    };
+    executionModel?: string | null;
+    settlement?: string | null;
+    order?: PredictionQuantities & {
+        orderPubkey?: string | null;
+        positionPubkey?: string;
+        userPubkey?: string;
+        marketId?: string;
+        isBuy?: boolean;
+        isYes?: boolean;
+        [key: string]: unknown;
+    };
+    [key: string]: unknown;
+}
+export interface PredictionClaim {
+    transaction: string;
+    txMeta: PredictionExpiry;
+    position: PredictionQuantities & {
+        positionPubkey: string;
+        ownerPubkey: string;
+        userPubkey: string;
+        marketPubkey?: string;
+        isYes: boolean;
+        payoutAmountUsd: string;
+    };
+    [key: string]: unknown;
+}
+export interface PredictionExecuteInput {
+    signedTransaction: string;
+    /** Preserve the complete build.execution.context object without modification. */
+    context?: Record<string, unknown>;
+    /** Correlation only, NOT an idempotency guarantee. */
+    requestId?: string;
+}
+export interface PredictionExecution {
+    ok: true;
+    status: "Success";
+    signature: string;
+    requestId?: string;
+    [key: string]: unknown;
+}
+/** Exact six-decimal display amount to positive u64 micro units, without floats. */
+export declare function predictionMicro(value: string): string;
 export declare class MusebookError extends Error {
     readonly status: number;
     readonly body: ApiError | unknown;
-    constructor(status: number, body: ApiError | unknown);
+    /** Raw Retry-After header, if supplied. The client never automatically retries. */
+    readonly retryAfter: string | null;
+    constructor(status: number, body: ApiError | unknown, retryAfter?: string | null);
 }
 export interface MusebookClientOptions {
     /** Defaults to https://api.musebook.trade */
@@ -135,6 +338,72 @@ export declare class MusebookClient {
     private readonly doFetch;
     constructor(options?: MusebookClientOptions);
     private request;
+    private predictionRequest;
+    private predictionGet;
+    predictionEvents(query?: PredictionEventsQuery): Promise<PredictionPage<PredictionEvent>>;
+    predictionSearch(query: string, options?: {
+        provider?: PredictionProvider;
+        limit?: number;
+    }): Promise<{
+        data: PredictionEvent[];
+    }>;
+    predictionEvent(eventId: string, options?: {
+        includeMarkets?: boolean;
+        includeAllMarkets?: boolean;
+    }): Promise<PredictionEvent>;
+    predictionEventMarkets(eventId: string, page?: PredictionPagination): Promise<PredictionPage<PredictionMarket>>;
+    predictionEventMarket(eventId: string, marketId: string): Promise<PredictionMarket>;
+    predictionScore(eventId: string): Promise<PredictionScore | null>;
+    predictionScores(eventIds: string[]): Promise<{
+        data: PredictionScore[];
+    }>;
+    /** This is an ORDER public key, not a wallet owner address. */
+    predictionSuggested(orderPubkey: string, provider?: PredictionProvider): Promise<{
+        data?: PredictionEvent[];
+    }>;
+    predictionMarket(marketId: string): Promise<PredictionMarket>;
+    predictionOrderbook(marketId: string): Promise<PredictionOrderbook | null>;
+    predictionTradingStatus(): Promise<{
+        trading_active: boolean;
+    }>;
+    predictionPositions(query: PredictionWalletQuery & {
+        marketPubkey?: string;
+        marketId?: string;
+        isYes?: boolean;
+    }): Promise<PredictionPage<PredictionPosition>>;
+    predictionPosition(positionPubkey: string): Promise<PredictionPosition>;
+    predictionOrders(query: PredictionWalletQuery): Promise<PredictionPage<PredictionOrder>>;
+    predictionOrder(orderPubkey: string): Promise<PredictionOrder>;
+    predictionOrderStatus(orderPubkey: string): Promise<{
+        orderPubkey: string;
+        status: string;
+        history?: Record<string, unknown>[];
+    }>;
+    predictionHistory(query: PredictionWalletQuery & {
+        id?: number;
+        positionPubkey?: string;
+    }): Promise<PredictionPage<PredictionHistory>>;
+    predictionProfile(ownerPubkey: string): Promise<Record<string, unknown>>;
+    predictionPnlHistory(ownerPubkey: string, query?: {
+        interval?: "24h" | "1w" | "1m";
+        count?: number;
+    }): Promise<Record<string, unknown>>;
+    predictionTrades(): Promise<Record<string, unknown>>;
+    predictionLeaderboards(query?: {
+        period?: "all_time" | "weekly" | "monthly";
+        metric?: "pnl" | "volume" | "win_rate";
+        limit?: number;
+    }): Promise<Record<string, unknown>>;
+    /** Prepare only. Review, simulate and obtain a wallet signature separately. */
+    predictionBuildOrder(input: PredictionOrderInput): Promise<PredictionBuild>;
+    predictionBuildClose(positionPubkey: string, ownerPubkey: string): Promise<PredictionBuild>;
+    /** Unsigned batch. Rebuild each item just before review to avoid expired transactions. */
+    predictionBuildCloseAll(ownerPubkey: string, minSellPriceSlippageBps: number): Promise<{
+        data: (PredictionBuild | PredictionClaim)[];
+    }>;
+    predictionBuildClaim(positionPubkey: string, ownerPubkey: string): Promise<PredictionClaim>;
+    /** Submit ALREADY-SIGNED bytes once. Does not review, sign, confirm or retry. */
+    predictionExecute(input: PredictionExecuteInput): Promise<PredictionExecution>;
     /** Liveness probe — version and server time. */
     health(): Promise<Health>;
     /** Machine-readable OpenAPI 3.0 contract for the full integration surface. */

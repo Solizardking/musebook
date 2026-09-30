@@ -136,13 +136,144 @@ export interface SignedTownRequest {
 export interface ApiError {
   error: string;
   slug?: string;
+  code?: string;
+}
+
+export const PREDICTION_USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+export const PREDICTION_JUPUSD = "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD";
+export type PredictionProvider = "polymarket" | "kalshi" | "bisonfi";
+export interface PredictionPagination { start?: number; end?: number }
+export interface PredictionPage<T> {
+  data: T[];
+  pagination: { start: number; end: number; total?: number; hasNext: boolean };
+}
+export interface PredictionQuantities {
+  /** Legacy whole contracts; prefer the exact micro or decimal fields. */
+  contracts?: string;
+  contractsMicro?: string;
+  contractsDecimal?: string;
+}
+export interface PredictionMarket {
+  marketId: string;
+  status: string;
+  eventId?: string;
+  title?: string;
+  provider?: string;
+  tradable?: boolean;
+  result?: string | null;
+  pricing?: {
+    buyYesPriceUsd?: number | null; buyNoPriceUsd?: number | null;
+    sellYesPriceUsd?: number | null; sellNoPriceUsd?: number | null;
+  };
+  marketOptions?: { label: string; buyYes: boolean }[];
+  rulesPrimary?: string;
+  rulesSecondary?: string;
+  [key: string]: unknown;
+}
+export interface PredictionScore {
+  eventId: string; gameId: string; live: boolean; ended: boolean; updatedAt: string;
+  score?: string | null; homeTeam?: string | null; awayTeam?: string | null;
+  [key: string]: unknown;
+}
+export interface PredictionEvent {
+  eventId: string;
+  metadata?: { title?: string; imageUrl?: string | null; [key: string]: unknown };
+  markets?: PredictionMarket[];
+  liveScore?: PredictionScore | null;
+  [key: string]: unknown;
+}
+export interface PredictionPosition extends PredictionQuantities {
+  pubkey: string; marketId: string; isYes: boolean; claimable: boolean; claimed: boolean;
+  owner?: string; ownerPubkey?: string; openOrders?: number;
+  /** Micro-USD strings; null or absent means unavailable, not zero. */
+  valueUsd?: string | null; pnlUsd?: string | null; payoutUsd?: string;
+  [key: string]: unknown;
+}
+export interface PredictionOrder extends PredictionQuantities {
+  pubkey: string; marketId: string; status: string;
+  isBuy?: boolean; isYes?: boolean; ownerPubkey?: string;
+  [key: string]: unknown;
+}
+export interface PredictionHistory extends PredictionQuantities {
+  id: number; eventType: string;
+  signature?: string; timestamp?: number; marketId?: string;
+  [key: string]: unknown;
+}
+export interface PredictionOrderbook {
+  yes: [number, number][]; no: [number, number][];
+  /** Exact decimal-dollar prices; sizes can be fractional. */
+  yes_dollars: [string, number][]; no_dollars: [string, number][];
+}
+export interface PredictionEventsQuery extends PredictionPagination {
+  provider?: PredictionProvider;
+  category?: "all" | "crypto" | "sports" | "politics" | "esports" | "culture" | "economics" | "tech";
+  filter?: "new" | "live" | "trending" | "upcoming";
+  includeMarkets?: boolean; includeAllMarkets?: boolean;
+  sortBy?: "volume" | "beginAt"; sortDirection?: "asc" | "desc";
+  tags?: string; subcategory?: string;
+}
+export interface PredictionWalletQuery extends PredictionPagination { ownerPubkey: string }
+export type PredictionOrderInput = {
+  ownerPubkey: string; marketId: string; isBuy: true; isYes: boolean;
+  /** Micro units as an integer string. Minimum 5,000,000; never a float. */
+  depositAmount: string; depositMint: typeof PREDICTION_USDC | typeof PREDICTION_JUPUSD;
+} | ({ ownerPubkey: string; positionPubkey: string; isBuy: false; isYes: boolean } & (
+  { contractsMicro: string; contractsDecimal?: never; contracts?: never } |
+  { contractsDecimal: string; contractsMicro?: never; contracts?: never } |
+  { contracts: string; contractsMicro?: never; contractsDecimal?: never }
+));
+export interface PredictionExpiry { blockhash: string; lastValidBlockHeight: number }
+export interface PredictionBuild {
+  /** Unsigned preparation is not execution. Some builds have no transaction. */
+  transaction: string | null;
+  txMeta: PredictionExpiry | null;
+  requiredSigners?: string[];
+  execution?: { endpoint?: string; context?: Record<string, unknown> };
+  executionModel?: string | null; settlement?: string | null;
+  order?: PredictionQuantities & {
+    orderPubkey?: string | null; positionPubkey?: string; userPubkey?: string;
+    marketId?: string; isBuy?: boolean; isYes?: boolean;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+export interface PredictionClaim {
+  transaction: string;
+  txMeta: PredictionExpiry;
+  position: PredictionQuantities & {
+    positionPubkey: string; ownerPubkey: string; userPubkey: string;
+    marketPubkey?: string; isYes: boolean; payoutAmountUsd: string;
+  };
+  [key: string]: unknown;
+}
+export interface PredictionExecuteInput {
+  signedTransaction: string;
+  /** Preserve the complete build.execution.context object without modification. */
+  context?: Record<string, unknown>;
+  /** Correlation only, NOT an idempotency guarantee. */
+  requestId?: string;
+}
+export interface PredictionExecution {
+  ok: true; status: "Success"; signature: string; requestId?: string;
+  [key: string]: unknown;
+}
+
+/** Exact six-decimal display amount to positive u64 micro units, without floats. */
+export function predictionMicro(value: string): string {
+  if (!/^\d{1,14}(\.\d{1,6})?$/.test(value)) throw new RangeError("Use a positive decimal string with at most six decimals.");
+  const [whole, fraction = ""] = value.split(".");
+  const amount = BigInt(whole) * 1000000n + BigInt(fraction.padEnd(6, "0"));
+  if (amount <= 0n || amount > 18446744073709551615n) throw new RangeError("Amount is outside the positive u64 range.");
+  return amount.toString();
 }
 
 export class MusebookError extends Error {
   readonly status: number;
   readonly body: ApiError | unknown;
+  /** Raw Retry-After header, if supplied. The client never automatically retries. */
+  readonly retryAfter: string | null;
 
-  constructor(status: number, body: ApiError | unknown) {
+  constructor(status: number, body: ApiError | unknown, retryAfter: string | null = null) {
     const msg =
       body && typeof body === "object" && "error" in body
         ? String((body as ApiError).error)
@@ -151,6 +282,7 @@ export class MusebookError extends Error {
     this.name = "MusebookError";
     this.status = status;
     this.body = body;
+    this.retryAfter = retryAfter;
   }
 }
 
@@ -178,7 +310,7 @@ export class MusebookClient {
   constructor(options: MusebookClientOptions = {}) {
     this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
     this.apiKey = options.apiKey;
-    this.headers = { "user-agent": "musebook-sdk/1.2.0", ...(options.headers ?? {}) };
+    this.headers = { "user-agent": "musebook-sdk/1.3.0", ...(options.headers ?? {}) };
     this.doFetch = options.fetch ?? fetch.bind(globalThis);
   }
 
@@ -208,6 +340,121 @@ export class MusebookClient {
 
     if (!res.ok) throw new MusebookError(res.status, data);
     return data as T;
+  }
+
+  // Public prediction requests do not inherit account credentials or custom headers.
+  private async predictionRequest<T>(method: "GET" | "POST" | "DELETE", path: string, body?: unknown): Promise<T> {
+    const res = await this.doFetch(`${this.baseUrl}/api/predictions${path}`, {
+      method, cache: "no-store", credentials: "omit", redirect: "error",
+      signal: AbortSignal.timeout(25000),
+      headers: { accept: "application/json", ...(body !== undefined ? { "content-type": "application/json" } : {}) },
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    });
+    let data: unknown;
+    try { data = await res.json(); }
+    catch { throw new MusebookError(res.ok ? 502 : res.status, { error: "Unreadable prediction response." }, res.headers.get("retry-after")); }
+    if (!res.ok || (data && typeof data === "object" && "ok" in data && data.ok === false)) {
+      throw new MusebookError(res.status, data, res.headers.get("retry-after"));
+    }
+    if (data === null && !path.startsWith("/orderbook/") && !path.endsWith("/score")) {
+      throw new MusebookError(502, { error: "Unreadable prediction response." });
+    }
+    return data as T;
+  }
+
+  private predictionGet<T>(path: string, query: object = {}): Promise<T> {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) if (value !== undefined) params.set(key, String(value));
+    const search = params.toString();
+    return this.predictionRequest<T>("GET", path + (search ? `?${search}` : ""));
+  }
+
+  predictionEvents(query: PredictionEventsQuery = {}): Promise<PredictionPage<PredictionEvent>> {
+    return this.predictionGet("/events", query);
+  }
+  predictionSearch(query: string, options: { provider?: PredictionProvider; limit?: number } = {}): Promise<{ data: PredictionEvent[] }> {
+    return this.predictionGet("/events/search", { ...options, query });
+  }
+  predictionEvent(eventId: string, options: { includeMarkets?: boolean; includeAllMarkets?: boolean } = {}): Promise<PredictionEvent> {
+    return this.predictionGet(`/events/${encodeURIComponent(eventId)}`, options);
+  }
+  predictionEventMarkets(eventId: string, page: PredictionPagination = {}): Promise<PredictionPage<PredictionMarket>> {
+    return this.predictionGet(`/events/${encodeURIComponent(eventId)}/markets`, page);
+  }
+  predictionEventMarket(eventId: string, marketId: string): Promise<PredictionMarket> {
+    return this.predictionGet(`/events/${encodeURIComponent(eventId)}/markets/${encodeURIComponent(marketId)}`);
+  }
+  predictionScore(eventId: string): Promise<PredictionScore | null> {
+    return this.predictionGet(`/events/${encodeURIComponent(eventId)}/score`);
+  }
+  predictionScores(eventIds: string[]): Promise<{ data: PredictionScore[] }> {
+    if (eventIds.length < 1 || eventIds.length > 100) throw new RangeError("Request 1-100 event scores.");
+    return this.predictionGet("/events/scores", { eventIds: eventIds.join(",") });
+  }
+  /** This is an ORDER public key, not a wallet owner address. */
+  predictionSuggested(orderPubkey: string, provider?: PredictionProvider): Promise<{ data?: PredictionEvent[] }> {
+    return this.predictionGet(`/events/suggested/${encodeURIComponent(orderPubkey)}`, { provider });
+  }
+  predictionMarket(marketId: string): Promise<PredictionMarket> {
+    return this.predictionGet(`/markets/${encodeURIComponent(marketId)}`);
+  }
+  predictionOrderbook(marketId: string): Promise<PredictionOrderbook | null> {
+    return this.predictionGet(`/orderbook/${encodeURIComponent(marketId)}`);
+  }
+  predictionTradingStatus(): Promise<{ trading_active: boolean }> {
+    return this.predictionGet("/trading-status");
+  }
+  predictionPositions(query: PredictionWalletQuery & { marketPubkey?: string; marketId?: string; isYes?: boolean }): Promise<PredictionPage<PredictionPosition>> {
+    return this.predictionGet("/positions", query);
+  }
+  predictionPosition(positionPubkey: string): Promise<PredictionPosition> {
+    return this.predictionGet(`/positions/${encodeURIComponent(positionPubkey)}`);
+  }
+  predictionOrders(query: PredictionWalletQuery): Promise<PredictionPage<PredictionOrder>> {
+    return this.predictionGet("/orders", query);
+  }
+  predictionOrder(orderPubkey: string): Promise<PredictionOrder> {
+    return this.predictionGet(`/orders/${encodeURIComponent(orderPubkey)}`);
+  }
+  predictionOrderStatus(orderPubkey: string): Promise<{ orderPubkey: string; status: string; history?: Record<string, unknown>[] }> {
+    return this.predictionGet(`/orders/status/${encodeURIComponent(orderPubkey)}`);
+  }
+  predictionHistory(query: PredictionWalletQuery & { id?: number; positionPubkey?: string }): Promise<PredictionPage<PredictionHistory>> {
+    return this.predictionGet("/history", query);
+  }
+  predictionProfile(ownerPubkey: string): Promise<Record<string, unknown>> {
+    return this.predictionGet(`/profiles/${encodeURIComponent(ownerPubkey)}`);
+  }
+  predictionPnlHistory(ownerPubkey: string, query: { interval?: "24h" | "1w" | "1m"; count?: number } = {}): Promise<Record<string, unknown>> {
+    return this.predictionGet(`/profiles/${encodeURIComponent(ownerPubkey)}/pnl-history`, query);
+  }
+  predictionTrades(): Promise<Record<string, unknown>> {
+    return this.predictionGet("/trades");
+  }
+  predictionLeaderboards(query: { period?: "all_time" | "weekly" | "monthly"; metric?: "pnl" | "volume" | "win_rate"; limit?: number } = {}): Promise<Record<string, unknown>> {
+    return this.predictionGet("/leaderboards", query);
+  }
+  /** Prepare only. Review, simulate and obtain a wallet signature separately. */
+  predictionBuildOrder(input: PredictionOrderInput): Promise<PredictionBuild> {
+    return this.predictionRequest("POST", "/orders", input);
+  }
+  predictionBuildClose(positionPubkey: string, ownerPubkey: string): Promise<PredictionBuild> {
+    return this.predictionRequest("DELETE", `/positions/${encodeURIComponent(positionPubkey)}`, { ownerPubkey });
+  }
+  /** Unsigned batch. Rebuild each item just before review to avoid expired transactions. */
+  predictionBuildCloseAll(ownerPubkey: string, minSellPriceSlippageBps: number): Promise<{ data: (PredictionBuild | PredictionClaim)[] }> {
+    return this.predictionRequest("DELETE", "/positions", { ownerPubkey, minSellPriceSlippageBps });
+  }
+  predictionBuildClaim(positionPubkey: string, ownerPubkey: string): Promise<PredictionClaim> {
+    return this.predictionRequest("POST", `/positions/${encodeURIComponent(positionPubkey)}/claim`, { ownerPubkey });
+  }
+  /** Submit ALREADY-SIGNED bytes once. Does not review, sign, confirm or retry. */
+  async predictionExecute(input: PredictionExecuteInput): Promise<PredictionExecution> {
+    const result = await this.predictionRequest<PredictionExecution>("POST", "/execute", input);
+    if (result?.ok !== true || result.status !== "Success" || typeof result.signature !== "string" || !result.signature) {
+      throw new MusebookError(502, { error: "Execution outcome is uncertain. Reconcile the saved signature.", code: "execution_uncertain" });
+    }
+    return result;
   }
 
   /** Liveness probe — version and server time. */

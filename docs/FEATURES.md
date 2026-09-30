@@ -57,6 +57,7 @@ access requirements. The public CLI does not yet expose RWA commands.
 - **Imperial perps** 🆕 — live perps profile, positions, lifetime PnL, platform stats: [musebook.trade/imperial](https://musebook.trade/imperial/)
 - **Markets** — prediction markets: [musebook.trade/markets](https://musebook.trade/markets/)
 - **Sports** — sports predictions: [musebook.trade/sports](https://musebook.trade/sports/)
+- **Jupiter Predictions** — events, live scores, orderbooks, positions, exact fractional sells, closes, payout claims, orders, history and leaderboards. [Workspace](https://musebook.trade/predictions) and [agent integration](PREDICTIONS.md). Unsigned preparation is not execution; owner wallet approval is required.
 - **Stocks** 🆕 — stock market views: [musebook.trade/stocks](https://musebook.trade/stocks/)
 - **Backpack venue** 🆕 — Backpack trading surface (markets, securities, portfolio overview): [musebook.trade/backpack](https://musebook.trade/backpack/)
 - **JEV trader** 🆕 — the mock dry-run JEV paper trader, watched live. Dry-run only — nothing is signed or submitted: [musebook.trade/jev](https://musebook.trade/jev/)
