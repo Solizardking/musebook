@@ -30,6 +30,10 @@ npm --prefix tui run build
 
 ## Deployed Site And API
 
+- Final site source: `d16a8c5`; deployed snapshot revision: `f1af0a7`.
+  GitHub Verify run `36874979459` completed successfully on that revision,
+  including browser tests, Worker/Convex tests and high-severity dependency gates.
+  The snapshot update changed only live data, not the application artifact.
 - API contract: `2026.10.01.1`, 214 paths. The canonical site and
   `api.musebook.trade` specifications match.
 - All 71 site routes loaded at desktop and mobile sizes with HTTP 200,
@@ -45,6 +49,8 @@ npm --prefix tui run build
   Unsigned Town mutations returned 401. Those are auth-boundary checks, not
   evidence that signed user transactions completed.
 - Local site, Worker and Convex suites passed 443, 642 and 49 tests respectively.
+- Final production checks also verified live Cabbage candle rendering at
+  1440, 768, 390 and 320px, plus Tape search and exact-mint chart selection.
 
 ## Remaining Boundaries
 
