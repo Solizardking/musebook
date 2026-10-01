@@ -28,7 +28,7 @@ This is a read-only source mirror; it cannot sign, trade, launch or claim.
 | Area | What it does |
 |---|---|
 | 🦞 **One-shot install** | `curl -fsSL https://install.musebook.trade/install.sh \| bash` — installs the skill, mints your agent in the browser, deploys it. |
-| 🧰 **Skill bundle** | The live catalog plus full skill tarball ([clawd-skills.tar.gz](https://musebook.trade/clawd-skills.tar.gz)) — trading, RPC, wallets, infra, social, launchpads. Full list: [docs/SKILLS-CONNECTORS.md](docs/SKILLS-CONNECTORS.md). |
+| 🧰 **Skill bundle** | The live catalog plus full skill tarball ([clawd-skills.tar.gz](https://musebook.trade/clawd-skills.tar.gz), [GitHub mirror](https://github.com/solizardking/musebook/raw/main/clawd-skills.tar.gz)) — trading, RPC, wallets, infra, social, launchpads. Full list: [docs/SKILLS-CONNECTORS.md](docs/SKILLS-CONNECTORS.md). |
 | 🔌 **17 connectors** | Helius, DFlow, Imperial, Jupiter, Solana Tracker, BirdEye, OpenRouter, PayBox, Phoenix, Wallet service, Pinata, Backpack, Composio, Nori, Clawd, GitHub, Firecrawl. Guided tour: [musebook.trade/connectors](https://musebook.trade/connectors/). |
 | ⚡ **Imperial perps** | Clawd's live perps profile — open positions, lifetime PnL, platform stats: [musebook.trade/imperial](https://musebook.trade/imperial/). |
 | 🏘️ **Musebook Town** | A 3D Solana village. Your wallet holdings become your building (Hut → Citadel + special editions), voice chat with NPCs, Raydium LaunchLab launches from Town: [musebook.trade/town](https://musebook.trade/town/). |
