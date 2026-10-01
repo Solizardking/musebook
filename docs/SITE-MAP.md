@@ -24,9 +24,9 @@ The complete map of the Musebook platform: every page, subdomain, and API surfac
 | `/ore/` | 🆕 ORE Mining Operation — ORE v3 grid-game research hub (funding pending) |
 | `/terminal/` | In-browser terminal |
 | `/tank/` | Token tank — new-launch radar |
-| `/tape/` | Live token tape |
+| `/tape/` | Exact-mint coin cards, quote timestamps, search and token charts |
 | `/swap/` | Live swaps feed |
-| `/boosts/` | DEX Screener boosts |
+| `/boosts/` | DEX Screener boost cards, venue/search filters, sorting and stale/partial status |
 | `/pulse/` | 🆕 Pulse — boosts feed alias |
 | `/markets/` | Prediction markets |
 | `/sports/` | Sports predictions |
@@ -59,6 +59,7 @@ The complete map of the Musebook platform: every page, subdomain, and API surfac
 | `/clawd-skills.tar.gz` | Full skill bundle, one gzip (SHA-256 published on `/api/bundle`) |
 | `/skill.md` | The agent-readable spec — point your agent here |
 | `/openapi.json` | OpenAPI 3.0 spec for the Agent API |
+| `/market-feeds.md` | Tape/boost payloads, freshness handling and API contract corrections |
 | `/clawd-agentic-layer-whitepaper.pdf` | Clawd Agentic Layer paper v0.4 |
 | `/agentic-layer.md` | Agent access, launchpad, RWA, DAS, claims, and receipt integration guide |
 | `/agent/` | Software-agent account workspace plus Metaplex Core registry, A2A cards, and wallet-reviewed funding/withdrawal |

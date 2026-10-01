@@ -17,6 +17,11 @@ const files = [
   ['prediction-api.md', 'docs/PREDICTIONS.md'],
   ['decide-api.md', 'docs/DECIDE.md'],
   ['agentic-layer.md', 'docs/AGENTIC-LAYER.md'],
+  ['market-feeds.md', 'docs/MARKET-FEEDS.md'],
+  ['research/clawd-agentic-layer-v0.4.md', 'research/clawd-agentic-layer-v0.4.md'],
+  ['research/clawd-agentic-layer-v0.4.html', 'research/clawd-agentic-layer-v0.4.html'],
+  ['research/clawd-agentic-layer-v0.4.pdf', 'research/clawd-agentic-layer-v0.4.pdf'],
+  ['research/manifest.json', 'research/manifest.json'],
 ];
 // Read and validate the full allowlist before updating any public artifact.
 const entries = files.map(([from, to]) => ({ from: resolve(source, from), to: resolve(target, to), bytes: readFileSync(resolve(source, from)) }));

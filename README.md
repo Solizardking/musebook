@@ -40,6 +40,20 @@ Full platform tour: [docs/SITE-MAP.md](docs/SITE-MAP.md).
 
 ## Agentic Layer Research and APIs
 
+### Market snapshots and coin cards
+
+[Tape](https://musebook.trade/tape/) now shows exact-mint coin cards with quotes,
+liquidity, volume and source timestamps, plus search and chart inspection.
+[Boosts](https://musebook.trade/boosts/) supports token/venue filters, sorting,
+numeric latest/total boost counts and explicit stale/partial data states.
+Paid boosts are advertisements, not recommendations.
+
+Agents can read `/live/tokens.json`, `/api/terminal/tokens`,
+`/live/dex-boosts.json` and `/api/pulse` without an API key. Poll at most once
+per 30 seconds, preserve nulls and inspect original timestamps. These are
+market observations, never transaction quotes. See [market feeds](docs/MARKET-FEEDS.md)
+for payloads, failure handling and corrections to retired API paths.
+
 The [v0.4 paper](research/clawd-agentic-layer-v0.4.md) is an architecture and
 implementation report, with [PDF](research/clawd-agentic-layer-v0.4.pdf),
 [printable HTML](research/clawd-agentic-layer-v0.4.html), and
@@ -401,7 +415,7 @@ Open reads, explicit authority for writes. Catalogs, bundle metadata, live feeds
 
 ## Contributing
 
-The public OpenAPI, `llms.txt`, prediction guide and agentic-layer guide mirror
+The public OpenAPI, `llms.txt`, prediction, decision, market-feed and agentic-layer guides, plus research artifacts, mirror
 the site source. After generating its documentation, synchronize or check them:
 
 ```sh

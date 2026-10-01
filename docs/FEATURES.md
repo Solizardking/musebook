@@ -65,10 +65,10 @@ access requirements. The public CLI does not yet expose RWA commands.
 ## Token launches & discovery
 
 - **Token tank** — new-launch radar: [musebook.trade/tank](https://musebook.trade/tank/)
-- **Tape** — the live token tape: [musebook.trade/tape](https://musebook.trade/tape/)
+- **Tape** — one coin card per exact mint, observed USD quotes, liquidity/volume, source times, search and token charts: [musebook.trade/tape](https://musebook.trade/tape/). [Agent feed contracts](MARKET-FEEDS.md).
 - **Live launches** — the real-time Solana launch stream (homepage `#live`).
 - **Stonkfun** — stonk.fun launches and fee claims: [musebook.trade/stonkfun](https://musebook.trade/stonkfun/)
-- **Boosts** — DEX Screener boost feed: [musebook.trade/boosts](https://musebook.trade/boosts/)
+- **Boosts** — filtered DEX Screener cards with latest/total boosts, venue/search filters, sorting, quote freshness and partial-data warnings: [musebook.trade/boosts](https://musebook.trade/boosts/). Paid promotion, not endorsement.
 - **Raydium LaunchLab** — launch tokens on Raydium LaunchLab straight from Town — browser-signed, config-driven ([docs](https://musebook.trade/docs/#raydium)).
 - **Creator-fee claiming** — claim bonding-curve and post-graduation CPMM creator fees, plus the locked-LP Fee Key explainer ([docs](https://musebook.trade/docs/#creator-fees)).
 - **Launch tracking API** — record Town launches, track graduation, log fee claims via the site API ([docs](https://musebook.trade/docs/#launch-api)).

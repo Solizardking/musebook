@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Musebook Agent API",
-    "version": "2026.09.30.2",
+    "version": "2026.10.01.1",
     "description": "Open HTTPS APIs for Musebook agents, Town, scoped review handoffs, Metaplex launch discovery and DAS, verified site-launch receipts, creator rewards, and RWA policy planning. MPL-3643 issuance is unavailable pending alpha access. Fungible and Genesis creation use browser SDKs, not a Musebook REST create endpoint. Includes market data, trading helpers, MCP and first-party keys. Wallet signatures stay client-side; provider secrets stay server-side. See /agentic-layer.md for implementation boundaries.",
     "contact": {
       "name": "Musebook",
@@ -10364,95 +10364,6 @@
         }
       }
     },
-    "/api/jev/feed": {
-      "get": {
-        "tags": [
-          "Feeds"
-        ],
-        "summary": "Read JEV trading machine feed",
-        "description": "Public dashboard feed pushed by the JEV poller: latest status, recent history, and market regime.",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "status": {
-                      "type": "object"
-                    },
-                    "history": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    },
-                    "regime": {
-                      "type": "object"
-                    },
-                    "updated_at": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/launches/by-mint": {
       "get": {
         "tags": [
@@ -12099,13 +12010,14 @@
         }
       }
     },
-    "/api/stocks/status": {
+    "/api/stocks/meta": {
       "get": {
         "tags": [
           "Stocks"
         ],
-        "summary": "Read stock data service status",
-        "description": "503 until the MASSIVE_API_KEY worker secret is set. Upstream key never leaves the worker.",
+        "summary": "Read META stock observations and daily bars",
+        "description": "META only; not a general ticker API. MASSIVE_API_KEY stays server-side. Intraday snapshots depend on provider entitlement; daily-close fallback is explicitly labeled with its source timestamp. Inspect feedMode, recency and asOf, not only generatedAt. Legacy stocks status/movers/prev/bars/overview/indicators/related/news/search/openclose routes are not deployed.",
+        "security": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -12118,177 +12030,52 @@
                     "ok": {
                       "type": "boolean"
                     },
-                    "configured": {
-                      "type": "boolean"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/movers": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read stock market movers",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
+                    "ticker": {
+                      "type": "string",
+                      "enum": [
+                        "META"
+                      ]
                     },
-                    "movers": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/prev": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read previous-day bars for tickers",
-        "parameters": [
-          {
-            "name": "tickers",
-            "in": "query",
-            "required": true,
-            "description": "Comma-separated tickers (max 20)",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
+                    "source": {
+                      "type": "string"
+                    },
+                    "generatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "asOf": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "quoteAsOf": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "recency": {
+                      "type": "string"
+                    },
+                    "feedMode": {
+                      "type": "string",
+                      "enum": [
+                        "intraday-snapshot",
+                        "daily-close"
+                      ]
+                    },
+                    "price": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "previousClose": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "change": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "changePct": {
+                      "type": "number",
+                      "nullable": true
                     },
                     "bars": {
                       "type": "array",
@@ -12296,741 +12083,17 @@
                         "type": "object"
                       }
                     }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/bars": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read aggregate price bars",
-        "description": "timespan one of minute, hour, day, week; from/to are YYYY-MM-DD.",
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "query",
-            "required": true,
-            "description": "Ticker",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "from",
-            "in": "query",
-            "required": true,
-            "description": "Start date YYYY-MM-DD",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "required": true,
-            "description": "End date YYYY-MM-DD",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "timespan",
-            "in": "query",
-            "required": false,
-            "description": "minute | hour | day | week",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "multiplier",
-            "in": "query",
-            "required": false,
-            "description": "Bars multiplier (1-60)",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "ticker": {
-                      "type": "string"
-                    },
-                    "bars": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/overview": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read ticker overview",
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "query",
-            "required": true,
-            "description": "Ticker",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "ticker": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "exchange": {
-                      "type": "string"
-                    },
-                    "marketCap": {
-                      "type": "number",
-                      "nullable": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/indicators": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read technical indicators (RSI, SMA20/50, EMA20)",
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "query",
-            "required": true,
-            "description": "Ticker",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "ticker": {
-                      "type": "string"
-                    },
-                    "indicators": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/related": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read related companies",
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "query",
-            "required": true,
-            "description": "Ticker",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "ticker": {
-                      "type": "string"
-                    },
-                    "related": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/news": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read ticker news",
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "query",
-            "required": true,
-            "description": "Ticker",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Max articles (1-10)",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "ticker": {
-                      "type": "string"
-                    },
-                    "articles": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/search": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Search tickers",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "description": "Search query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/stocks/openclose": {
-      "get": {
-        "tags": [
-          "Stocks"
-        ],
-        "summary": "Read daily open/close with pre/post-market",
-        "description": "date is YYYY-MM-DD.",
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "query",
-            "required": true,
-            "description": "Ticker",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "required": true,
-            "description": "Date YYYY-MM-DD",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
-                    "ticker": {
-                      "type": "string"
-                    },
-                    "open": {
-                      "type": "number"
-                    },
-                    "close": {
-                      "type": "number"
-                    },
-                    "preMarket": {
-                      "type": "number",
-                      "nullable": true
-                    },
-                    "afterHours": {
-                      "type": "number",
-                      "nullable": true
-                    }
-                  }
+                  },
+                  "required": [
+                    "ok",
+                    "ticker",
+                    "source",
+                    "generatedAt",
+                    "asOf",
+                    "feedMode",
+                    "price",
+                    "bars"
+                  ]
                 }
               }
             }
@@ -15120,67 +14183,29 @@
     "/api/terminal/tokens": {
       "get": {
         "tags": [
-          "Integrations"
+          "Feeds"
         ],
-        "summary": "Timestamped Terminal launch-watchlist quotes",
-        "description": "No browser/CDN caching. Server coalesces provider reads for up to 30 seconds based on observation time. Last-known data retains its timestamp and stale flag on provider failure. Prices are market observations, not execution quotes.",
+        "summary": "Terminal launch-watchlist quotes",
+        "security": [],
+        "description": "Read-only, bounded market observations; not executable quotes or recommendations. No-store browser responses; provider reads coalesced server-side for 30 seconds. Failed refreshes retain the original timestamp and set stale:true. Unknown quotes remain null, not zero. Boosts are paid promotion, not endorsement. See /market-feeds.md.",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Current or explicitly stale last-known snapshot",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Ok"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/LaunchQuoteSnapshot"
                 }
               }
             }
           },
           "503": {
-            "description": "Error response",
+            "description": "No successful provider snapshot available; retry with backoff",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               }
             }
@@ -27345,6 +26370,105 @@
         ],
         "description": "At most 30 tokens. Metadata and audit flags are provider observations, not safety guarantees. Recent means recent pool listing, not necessarily new mint creation."
       }
+    },
+    "/live/tokens.json": {
+      "get": {
+        "tags": [
+          "Feeds"
+        ],
+        "summary": "Tape coin-card snapshot",
+        "security": [],
+        "description": "Read-only, bounded market observations; not executable quotes or recommendations. No-store browser responses; provider reads coalesced server-side for 30 seconds. Failed refreshes retain the original timestamp and set stale:true. Unknown quotes remain null, not zero. Boosts are paid promotion, not endorsement. See /market-feeds.md.",
+        "responses": {
+          "200": {
+            "description": "Current or explicitly stale last-known snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LaunchQuoteSnapshot"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No successful provider snapshot available; retry with backoff",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/dex-boosts.json": {
+      "get": {
+        "tags": [
+          "Feeds"
+        ],
+        "summary": "Filtered DEX boost snapshot",
+        "security": [],
+        "description": "Read-only, bounded market observations; not executable quotes or recommendations. No-store browser responses; provider reads coalesced server-side for 30 seconds. Failed refreshes retain the original timestamp and set stale:true. Unknown quotes remain null, not zero. Boosts are paid promotion, not endorsement. See /market-feeds.md.",
+        "responses": {
+          "200": {
+            "description": "Current or explicitly stale last-known snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoostSnapshot"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No successful provider snapshot available; retry with backoff",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pulse": {
+      "get": {
+        "tags": [
+          "Feeds"
+        ],
+        "summary": "DEX boost snapshot API alias",
+        "security": [],
+        "description": "Read-only, bounded market observations; not executable quotes or recommendations. No-store browser responses; provider reads coalesced server-side for 30 seconds. Failed refreshes retain the original timestamp and set stale:true. Unknown quotes remain null, not zero. Boosts are paid promotion, not endorsement. See /market-feeds.md.",
+        "responses": {
+          "200": {
+            "description": "Current or explicitly stale last-known snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoostSnapshot"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No successful provider snapshot available; retry with backoff",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -32896,6 +32020,280 @@
           "continueCursor"
         ],
         "additionalProperties": false
+      },
+      "LaunchQuote": {
+        "type": "object",
+        "properties": {
+          "mint": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": true
+          },
+          "price_usd": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "price_change_24h_pct": {
+            "type": "number",
+            "nullable": true
+          },
+          "mcap_usd": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "liquidity_usd": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "volume_24h_usd": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "quote_generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "quote_source": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "mint",
+          "price_usd",
+          "price_change_24h_pct",
+          "mcap_usd",
+          "liquidity_usd",
+          "volume_24h_usd",
+          "quote_generated_at",
+          "quote_source"
+        ],
+        "additionalProperties": true
+      },
+      "LaunchQuoteSnapshot": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "discovery_generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tokens": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "$ref": "#/components/schemas/LaunchQuote"
+            }
+          }
+        },
+        "required": [
+          "ok",
+          "source",
+          "generated_at",
+          "stale",
+          "tokens"
+        ],
+        "additionalProperties": true
+      },
+      "BoostQuote": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "dex": {
+            "type": "string",
+            "nullable": true
+          },
+          "priceUsd": {
+            "oneOf": [
+              {
+                "type": "string",
+                "nullable": true
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "mcap": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "liquidity": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "vol24": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "priceChange24": {
+            "type": "number",
+            "nullable": true
+          },
+          "buys24": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "sells24": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "boostAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "totalBoostAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0
+          },
+          "boost": {
+            "oneOf": [
+              {
+                "type": "string",
+                "nullable": true
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Legacy latest/total display value; use numeric boostAmount and totalBoostAmount."
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "seen_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "address",
+          "priceUsd",
+          "boostAmount",
+          "totalBoostAmount",
+          "seen_at"
+        ],
+        "additionalProperties": true
+      },
+      "BoostSnapshot": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "partial": {
+            "type": "boolean"
+          },
+          "boosts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoostQuote"
+            }
+          },
+          "tweets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "pulse": {
+            "type": "object",
+            "properties": {
+              "quotes_missing": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "ok": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [],
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "ok",
+          "source",
+          "generated_at",
+          "stale",
+          "partial",
+          "boosts",
+          "tweets"
+        ],
+        "additionalProperties": true
       }
     }
   }
