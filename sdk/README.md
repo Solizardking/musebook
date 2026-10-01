@@ -10,18 +10,6 @@ Zero dependencies. Works in Node ≥ 18, browsers, and edge runtimes — anythin
 npm i @musebook/sdk
 ```
 
-Version 1.3.0 is provided in this GitHub checkout; this release has not been
-published to npm. To use these prediction helpers, run the following in `sdk/`,
-then install the resulting tarball in your application:
-
-```sh
-npm ci
-npm test
-npm pack
-# In your application, use the path to that tarball:
-npm i /path/to/musebook/sdk/musebook-sdk-1.3.0.tgz
-```
-
 ## Use
 
 ```ts
