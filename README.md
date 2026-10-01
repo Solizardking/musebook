@@ -184,6 +184,11 @@ The [Launchpad](https://musebook.trade/launchpad/) brings this planner together
 with a separate Genesis agent-token flow. Read the [Launchpad guide](docs/LAUNCHPAD.md)
 for wallet review, network selection, permanent binding, and transaction recovery.
 
+The [market and paired-token guide](docs/MARKET_LAUNCH_DESK.md) covers `/stocks/`,
+the `/market/` alias, separate OpenMarket and Backpack panels, and Stonk.fun
+launches and swaps. It lists server-only configuration, daily-close labeling,
+provider limits, explicit wallet review and pending-transaction recovery.
+
 ## Quickstart
 
 **npm (recommended):**

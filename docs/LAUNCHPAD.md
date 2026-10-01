@@ -2,8 +2,18 @@
 
 [Open the launchpad](https://musebook.trade/launchpad/).
 The workspace separates permissioned-asset planning, browser-signed Genesis
-agent-token launches, standalone fungible tokens, Metaplex discovery, and existing
+agent-token launches, Stonk.fun paired-token launches, standalone fungible tokens, Metaplex discovery, and existing
 SPL Token Metadata asset management.
+
+## Paired Tokens
+
+The default workspace uses searchable quote-asset tiles and a launch summary.
+Choose a live eligible pair, enter token metadata, prepare a fresh transaction,
+review the exact mint and costs, and approve in your wallet. Pending signatures
+survive reloads and must be reconciled before creating a replacement. This form
+supports standard LaunchLab tokens, not permissioned MPL-3643 issuance or reward
+baskets. Read the [market and launch guide](MARKET_LAUNCH_DESK.md) for configuration,
+recovery, provider limits and the distinction between confirmation and adoption.
 
 ## Manage Existing Assets
 
@@ -39,6 +49,7 @@ These are different flows with different readiness gates.
 
 | Workspace | Direct Link | Execution |
 | --- | --- | --- |
+| Paired tokens | [/launchpad?mode=paired](https://musebook.trade/launchpad?mode=paired) | Browser-signed Stonk.fun LaunchLab; explicit review and recovery |
 | Permissioned assets | [/launchpad?mode=mpl3643](https://musebook.trade/launchpad?mode=mpl3643) | Draft-only; alpha access required |
 | Agent tokens | [/launchpad?mode=genesis](https://musebook.trade/launchpad?mode=genesis) | Owner-wallet Genesis launch |
 | Create token | [/launchpad?mode=fungible](https://musebook.trade/launchpad?mode=fungible) | Atomic SPL + Token Metadata creation |
