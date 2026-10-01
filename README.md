@@ -103,6 +103,9 @@ orders, Auto (RTSE) slippage, advanced Metis builds with simulated compute limit
 and priority-fee caps, token discovery, Price V3 metadata and program-label
 diagnostics. [Jupiter trade integration guide](docs/JUPITER-TRADE.md) lists every
 new endpoint, browser-signing boundary and server-side `JUPITER_API_KEY` setup.
+The [Metis and Ultra migration checklist](docs/JUPITER-TRADE.md#migrating-metis-and-ultra)
+maps legacy requests to V2 Meta-Aggregator or Router, including immutable managed
+transactions, ExactIn validation, canonical route `bps` and resolved lookup tables.
 Market-maker RFQ services require separate Jupiter onboarding and are not
 represented as a retail trading feature.
 

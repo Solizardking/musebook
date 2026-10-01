@@ -7652,13 +7652,39 @@
                           "type": "number"
                         },
                         "gasless": {
-                          "type": "boolean"
+                          "type": "boolean",
+                          "description": "Provider-reported sponsorship, not inferred from wallet balance; other fees may apply."
                         },
                         "feeBps": {
                           "type": "number"
                         },
                         "router": {
                           "type": "string"
+                        },
+                        "routePlan": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "bps": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 10000,
+                                "description": "Canonical V2 route weight: 10000 is 100%, not a fee."
+                              },
+                              "percent": {
+                                "type": "number",
+                                "deprecated": true,
+                                "description": "Compatibility field. Prefer bps."
+                              },
+                              "swapInfo": {
+                                "type": "object",
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [],
+                            "additionalProperties": true
+                          }
                         }
                       },
                       "required": []
@@ -7818,7 +7844,8 @@
                 "smart",
                 "order",
                 "build"
-              ]
+              ],
+              "description": "smart compares venues; order uses the Jupiter Meta-Aggregator; build returns Metis V2 instructions. All modes are ExactIn."
             }
           },
           {
@@ -8114,7 +8141,8 @@
                       "smart",
                       "order",
                       "build"
-                    ]
+                    ],
+                    "description": "smart compares venues; order uses the Jupiter Meta-Aggregator; build returns Metis V2 instructions. All modes are ExactIn."
                   },
                   "slippageMode": {
                     "type": "string",
@@ -8197,7 +8225,7 @@
             }
           }
         },
-        "description": "Managed order or existing venue path, not build. Returns a fresh unsigned/partially-signed provider transaction and review details. API keys remain server-side. Review and simulate before signing. Do not silently retry uncertain submissions."
+        "description": "Managed Meta-Aggregator V2 order or existing venue path, not build. Replaces Metis V1 quote+swap and Ultra order preparation. Use taker, never legacy userPublicKey or quoteResponse; ExactIn only. Returns a fresh unsigned/partially-signed provider transaction and review details. API keys remain server-side. Review, simulate and sign the unchanged message, retaining provider signatures. Do not silently retry uncertain submissions."
       }
     },
     "/api/trade/execute": {
@@ -8370,7 +8398,7 @@
             }
           }
         },
-        "description": "Only transactions from /order. Preserves Failed status and exact execution amount strings. A timeout is uncertain, not permission to submit a different transaction. Reconcile the signed signature."
+        "description": "Only unchanged transactions from V2 /order, signed by the owner, with the original requestId. Never use for modified or locally assembled /build transactions. Preserves Failed status and exact execution amount strings. A timeout is uncertain, not permission to submit a different transaction. Reconcile the signed signature."
       }
     },
     "/api/trade/broadcast": {
@@ -26339,13 +26367,39 @@
                       "type": "number"
                     },
                     "gasless": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "description": "Provider-reported sponsorship, not inferred from wallet balance; other fees may apply."
                     },
                     "feeBps": {
                       "type": "number"
                     },
                     "router": {
                       "type": "string"
+                    },
+                    "routePlan": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "bps": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 10000,
+                            "description": "Canonical V2 route weight: 10000 is 100%, not a fee."
+                          },
+                          "percent": {
+                            "type": "number",
+                            "deprecated": true,
+                            "description": "Compatibility field. Prefer bps."
+                          },
+                          "swapInfo": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        },
+                        "required": [],
+                        "additionalProperties": true
+                      }
                     },
                     "computeBudgetInstructions": {
                       "type": "array",
@@ -26852,7 +26906,7 @@
             }
           }
         ],
-        "description": "No server signing. Client caps CU price, simulates at 1.4M CU, applies a 1.2x buffer capped at 1.4M, checks 1232-byte size, reviews and signs. Broadcast via own RPC, never /execute. No alternate payer, receiver, referral fees or extra signer support."
+        "description": "Replaces Metis V1 quote+swap-instructions. ExactIn and V2 instructions only; taker replaces userPublicKey. Returns raw instructions, resolved ALT contents and blockhash, not an assembled transaction. Client caps CU price, simulates at 1.4M CU, applies a 1.2x buffer capped at 1.4M, checks 1232-byte size, reviews and signs. Broadcast via own RPC, never /execute. No alternate payer, receiver, referral fees or extra signer support."
       }
     },
     "/api/trade/jupiter/program-id-to-label": {

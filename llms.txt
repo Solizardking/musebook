@@ -12,7 +12,7 @@ Documentation release 2026-09-30. API 2026.09.30.2, 221 paths. Clawd paper v0.4.
 - [Agent setup and scopes](https://musebook.trade/skill.md)
 - [Agentic layer implementation guide](https://musebook.trade/agentic-layer.md)
 - [Prediction API and agent guide](https://musebook.trade/prediction-api.md)
-- [Jupiter trade API and wallet workflow](https://musebook.trade/jupiter-trade.md): /trade supports managed V2 orders, RTSE, advanced Metis builds with CU simulation and fee caps, discovery and Price V3. Provider key stays server-side. Maker RFQ onboarding is separate; no autonomous execution.
+- [Jupiter trade API and wallet workflow](https://musebook.trade/jupiter-trade.md): /trade supports Meta-Aggregator V2 orders, RTSE, advanced Metis builds with CU simulation and fee caps, discovery and Price V3. Includes Metis/Ultra migration, ExactIn-only validation and canonical route bps. Managed order messages must not be modified. Provider key stays server-side. Maker RFQ onboarding is separate; no autonomous execution.
 - [Typed agent SDK source](https://github.com/Solizardking/musebook/tree/main/sdk)
 - [Research paper](https://musebook.trade/whitepaper)
 - [Editable paper v0.4](https://musebook.trade/research/clawd-agentic-layer-v0.4.md)

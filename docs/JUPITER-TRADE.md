@@ -9,7 +9,7 @@ in Vite variables, browser storage, URLs, plugin bundles or agent prompts.
 | Mode | Quote and fresh preparation | Submission |
 | --- | --- | --- |
 | Compare venues | Jupiter, DFlow and Raptor quotes; best output | Selected provider after fresh wallet review |
-| Jupiter managed | Swap V2 `/order`; all eligible Jupiter routers compete | `/execute` with original requestId and wallet-signed bytes |
+| Meta-Aggregator | Swap V2 `/order`; all eligible Jupiter routers compete | `/execute` with original requestId and wallet-signed bytes |
 | Metis build | Swap V2 `/build`; raw instructions and address lookup tables | Browser assembly, simulation, wallet signing, own RPC |
 
 Open swap settings to choose routing, fixed slippage or Auto (RTSE). Auto omits
@@ -41,6 +41,54 @@ Recent lists, with exact-mint swap/chart selection. Inspect a token for Price V3
 block ID, percentage-point 24-hour change, liquidity and conditional audit flags.
 Verification and organic scores are not safety endorsements. Missing prices
 remain unavailable, not zero. Failed simulation logs map program IDs to labels.
+
+## Migrating Metis And Ultra
+
+For an ordinary swap without transaction modifications, choose **Meta-Aggregator**
+in `/trade` settings (`jupiterMode=order`). Eligible Jupiter routing engines
+compete for the order. Existing Compare venues mode also uses V2 for its Jupiter
+candidate; it additionally compares DFlow and Raptor. No pricing improvement or
+gas subsidy is guaranteed: review the actual returned price, fees and `gasless`
+flag, rather than inferring sponsorship from the wallet's SOL balance.
+
+| Previous integration | Current Jupiter upstream | Musebook equivalent |
+| --- | --- | --- |
+| Metis V1 `/quote` then `/swap`, unchanged transaction | V2 `/order` then `/execute` | POST `/api/trade/swap` with `jupiterMode=order`, then POST `/api/trade/execute` |
+| Ultra `/order` and `/execute` on `ultra-api.jup.ag` | Same workflow on `https://api.jup.ag/swap/v2` | Same managed Musebook endpoints; keep the original `requestId` |
+| Metis V1 `/quote` then `/swap-instructions` | One V2 `/build` call | GET `/api/trade/jupiter/build`; local assembly, simulation and own RPC |
+
+The optional Musebook `/quote` call is for display; it is not the transaction to
+sign. `/swap` requests a fresh wallet-bound order. Review and sign the exact
+returned transaction without changing its message, including its blockhash,
+instructions, accounts or fees. Preserve any existing provider signatures.
+Submit its signed bytes with its own `requestId` to `/execute`. Never send
+modified managed orders or locally assembled builds to `/execute`.
+
+For agents, preparing an order is not permission to sign it. Use the existing
+owner-approved browser flow; no agent key authorizes automatic execution.
+
+When migrating instruction-based integrations:
+
+- Rename `userPublicKey` to `taker`; use exact input-token base units for `amount`.
+- Musebook supports **ExactIn only**. `ExactOut`, V1 instructions, legacy
+  `quoteResponse`, `userPublicKey` and `asLegacyTransaction` requests return 400
+  before contacting a provider instead of silently changing their meaning.
+- V2 route weights use `routePlan[].bps` (10000 means 100%). Prefer it over the
+  compatibility `percent` field; this is a route weight, not slippage or a fee.
+- `/build` returns raw instruction objects, not an assembled base64 transaction.
+  Use `addressesByLookupTableAddress` for resolved ALT contents and
+  `blockhashWithMetadata` for the blockhash and expiry height.
+- Do not depend on V1 fee log events. For managed execution, preserve the exact
+  `/execute` amount strings; for self-broadcast builds, reconcile confirmed token
+  balance changes. Quoted amounts alone are not settlement evidence.
+
+The upstream builder permits custom composition, but Musebook's current page
+only assembles the reviewed swap. Arbitrary CPI, extra signers and user-supplied
+instructions need their own transaction validation and approval flow.
+
+Browser token search also goes through `/api/trade/tokens`, which calls
+`api.jup.ag/tokens/v2/search` with the server key. No browser Ultra/Lite fallback
+or provider credential is required.
 
 ## Same-Origin API
 
@@ -88,5 +136,8 @@ review/authorization flow is required before those capabilities can be enabled.
 Official references: [index](https://developers.jup.ag/docs/llms.txt),
 [order and execute](https://developers.jup.ag/docs/swap/order-and-execute),
 [build](https://developers.jup.ag/docs/swap/build),
+[Metis to Meta-Aggregator](https://developers.jup.ag/docs/swap/migration/metis-to-order),
+[Ultra to Meta-Aggregator](https://developers.jup.ag/docs/swap/migration/ultra-to-order),
+[Metis to Router](https://developers.jup.ag/docs/swap/migration/metis-to-build),
 [price](https://developers.jup.ag/docs/price),
 [tokens](https://developers.jup.ag/docs/tokens).
