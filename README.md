@@ -395,6 +395,8 @@ Open reads, explicit authority for writes. Catalogs, bundle metadata, live feeds
 | [docs/RWA-AGENTS.md](docs/RWA-AGENTS.md) | Agent Assets preview: MPL-3643 drafts, tokenized-asset pairing proposals, API examples, and alpha gates |
 | [docs/PREDICTIONS.md](docs/PREDICTIONS.md) | Jupiter prediction endpoints, agent SDK, exact quantities, owner-approved orders, claims and recovery |
 | [docs/DECIDE.md](docs/DECIDE.md) | Coin research, typed Mercury/TypeSafe decisions and public Convex history |
+| [docs/MARKET-FEEDS.md](docs/MARKET-FEEDS.md) | Tape cards, Boosts snapshots, exact mints and stale-data contracts |
+| [October 1 verification](docs/RELEASE-VERIFICATION-2026-10-01.md) | Fresh-clone package tests, deployed route/API checks and remaining validation gates |
 | [docs/SKILLS-CONNECTORS.md](docs/SKILLS-CONNECTORS.md) | Skill catalog, skill tarball notes, and 16 connectors |
 | [docs/connecting-inside-muse.md](docs/connecting-inside-muse.md) | Connect Clawd inside Muse: the 4-step no-code flow |
 | [docs/api-keys.md](docs/api-keys.md) | SIWS wallet flow, curl examples, key hygiene |
