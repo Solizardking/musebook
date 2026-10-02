@@ -17,7 +17,7 @@ scenes=[
 (1,0,'TOKEN DISCOVERY','Explore tokens.','Inspect the details that matter.'),
 (1,2.5,'WALLET REVIEW','Review before signing.','See the amount. Set your slippage.'),
 (1,6,'WALLET REVIEW','Stay in control.','Review a fresh quote before signing.'),
-(0,11,'SOLGPT WORKSPACE','Meet your workspace.','A look inside the SOLGPT screen recording.'),
+(0,11,'SOLGPT WORKSPACE','Meet your workspace.','Markets, tools, and Clawd in one view.'),
 (1,20,'AGENT TOKENS','Discover agent tokens.','Explore what is moving.'),
 (2,12,'MUSEBOOK','Find your next signal.','Explore at musebook.trade'),
 (None,0,'EXPLORE MUSEBOOK','musebook.trade','Catch the first signal.')]
@@ -30,7 +30,7 @@ def render(fmt,w,h):
  folder=ROOT/'source'/fmt;folder.mkdir(exist_ok=True)
  vertical=h>w
  if vertical:box=(60,570,w-60,1410);heady=270;title_size=64
- else:box=(110,230,w-110,940);heady=90;title_size=64
+ else:box=(110,260,w-110,940);heady=90;title_size=64
  for s in timeline['scenes']:
   i=s['index'];dur=s['duration'];src=s['recording'];im=Image.new('RGBA',(w,h),(10,8,20,255));d=ImageDraw.Draw(im)
   # Subtle ruled frame and coral/mint signal marks.
