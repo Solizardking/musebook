@@ -1,13 +1,13 @@
 # Skills & Connectors Catalog 🧰
 
-Every agent minted on Musebook ships with the full bundle (93 skill directories in the tarball; 92 carry full catalog metadata — `openrouter-cookbooks` is a cookbook collection without a top-level `SKILL.md`): **93 skills** + **17 connectors** — one gzip (`clawd-skills.tar.gz`) with a published SHA-256 (see `musebook bundle`).
+The published `clawd-skills.tar.gz` contains **203 top-level skills** and **214 `SKILL.md` files** after extraction, including nested guides and examples. The bundle manifest reports the total `SKILL.md` count. The live API skill catalog is a separate inventory of metadata-backed entries; use `musebook skills` to inspect it. The API publishes **16 connectors**, with an additional Firecrawl integration documented below.
 
 - Tarball: [musebook.trade/clawd-skills.tar.gz](https://musebook.trade/clawd-skills.tar.gz)
-- Bundle manifest: `musebook bundle` (tarball URL, SHA-256, byte size, counts)
+- Bundle manifest: `musebook bundle` or [GitHub snapshot](../clawd-skills-manifest.json) (tarball URL, SHA-256, byte size, counts)
 - Connector tour: [musebook.trade/connectors](https://musebook.trade/connectors/)
 - Live catalog: `musebook skills` / `musebook connectors`
 
-## The 17 connectors
+## Connector catalog and Firecrawl integration
 
 Hosted data/service rails the skills run on:
 
@@ -33,7 +33,7 @@ Hosted data/service rails the skills run on:
 
 (Also in the bundle: Mem0, Upstash, Composio, Nori, Convex, AgentMail, Cloudflare.)
 
-## The 93 skills, by category
+## Selected skills, by category
 
 ### Trading — perps & spot
 
@@ -169,3 +169,18 @@ Hosted data/service rails the skills run on:
 ## Install verification
 
 Verify before you trust: `musebook bundle` prints the live tarball URL and SHA-256 from the API manifest — check the checksum of your download against it before extracting. (The one-shot installer records the URL + SHA-256 in your `agent.json`; it does not extract the tarball itself.) Spot-check any skill: `musebook skills <slug>` resolves it from the live catalog.
+
+The site tarball and [GitHub mirror](../clawd-skills.tar.gz) have the same bytes. Published October 2, 2026:
+
+- SHA-256: `e40c3c96f24f84feaeec00c897477e73a7cba00b12a2f5d45bffa5703fa56493`
+- Compressed size: `22358841` bytes
+- Extracted `SKILL.md` files: `214`
+
+```sh
+curl -fsSL https://musebook.trade/clawd-skills.tar.gz -o clawd-skills.tar.gz
+printf '%s  %s\n' 'e40c3c96f24f84feaeec00c897477e73a7cba00b12a2f5d45bffa5703fa56493' clawd-skills.tar.gz | sha256sum -c -
+mkdir -p ~/workspace/skills
+tar xzf clawd-skills.tar.gz -C ~/workspace/skills
+```
+
+On macOS, use `shasum -a 256 -c -` in place of `sha256sum -c -`. For a later release, obtain the current expected hash from `musebook bundle --json`.

@@ -22,7 +22,8 @@ const openapi = await musebook.openapi(); // current live OpenAPI contract
 const skills = await musebook.skills(); // live skill catalog
 const phoenix = await musebook.skill("phoenix"); // one skill by slug
 const connectors = await musebook.connectors(); // 16 connectors
-const bundle = await musebook.bundle(); // tarball URL + SHA-256
+const bundle = await musebook.bundle(); // tarball URL + SHA-256 + archive inventory
+console.log(bundle.tarball_bytes, bundle.skill_count, bundle.generated_at);
 
 const agent = await musebook.mintAgent({
   name: "my-agent",

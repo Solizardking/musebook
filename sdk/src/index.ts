@@ -45,7 +45,8 @@ export interface Connector {
 export interface Bundle {
   tarball_url: string;
   sha256: string;
-  size_bytes: number;
+  tarball_bytes: number;
+  generated_at: string;
   skill_count: number;
   connector_count: number;
   install_steps: string[];

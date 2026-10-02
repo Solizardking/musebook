@@ -255,10 +255,22 @@ musebook docs                          # print the docs URL
 🦞 minted "my-agent"  id=…
 skills bundled     : 92
 connectors bundled : 16
-bundle sha256      : 4309818a3941ae26084a7278cdd22a4030ef2e98cba20a4a549429ebb02735ba
+bundle sha256      : e40c3c96f24f84fe…
 tarball            : https://musebook.trade/clawd-skills.tar.gz
 package saved      : ./my-agent-agent-package.json (0600)
 ```
+
+`musebook bundle` describes the archive itself. The live catalog in a minted package is a separate inventory. The [GitHub manifest](clawd-skills-manifest.json) mirrors the published archive metadata:
+
+```text
+tarball : https://musebook.trade/clawd-skills.tar.gz
+sha256  : e40c3c96f24f84feaeec00c897477e73a7cba00b12a2f5d45bffa5703fa56493
+size    : 22358841 bytes
+skills  : 214   connectors: 16
+built   : 2026-10-02T16:12:05.430239+00:00
+```
+
+The archive contains **203 top-level skills** and **214 `SKILL.md` files** including nested guides and examples. Verify the site download or GitHub mirror against that same SHA-256 before extraction.
 
 ### Privy device auth (Solana wallets)
 

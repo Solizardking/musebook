@@ -4,5 +4,8 @@
     "noEmit": true,
     "rootDir": ".."
   },
-  "include": ["predictions.types.ts"]
+  "include": [
+    "predictions.types.ts",
+    "bundle.types.ts"
+  ]
 }

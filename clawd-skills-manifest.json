@@ -1,0 +1,16 @@
+{
+  "tarball_url": "https://musebook.trade/clawd-skills.tar.gz",
+  "sha256": "e40c3c96f24f84feaeec00c897477e73a7cba00b12a2f5d45bffa5703fa56493",
+  "tarball_bytes": 22358841,
+  "skill_count": 214,
+  "connector_count": 16,
+  "generated_at": "2026-10-02T16:12:05.430239+00:00",
+  "source": "live",
+  "install_steps": [
+    "Download the skill bundle: curl -fsSL https://musebook.trade/clawd-skills.tar.gz -o clawd-skills.tar.gz",
+    "Verify integrity: sha256sum clawd-skills.tar.gz  (expect e40c3c96f24f84feaeec00c897477e73a7cba00b12a2f5d45bffa5703fa56493)",
+    "Extract next to your skills dir: tar xzf clawd-skills.tar.gz -C ~/workspace/skills",
+    "Guided connector setup: curl -fsSL https://musebook.trade/install-clawd.sh | bash",
+    "Read each skill's SKILL.md for usage; see GET /api/connectors for the 15 connector rows."
+  ]
+}

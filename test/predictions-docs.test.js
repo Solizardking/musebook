@@ -30,8 +30,8 @@ test('machine index and agent docs link the new contract without granting wallet
   assert.match(llms, /Research plugin remains read-only/);
   assert.match(read('docs/PREDICTIONS.md'), /not a guarantee of idempotency/);
   assert.match(read('docs/PREDICTIONS.md'), /posting key.*A2A task does \*\*not\*\*/s);
-  assert.match(read('sdk/README.md'), /has not been\s+published to npm/);
   const pkg = JSON.parse(read('sdk/package.json'));
+  assert.ok(read('sdk/README.md').includes(`npm i ${pkg.name}`), 'SDK docs must install the declared package');
   const lock = JSON.parse(read('sdk/package-lock.json'));
   assert.equal(pkg.version, lock.version);
   assert.equal(pkg.version, lock.packages[''].version);

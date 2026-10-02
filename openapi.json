@@ -26867,7 +26867,7 @@
           },
           "skill_count": {
             "type": "integer",
-            "description": "Top-level skills/<slug>/SKILL.md entries, excluding nested guides"
+            "description": "Total SKILL.md files in the extracted archive, including nested guides and examples"
           },
           "skill_file_count": {
             "type": "integer",
