@@ -4,6 +4,7 @@ import type { AgentConfig } from './config.js';
 import { musebookTools } from './tools/musebook.js';
 import { actionTools } from './tools/actions.js';
 import { appendJsonl } from './session.js';
+import { withMcpUrl } from './mcp.js';
 
 export type AgentEvent =
   | { type: 'text'; delta: string }
@@ -51,7 +52,16 @@ export function listTools(): Array<{ name: string; description: string; mcp: boo
   });
 }
 
-export async function runAgent(
+export function runAgent(
+  config: AgentConfig,
+  input: string | Item[],
+  state: StateAccessor,
+  options?: { onEvent?: (event: AgentEvent) => void; jsonlPath?: string },
+): Promise<RunResult> {
+  return withMcpUrl(config.mcpUrl, () => runConfiguredAgent(config, input, state, options));
+}
+
+async function runConfiguredAgent(
   config: AgentConfig,
   input: string | Item[],
   state: StateAccessor,

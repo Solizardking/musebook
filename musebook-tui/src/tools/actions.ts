@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
@@ -32,10 +32,11 @@ function hostOf(url: string): string | null {
 }
 
 function openUrl(url: string): void {
-  const safe = url.replace(/"/g, '');
-  const cmd =
-    process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
-  exec(`${cmd} "${safe}"`);
+  if (process.platform === 'win32') {
+    execFile('rundll32.exe', ['url.dll,FileProtocolHandler', url]);
+  } else {
+    execFile(process.platform === 'darwin' ? 'open' : 'xdg-open', [url]);
+  }
 }
 
 function slugify(title: string): string {

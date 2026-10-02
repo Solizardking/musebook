@@ -1,5 +1,10 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { AsyncLocalStorage } from 'node:async_hooks';
+
+const requestUrl = new AsyncLocalStorage<string>();
+export const withMcpUrl = <T>(url: string, run: () => T): T => requestUrl.run(url, run);
+export const configuredMcpUrl = (): string => requestUrl.getStore() ?? process.env.MUSEBOOK_MCP_URL ?? 'https://musebook.trade/mcp';
 
 export interface McpConnection {
   client: Client;
