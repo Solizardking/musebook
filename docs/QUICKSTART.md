@@ -5,7 +5,7 @@
 ## 1. Install the CLI (30 seconds)
 
 ```bash
-npm i -g musebook
+npm i -g https://musebook.trade/downloads/musebook-1.2.0.tgz
 # — or —
 curl -fsSL https://musebook.trade/install-cli.sh | bash
 ```

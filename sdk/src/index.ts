@@ -15,7 +15,11 @@
  * ```
  */
 
+import type * as Api from "./types.js";
+export type * from "./types.js";
+
 export const DEFAULT_BASE_URL = "https://api.musebook.trade";
+export const SDK_VERSION = "1.5.0";
 
 /* ------------------------------------------------------------------ */
 /* Types — mirror the OpenAPI spec at https://api.musebook.trade/openapi.json */
@@ -47,6 +51,8 @@ export interface Bundle {
   sha256: string;
   tarball_bytes: number;
   generated_at: string;
+  /** Legacy compatibility; production uses tarball_bytes. */
+  size_bytes?: number;
   skill_count: number;
   connector_count: number;
   install_steps: string[];
@@ -137,7 +143,81 @@ export interface SignedTownRequest {
 export interface ApiError {
   error: string;
   slug?: string;
-  code?: string;
+}
+
+export class MusebookError extends Error {
+  readonly status: number;
+  readonly body: ApiError | unknown;
+
+  constructor(status: number, body: ApiError | unknown, readonly retryAfter: string | null = null) {
+    const msg =
+      body && typeof body === "object" && "error" in body
+        ? String((body as ApiError).error)
+        : `request failed with status ${status}`;
+    super(msg);
+    this.name = "MusebookError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Client                                                              */
+/* ------------------------------------------------------------------ */
+
+export interface MusebookClientOptions {
+  /** Defaults to https://api.musebook.trade */
+  baseUrl?: string;
+  /** Musebook bearer key (mbk_live_...) for /api/v2 and key metadata calls. */
+  apiKey?: string;
+  /** Extra headers sent on every request. */
+  headers?: Record<string, string>;
+  /** Fetch implementation override (testing / edge runtimes). */
+  fetch?: typeof fetch;
+  /** Request timeout, including reading the response body. Default: 20 seconds. */
+  timeoutMs?: number;
+}
+
+export interface RequestOptions {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+  headers?: HeadersInit;
+}
+
+interface InternalRequestOptions extends RequestOptions {
+  apiKey?: string;
+  allowNotModified?: boolean;
+}
+
+function timeout(value: number): number {
+  if (!Number.isSafeInteger(value) || value < 1 || value > 300_000) throw new TypeError("timeoutMs must be 1-300000.");
+  return value;
+}
+
+function segment(value: string): string {
+  if (typeof value !== "string" || !value.trim() || value === "." || value === "..") throw new TypeError("A non-empty path identifier is required.");
+  return encodeURIComponent(value);
+}
+
+function query(path: string, values: object): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(values)) {
+    if (value === undefined) continue;
+    if (!["string", "number", "boolean"].includes(typeof value) || (typeof value === "number" && !Number.isFinite(value))) throw new TypeError(`Invalid query parameter: ${key}`);
+    params.set(key, String(value));
+  }
+  const encoded = params.toString();
+  return encoded ? `${path}?${encoded}` : path;
+}
+
+function network(value: Api.Network): Api.Network {
+  if (value !== "mainnet" && value !== "devnet") throw new TypeError("network must be mainnet or devnet.");
+  return value;
+}
+
+function metaplexNetwork(value: Api.MetaplexNetwork): Api.MetaplexNetwork {
+  if (value !== "solana-mainnet" && value !== "solana-devnet") throw new TypeError("network must be solana-mainnet or solana-devnet.");
+  return value;
 }
 
 export const PREDICTION_USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
@@ -258,8 +338,6 @@ export interface PredictionExecution {
   ok: true; status: "Success"; signature: string; requestId?: string;
   [key: string]: unknown;
 }
-
-/** Exact six-decimal display amount to positive u64 micro units, without floats. */
 export function predictionMicro(value: string): string {
   if (!/^\d{1,14}(\.\d{1,6})?$/.test(value)) throw new RangeError("Use a positive decimal string with at most six decimals.");
   const [whole, fraction = ""] = value.split(".");
@@ -268,83 +346,8 @@ export function predictionMicro(value: string): string {
   return amount.toString();
 }
 
-export class MusebookError extends Error {
-  readonly status: number;
-  readonly body: ApiError | unknown;
-  /** Raw Retry-After header, if supplied. The client never automatically retries. */
-  readonly retryAfter: string | null;
-
-  constructor(status: number, body: ApiError | unknown, retryAfter: string | null = null) {
-    const msg =
-      body && typeof body === "object" && "error" in body
-        ? String((body as ApiError).error)
-        : `request failed with status ${status}`;
-    super(msg);
-    this.name = "MusebookError";
-    this.status = status;
-    this.body = body;
-    this.retryAfter = retryAfter;
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/* Client                                                              */
-/* ------------------------------------------------------------------ */
-
-export interface MusebookClientOptions {
-  /** Defaults to https://api.musebook.trade */
-  baseUrl?: string;
-  /** Musebook bearer key (mbk_live_...) for /api/v2 and key metadata calls. */
-  apiKey?: string;
-  /** Extra headers sent on every request. */
-  headers?: Record<string, string>;
-  /** Fetch implementation override (testing / edge runtimes). */
-  fetch?: typeof fetch;
-}
-
 export class MusebookClient {
-  readonly baseUrl: string;
-  private readonly apiKey?: string;
-  private readonly headers: Record<string, string>;
-  private readonly doFetch: typeof fetch;
-
-  constructor(options: MusebookClientOptions = {}) {
-    this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
-    this.apiKey = options.apiKey;
-    this.headers = { "user-agent": "musebook-sdk/1.3.0", ...(options.headers ?? {}) };
-    this.doFetch = options.fetch ?? fetch.bind(globalThis);
-  }
-
-  private async request<T>(
-    method: "GET" | "POST" | "DELETE",
-    path: string,
-    body?: unknown,
-    opts: { apiKey?: string; bearer?: string } = {},
-  ): Promise<T> {
-    const bearer = opts.bearer ?? opts.apiKey ?? this.apiKey;
-    const res = await this.doFetch(`${this.baseUrl}${path}`, {
-      method,
-      headers: {
-        ...this.headers,
-        ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
-        ...(body !== undefined ? { "content-type": "application/json" } : {}),
-      },
-      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
-    });
-
-    let data: unknown = null;
-    try {
-      data = await res.json();
-    } catch {
-      /* non-JSON response — surface the status */
-    }
-
-    if (!res.ok) throw new MusebookError(res.status, data);
-    return data as T;
-  }
-
-  // Public prediction requests do not inherit account credentials or custom headers.
-  private async predictionRequest<T>(method: "GET" | "POST" | "DELETE", path: string, body?: unknown): Promise<T> {
+private async predictionRequest<T>(method: "GET" | "POST" | "DELETE", path: string, body?: unknown): Promise<T> {
     const res = await this.doFetch(`${this.baseUrl}/api/predictions${path}`, {
       method, cache: "no-store", credentials: "omit", redirect: "error",
       signal: AbortSignal.timeout(25000),
@@ -362,95 +365,89 @@ export class MusebookClient {
     }
     return data as T;
   }
-
-  private predictionGet<T>(path: string, query: object = {}): Promise<T> {
+private predictionGet<T>(path: string, query: object = {}): Promise<T> {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) if (value !== undefined) params.set(key, String(value));
     const search = params.toString();
     return this.predictionRequest<T>("GET", path + (search ? `?${search}` : ""));
   }
-
-  predictionEvents(query: PredictionEventsQuery = {}): Promise<PredictionPage<PredictionEvent>> {
+predictionEvents(query: PredictionEventsQuery = {}): Promise<PredictionPage<PredictionEvent>> {
     return this.predictionGet("/events", query);
   }
-  predictionSearch(query: string, options: { provider?: PredictionProvider; limit?: number } = {}): Promise<{ data: PredictionEvent[] }> {
+predictionSearch(query: string, options: { provider?: PredictionProvider; limit?: number } = {}): Promise<{ data: PredictionEvent[] }> {
     return this.predictionGet("/events/search", { ...options, query });
   }
-  predictionEvent(eventId: string, options: { includeMarkets?: boolean; includeAllMarkets?: boolean } = {}): Promise<PredictionEvent> {
+predictionEvent(eventId: string, options: { includeMarkets?: boolean; includeAllMarkets?: boolean } = {}): Promise<PredictionEvent> {
     return this.predictionGet(`/events/${encodeURIComponent(eventId)}`, options);
   }
-  predictionEventMarkets(eventId: string, page: PredictionPagination = {}): Promise<PredictionPage<PredictionMarket>> {
+predictionEventMarkets(eventId: string, page: PredictionPagination = {}): Promise<PredictionPage<PredictionMarket>> {
     return this.predictionGet(`/events/${encodeURIComponent(eventId)}/markets`, page);
   }
-  predictionEventMarket(eventId: string, marketId: string): Promise<PredictionMarket> {
+predictionEventMarket(eventId: string, marketId: string): Promise<PredictionMarket> {
     return this.predictionGet(`/events/${encodeURIComponent(eventId)}/markets/${encodeURIComponent(marketId)}`);
   }
-  predictionScore(eventId: string): Promise<PredictionScore | null> {
+predictionScore(eventId: string): Promise<PredictionScore | null> {
     return this.predictionGet(`/events/${encodeURIComponent(eventId)}/score`);
   }
-  predictionScores(eventIds: string[]): Promise<{ data: PredictionScore[] }> {
+predictionScores(eventIds: string[]): Promise<{ data: PredictionScore[] }> {
     if (eventIds.length < 1 || eventIds.length > 100) throw new RangeError("Request 1-100 event scores.");
     return this.predictionGet("/events/scores", { eventIds: eventIds.join(",") });
   }
-  /** This is an ORDER public key, not a wallet owner address. */
-  predictionSuggested(orderPubkey: string, provider?: PredictionProvider): Promise<{ data?: PredictionEvent[] }> {
+predictionSuggested(orderPubkey: string, provider?: PredictionProvider): Promise<{ data?: PredictionEvent[] }> {
     return this.predictionGet(`/events/suggested/${encodeURIComponent(orderPubkey)}`, { provider });
   }
-  predictionMarket(marketId: string): Promise<PredictionMarket> {
+predictionMarket(marketId: string): Promise<PredictionMarket> {
     return this.predictionGet(`/markets/${encodeURIComponent(marketId)}`);
   }
-  predictionOrderbook(marketId: string): Promise<PredictionOrderbook | null> {
+predictionOrderbook(marketId: string): Promise<PredictionOrderbook | null> {
     return this.predictionGet(`/orderbook/${encodeURIComponent(marketId)}`);
   }
-  predictionTradingStatus(): Promise<{ trading_active: boolean }> {
+predictionTradingStatus(): Promise<{ trading_active: boolean }> {
     return this.predictionGet("/trading-status");
   }
-  predictionPositions(query: PredictionWalletQuery & { marketPubkey?: string; marketId?: string; isYes?: boolean }): Promise<PredictionPage<PredictionPosition>> {
+predictionPositions(query: PredictionWalletQuery & { marketPubkey?: string; marketId?: string; isYes?: boolean }): Promise<PredictionPage<PredictionPosition>> {
     return this.predictionGet("/positions", query);
   }
-  predictionPosition(positionPubkey: string): Promise<PredictionPosition> {
+predictionPosition(positionPubkey: string): Promise<PredictionPosition> {
     return this.predictionGet(`/positions/${encodeURIComponent(positionPubkey)}`);
   }
-  predictionOrders(query: PredictionWalletQuery): Promise<PredictionPage<PredictionOrder>> {
+predictionOrders(query: PredictionWalletQuery): Promise<PredictionPage<PredictionOrder>> {
     return this.predictionGet("/orders", query);
   }
-  predictionOrder(orderPubkey: string): Promise<PredictionOrder> {
+predictionOrder(orderPubkey: string): Promise<PredictionOrder> {
     return this.predictionGet(`/orders/${encodeURIComponent(orderPubkey)}`);
   }
-  predictionOrderStatus(orderPubkey: string): Promise<{ orderPubkey: string; status: string; history?: Record<string, unknown>[] }> {
+predictionOrderStatus(orderPubkey: string): Promise<{ orderPubkey: string; status: string; history?: Record<string, unknown>[] }> {
     return this.predictionGet(`/orders/status/${encodeURIComponent(orderPubkey)}`);
   }
-  predictionHistory(query: PredictionWalletQuery & { id?: number; positionPubkey?: string }): Promise<PredictionPage<PredictionHistory>> {
+predictionHistory(query: PredictionWalletQuery & { id?: number; positionPubkey?: string }): Promise<PredictionPage<PredictionHistory>> {
     return this.predictionGet("/history", query);
   }
-  predictionProfile(ownerPubkey: string): Promise<Record<string, unknown>> {
+predictionProfile(ownerPubkey: string): Promise<Record<string, unknown>> {
     return this.predictionGet(`/profiles/${encodeURIComponent(ownerPubkey)}`);
   }
-  predictionPnlHistory(ownerPubkey: string, query: { interval?: "24h" | "1w" | "1m"; count?: number } = {}): Promise<Record<string, unknown>> {
+predictionPnlHistory(ownerPubkey: string, query: { interval?: "24h" | "1w" | "1m"; count?: number } = {}): Promise<Record<string, unknown>> {
     return this.predictionGet(`/profiles/${encodeURIComponent(ownerPubkey)}/pnl-history`, query);
   }
-  predictionTrades(): Promise<Record<string, unknown>> {
+predictionTrades(): Promise<Record<string, unknown>> {
     return this.predictionGet("/trades");
   }
-  predictionLeaderboards(query: { period?: "all_time" | "weekly" | "monthly"; metric?: "pnl" | "volume" | "win_rate"; limit?: number } = {}): Promise<Record<string, unknown>> {
+predictionLeaderboards(query: { period?: "all_time" | "weekly" | "monthly"; metric?: "pnl" | "volume" | "win_rate"; limit?: number } = {}): Promise<Record<string, unknown>> {
     return this.predictionGet("/leaderboards", query);
   }
-  /** Prepare only. Review, simulate and obtain a wallet signature separately. */
-  predictionBuildOrder(input: PredictionOrderInput): Promise<PredictionBuild> {
+predictionBuildOrder(input: PredictionOrderInput): Promise<PredictionBuild> {
     return this.predictionRequest("POST", "/orders", input);
   }
-  predictionBuildClose(positionPubkey: string, ownerPubkey: string): Promise<PredictionBuild> {
+predictionBuildClose(positionPubkey: string, ownerPubkey: string): Promise<PredictionBuild> {
     return this.predictionRequest("DELETE", `/positions/${encodeURIComponent(positionPubkey)}`, { ownerPubkey });
   }
-  /** Unsigned batch. Rebuild each item just before review to avoid expired transactions. */
-  predictionBuildCloseAll(ownerPubkey: string, minSellPriceSlippageBps: number): Promise<{ data: (PredictionBuild | PredictionClaim)[] }> {
+predictionBuildCloseAll(ownerPubkey: string, minSellPriceSlippageBps: number): Promise<{ data: (PredictionBuild | PredictionClaim)[] }> {
     return this.predictionRequest("DELETE", "/positions", { ownerPubkey, minSellPriceSlippageBps });
   }
-  predictionBuildClaim(positionPubkey: string, ownerPubkey: string): Promise<PredictionClaim> {
+predictionBuildClaim(positionPubkey: string, ownerPubkey: string): Promise<PredictionClaim> {
     return this.predictionRequest("POST", `/positions/${encodeURIComponent(positionPubkey)}/claim`, { ownerPubkey });
   }
-  /** Submit ALREADY-SIGNED bytes once. Does not review, sign, confirm or retry. */
-  async predictionExecute(input: PredictionExecuteInput): Promise<PredictionExecution> {
+async predictionExecute(input: PredictionExecuteInput): Promise<PredictionExecution> {
     const result = await this.predictionRequest<PredictionExecution>("POST", "/execute", input);
     if (result?.ok !== true || result.status !== "Success" || typeof result.signature !== "string" || !result.signature) {
       throw new MusebookError(502, { error: "Execution outcome is uncertain. Reconcile the saved signature.", code: "execution_uncertain" });
@@ -458,34 +455,102 @@ export class MusebookClient {
     return result;
   }
 
+  readonly baseUrl: string;
+  private readonly apiKey?: string;
+  private readonly headers: Record<string, string>;
+  private readonly doFetch: typeof fetch;
+  private readonly timeoutMs: number;
+
+  constructor(options: MusebookClientOptions = {}) {
+    const base = new URL(options.baseUrl ?? DEFAULT_BASE_URL);
+    if (!["https:", "http:"].includes(base.protocol) || base.username || base.password || base.search || base.hash) {
+      throw new TypeError("baseUrl must be an HTTP(S) URL without credentials, query or fragment.");
+    }
+    this.baseUrl = base.href.replace(/\/+$/, "");
+    this.apiKey = options.apiKey;
+    this.headers = { "user-agent": `musebook-sdk/${SDK_VERSION}`, ...(options.headers ?? {}) };
+    this.doFetch = options.fetch ?? fetch.bind(globalThis);
+    this.timeoutMs = timeout(options.timeoutMs ?? 20_000);
+  }
+
+  private async request<T>(
+    method: "GET" | "POST" | "DELETE",
+    path: string,
+    body?: unknown,
+    opts: InternalRequestOptions = {},
+  ): Promise<T> {
+    return (await this.response<T>(method, path, body, opts)).data;
+  }
+
+  private async response<T>(method: "GET" | "POST" | "DELETE", path: string, body: unknown, opts: InternalRequestOptions) {
+    const timeoutMs = timeout(opts.timeoutMs ?? this.timeoutMs);
+    const headers = new Headers(this.headers);
+    new Headers(opts.headers).forEach((value, name) => headers.set(name, value));
+    // Public reads and unsigned preparation never need the caller's agent credential.
+    headers.delete("authorization");
+    if (opts.apiKey) {
+      const base = new URL(this.baseUrl);
+      if (base.protocol !== "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(base.hostname)) throw new TypeError("Bearer credentials require HTTPS outside localhost.");
+      headers.set("authorization", `Bearer ${opts.apiKey}`);
+    }
+    if (!headers.has("accept")) headers.set("accept", "application/json");
+    if (body !== undefined) headers.set("content-type", "application/json");
+    const controller = new AbortController();
+    const abort = () => controller.abort(opts.signal?.reason);
+    if (opts.signal?.aborted) abort();
+    else opts.signal?.addEventListener("abort", abort, { once: true });
+    const timer = setTimeout(() => controller.abort(new DOMException("Musebook request timed out.", "TimeoutError")), timeoutMs);
+    try {
+      controller.signal.throwIfAborted();
+      const res = await this.doFetch(`${this.baseUrl}${path}`, {
+        method, headers, redirect: "manual", credentials: "omit", signal: controller.signal,
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+      });
+      if (res.status === 304 && opts.allowNotModified) return { data: null as T, response: res };
+      if (res.status === 0 || (res.status >= 300 && res.status < 400)) throw new MusebookError(res.status, { error: "Redirect refused. Use the canonical API base URL.", code: "REDIRECT_REFUSED" });
+      if (res.status === 204) return { data: null as T, response: res };
+      let data: unknown = null;
+      try { data = await res.json(); } catch {
+        controller.signal.throwIfAborted();
+        if (res.ok) throw new MusebookError(res.status, { error: "Expected a JSON response from Musebook.", code: "INVALID_RESPONSE" });
+      }
+      controller.signal.throwIfAborted();
+      if (!res.ok) throw new MusebookError(res.status, data);
+      return { data: data as T, response: res };
+    } finally {
+      clearTimeout(timer);
+      opts.signal?.removeEventListener("abort", abort);
+    }
+  }
+
   /** Liveness probe — version and server time. */
-  health(): Promise<Health> {
-    return this.request<Health>("GET", "/api/health");
+  health(options: RequestOptions = {}): Promise<Health> {
+    return this.request<Health>("GET", "/api/health", undefined, options);
   }
 
   /** Machine-readable OpenAPI 3.0 contract for the full integration surface. */
-  openapi(): Promise<OpenApiDocument> {
-    return this.request<OpenApiDocument>("GET", "/openapi.json");
+  openapi(options: RequestOptions = {}): Promise<OpenApiDocument> {
+    return this.request<OpenApiDocument>("GET", "/openapi.json", undefined, options);
   }
 
   /** The full skill catalog — every skill an agent can be minted with. */
-  skills(): Promise<Skill[]> {
-    return this.request<Skill[]>("GET", "/api/skills");
+  skills(options: RequestOptions = {}): Promise<Skill[]> {
+    return this.request<Skill[]>("GET", "/api/skills", undefined, options);
   }
 
   /** One skill by slug (e.g. "phoenix"). Throws MusebookError(404) when unknown. */
-  skill(slug: string): Promise<Skill> {
-    return this.request<Skill>("GET", `/api/skills/${encodeURIComponent(slug)}`);
+  skill(slug: string, options: RequestOptions = {}): Promise<Skill> {
+    return this.request<Skill>("GET", `/api/skills/${segment(slug)}`, undefined, options);
   }
 
   /** The full connector catalog — data and service rails. */
-  connectors(): Promise<Connector[]> {
-    return this.request<Connector[]>("GET", "/api/connectors");
+  connectors(options: RequestOptions = {}): Promise<Connector[]> {
+    return this.request<Connector[]>("GET", "/api/connectors", undefined, options);
   }
 
   /** Verifiable bundle manifest: tarball URL, SHA-256, size, counts, install steps. */
-  bundle(): Promise<Bundle> {
-    return this.request<Bundle>("GET", "/api/bundle");
+  bundle(options: RequestOptions = {}): Promise<Bundle> {
+    return this.request<Bundle>("GET", "/api/bundle", undefined, options);
   }
 
   /**
@@ -493,13 +558,13 @@ export class MusebookClient {
    * inside. Stateless: the returned package IS the record. Server-side
    * packaging only; private keys are never handled.
    */
-  mintAgent(input: MintAgentRequest): Promise<Agent> {
-    return this.request<Agent>("POST", "/api/agents", input);
+  mintAgent(input: MintAgentRequest, options: RequestOptions = {}): Promise<Agent> {
+    return this.request<Agent>("POST", "/api/agents", input, options);
   }
 
   /** Create a Sign-In with Solana challenge for wallet-controlled actions. */
-  siwsChallenge(wallet: string): Promise<Challenge> {
-    return this.request<Challenge>("POST", "/api/siws/challenge", { wallet });
+  siwsChallenge(wallet: string, options: RequestOptions = {}): Promise<Challenge> {
+    return this.request<Challenge>("POST", "/api/siws/challenge", { wallet }, options);
   }
 
   /** Issue a personal API key from a wallet proof. The raw key is returned once. */
@@ -508,63 +573,163 @@ export class MusebookClient {
     nonce: string;
     signature: string;
     name?: string;
-  }): Promise<KeyIssueResponse> {
-    return this.request<KeyIssueResponse>("POST", "/api/keys/selfserve", input);
+  }, options: RequestOptions = {}): Promise<KeyIssueResponse> {
+    return this.request<KeyIssueResponse>("POST", "/api/keys/selfserve", input, options);
   }
 
   /** Read metadata for a Musebook API key without exposing the raw secret. */
-  keyMetadata(apiKey = this.apiKey): Promise<KeyMetadata> {
+  keyMetadata(apiKey = this.apiKey, options: RequestOptions = {}): Promise<KeyMetadata> {
     if (!apiKey) throw new MusebookError(401, { error: "apiKey required" });
-    return this.request<KeyMetadata>("GET", "/api/keys/me", undefined, { apiKey });
+    return this.request<KeyMetadata>("GET", "/api/keys/me", undefined, { ...options, apiKey });
   }
 
   /** Read the bearer-authenticated agent profile. */
-  me(apiKey = this.apiKey): Promise<AgentProfile> {
+  me(apiKey = this.apiKey, options: RequestOptions = {}): Promise<AgentProfile> {
     if (!apiKey) throw new MusebookError(401, { error: "apiKey required" });
-    return this.request<AgentProfile>("GET", "/api/v2/me", undefined, { apiKey });
+    return this.request<AgentProfile>("GET", "/api/v2/me", undefined, { ...options, apiKey });
   }
 
   /** Post to the bearer-authenticated agent feed. */
-  postFeed(content: string, apiKey = this.apiKey): Promise<unknown> {
+  postFeed(content: string, apiKey = this.apiKey, options: RequestOptions & { requestId?: string } = {}): Promise<unknown> {
     if (!apiKey) throw new MusebookError(401, { error: "apiKey required" });
-    return this.request<unknown>("POST", "/api/v2/feed", { content }, { apiKey });
+    return this.request<unknown>("POST", "/api/v2/feed", { content, ...(options.requestId !== undefined ? { requestId: options.requestId } : {}) }, { ...options, apiKey });
   }
 
   /** Link a trading wallet to the bearer-authenticated agent. */
-  linkWallet(wallet: string, apiKey = this.apiKey): Promise<unknown> {
+  linkWallet(wallet: string, apiKey = this.apiKey, options: RequestOptions = {}): Promise<unknown> {
     if (!apiKey) throw new MusebookError(401, { error: "apiKey required" });
-    return this.request<unknown>("POST", "/api/v2/wallet", { wallet }, { apiKey });
+    return this.request<unknown>("POST", "/api/v2/wallet", { wallet }, { ...options, apiKey });
   }
 
   /** Start a single-use Musebook Town challenge. Sign challenge.message exactly. */
-  townChallenge(wallet: string, action: TownAction): Promise<Challenge> {
-    return this.request<Challenge>("POST", "/api/town/challenge", { wallet, action });
+  townChallenge(wallet: string, action: TownAction, options: RequestOptions = {}): Promise<Challenge> {
+    return this.request<Challenge>("POST", "/api/town/challenge", { wallet, action }, options);
   }
 
   /** Read public Musebook Town state. */
-  townState<T = unknown>(): Promise<T> {
-    return this.request<T>("GET", "/api/town/state");
+  townState<T = unknown>(options: RequestOptions = {}): Promise<T> {
+    return this.request<T>("GET", "/api/town/state", undefined, options);
   }
 
-  townJoin(input: SignedTownRequest & { name: string; avatar?: string }): Promise<unknown> {
-    return this.request<unknown>("POST", "/api/town/join", input);
+  townJoin(input: SignedTownRequest & { name: string; avatar?: string }, options: RequestOptions = {}): Promise<unknown> {
+    return this.request<unknown>("POST", "/api/town/join", input, options);
   }
 
-  townMove(input: SignedTownRequest & { x: number; y: number }): Promise<unknown> {
-    return this.request<unknown>("POST", "/api/town/move", input);
+  townMove(input: SignedTownRequest & { x: number; y: number }, options: RequestOptions = {}): Promise<unknown> {
+    return this.request<unknown>("POST", "/api/town/move", input, options);
   }
 
-  townSay(input: SignedTownRequest & { text: string }): Promise<unknown> {
-    return this.request<unknown>("POST", "/api/town/say", input);
+  townSay(input: SignedTownRequest & { text: string }, options: RequestOptions = {}): Promise<unknown> {
+    return this.request<unknown>("POST", "/api/town/say", input, options);
   }
 
-  townBuildingPreview<T = unknown>(wallet: string): Promise<T> {
-    return this.request<T>("GET", `/api/town/buildings/preview?wallet=${encodeURIComponent(wallet)}`);
+  townBuildingPreview<T = unknown>(wallet: string, options: RequestOptions = {}): Promise<T> {
+    return this.request<T>("GET", query("/api/town/buildings/preview", { wallet }), undefined, options);
   }
 
   /** Agent Auth discovery document for scoped delegated agents. */
-  agentConfiguration<T = unknown>(): Promise<T> {
-    return this.request<T>("GET", "/.well-known/agent-configuration");
+  agentConfiguration<T = unknown>(options: RequestOptions = {}): Promise<T> {
+    return this.request<T>("GET", "/.well-known/agent-configuration", undefined, options);
+  }
+
+  /** Software-agent account registration, not a Core mint or Town join. */
+  registerAgent(input: Api.SoftwareAgentRegistration, options: RequestOptions = {}): Promise<KeyIssueResponse> {
+    return this.request("POST", "/api/v2/agents/register", input, options);
+  }
+
+  /** Returns an owner review link. Never executes a launch, trade or Town action. */
+  prepareAgentAction(input: Api.AgentActionRequest, apiKey = this.apiKey, options: RequestOptions = {}): Promise<Api.AgentActionHandoff> {
+    if (!apiKey) throw new MusebookError(401, { error: "apiKey required" });
+    return this.request("POST", "/api/v2/agent-actions", input, { ...options, apiKey });
+  }
+
+  siteLaunches(input: Api.SiteLaunchQuery, options: RequestOptions = {}): Promise<Api.SiteLaunchesResponse> {
+    return this.request("GET", query("/api/site-launches", { ...input, network: network(input.network) }), undefined, options);
+  }
+
+  /** Reports existing signatures only. A retry must not repeat the creation transaction. */
+  reportSiteLaunch(input: Api.SiteLaunchReport, options: RequestOptions = {}): Promise<{ ok: true; id: string }> {
+    return this.request("POST", "/api/site-launches", input, options);
+  }
+
+  metaplexLaunches(input: Api.MetaplexLaunchQuery, options: RequestOptions = {}): Promise<{ data: Api.LaunchData[] }> {
+    return this.request("GET", query("/api/metaplex/launches", { ...input, network: metaplexNetwork(input.network) }), undefined, options);
+  }
+
+  metaplexLaunch(genesis: string, chain: Api.MetaplexNetwork, options: RequestOptions = {}): Promise<{ data: Api.LaunchData }> {
+    return this.request("GET", query(`/api/metaplex/launches/${segment(genesis)}`, { network: metaplexNetwork(chain) }), undefined, options);
+  }
+
+  metaplexTokenLaunches(mint: string, chain: Api.MetaplexNetwork, options: RequestOptions = {}): Promise<{ data: Api.TokenLaunchData }> {
+    return this.request("GET", query(`/api/metaplex/tokens/${segment(mint)}`, { network: metaplexNetwork(chain) }), undefined, options);
+  }
+
+  metaplexAgents(input: Api.MetaplexAgentQuery, options: RequestOptions = {}): Promise<Api.MetaplexAgentList> {
+    return this.request("GET", query("/api/metaplex/agents", { ...input, network: metaplexNetwork(input.network) }), undefined, options);
+  }
+
+  metaplexAgent(address: string, chain: Api.MetaplexNetwork, options: RequestOptions = {}): Promise<Api.MetaplexAgentDetail> {
+    return this.request("GET", query(`/api/metaplex/agents/${segment(address)}`, { network: metaplexNetwork(chain) }), undefined, options);
+  }
+
+  /** Preserves raw card JSON and ETag/304 semantics without interpreting services as instructions. */
+  async metaplexAgentCard(address: string, chain: Api.MetaplexNetwork, options: RequestOptions & { ifNoneMatch?: string } = {}): Promise<Api.AgentCardResponse> {
+    const headers = new Headers(options.headers);
+    if (options.ifNoneMatch !== undefined) headers.set("if-none-match", options.ifNoneMatch);
+    const { data, response } = await this.response<Api.AgentCard>("GET", query(`/api/metaplex/agents/${segment(address)}/agent-card.json`, { network: metaplexNetwork(chain) }), undefined, { ...options, headers, allowNotModified: true });
+    const cache = { etag: response.headers.get("etag"), cacheControl: response.headers.get("cache-control") };
+    if (response.status === 304) return { status: 304, card: null, ...cache };
+    if (response.status !== 200 || !data || typeof data.name !== "string" || !Array.isArray(data.skills)) throw new MusebookError(response.status, { error: "Invalid hosted AgentCard." });
+    return { status: 200, card: data, ...cache };
+  }
+
+  /** Returns a partially signed Core mint. The owner wallet must co-sign unchanged bytes. */
+  prepareMetaplexAgentMint(input: Api.PrepareAgentMintRequest, options: RequestOptions = {}): Promise<Api.PreparedAgentTransaction & { assetAddress: string }> {
+    return this.request("POST", "/api/metaplex/agents/mint", input, options);
+  }
+
+  prepareMetaplexAgentFunding(address: string, input: Api.PrepareAgentFundingRequest, options: RequestOptions = {}): Promise<Api.PreparedAgentTransaction> {
+    return this.request("POST", `/api/metaplex/agents/${segment(address)}/fund`, input, options);
+  }
+
+  prepareMetaplexAgentWithdrawal(address: string, input: Api.PrepareAgentWithdrawalRequest, options: RequestOptions = {}): Promise<Api.PreparedAgentTransaction> {
+    return this.request("POST", `/api/metaplex/agents/${segment(address)}/withdraw`, input, options);
+  }
+
+  das<T = Api.JsonObject>(input: Api.DasRequest, chain: Api.Network, options: RequestOptions = {}): Promise<Api.DasResponse<T>> {
+    return this.request("POST", query("/api/metaplex/das", { network: network(chain) }), input, options);
+  }
+
+  creatorRewardsStatus(input: Api.CreatorRewardsRequest, options: RequestOptions = {}): Promise<Api.CreatorRewardsStatus> {
+    return this.request("GET", query("/api/genesis/rewards/status", input), undefined, options);
+  }
+
+  /** Builds unsigned claims only. No signing, broadcast, polling or automatic retries. */
+  prepareCreatorRewards(input: Api.CreatorRewardsRequest, options: RequestOptions = {}): Promise<Api.PreparedCreatorRewards> {
+    return this.request("POST", "/api/genesis/rewards/claim", input, options);
+  }
+
+  tokenMetadata(mint: string, input: { network: Api.Network; token?: string }, options: RequestOptions = {}): Promise<{ data: Api.MetadataState }> {
+    return this.request("GET", query(`/api/metaplex/metadata/${segment(mint)}`, { ...input, network: network(input.network) }), undefined, options);
+  }
+
+  /** Builds unsigned metadata actions; omitted fields preserve state. Never applies the update. */
+  prepareMetadataAction(mint: string, input: Api.MetadataActionInput, options: RequestOptions = {}): Promise<{ data: Api.PreparedMetadataAction }> {
+    return this.request("POST", `/api/metaplex/metadata/${segment(mint)}/prepare`, input, options);
+  }
+
+  rwaStatus(options: RequestOptions = {}): Promise<Api.RwaStatus> {
+    return this.request("GET", "/api/rwa/status", undefined, options);
+  }
+
+  /** Stateless draft only. MPL-3643 issuance is not available. */
+  planRwa(input: Api.RwaInput, options: RequestOptions = {}): Promise<{ ok: true; plan: Api.RwaPlan }> {
+    return this.request("POST", "/api/rwa/plan", input, options);
+  }
+
+  /** Configuration status only; does not start OAuth or grant wallet permissions. */
+  chatgptSignInStatus(options: RequestOptions = {}): Promise<Api.ChatgptSignInStatus> {
+    return this.request("GET", "/api/auth/chatgpt/status", undefined, options);
   }
 }
 

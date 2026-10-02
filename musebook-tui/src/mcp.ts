@@ -12,26 +12,27 @@ export interface McpConnection {
   close: () => Promise<void>;
 }
 
-let connection: McpConnection | null = null;
+const connections = new Map<string, Promise<McpConnection>>();
 
 export async function getMcpConnection(url: string): Promise<McpConnection> {
-  if (connection && connection.url === url) return connection;
-  if (connection) {
-    await connection.close().catch(() => {});
-    connection = null;
-  }
-  const client = new Client({ name: 'musebook-tui', version: '0.1.1' });
-  const transport = new StreamableHTTPClientTransport(new URL(url));
-  await client.connect(transport);
-  connection = {
-    client,
-    url,
-    close: async () => {
+  const existing = connections.get(url);
+  if (existing) return existing;
+  const pending = (async (): Promise<McpConnection> => {
+    const client = new Client({ name: 'musebook-tui', version: '0.1.2' });
+    try {
+      await client.connect(new StreamableHTTPClientTransport(new URL(url)));
+      return { client, url, close: async () => {
+        await client.close().catch(() => {});
+        connections.delete(url);
+      } };
+    } catch (error) {
       await client.close().catch(() => {});
-      if (connection?.url === url) connection = null;
-    },
-  };
-  return connection;
+      connections.delete(url);
+      throw error;
+    }
+  })();
+  connections.set(url, pending);
+  return pending;
 }
 
 /** Call a remote MCP tool and return the parsed payload (JSON when possible). */
@@ -56,5 +57,5 @@ export async function callMcpTool(
 }
 
 export async function closeMcp(): Promise<void> {
-  if (connection) await connection.close().catch(() => {});
+  await Promise.allSettled([...connections.values()].map(async pending => (await pending).close()));
 }

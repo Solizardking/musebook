@@ -209,7 +209,7 @@ export const draftAgentRegistrationTool = tool({
       '- Docs: https://musebook.trade/docs',
       '- API reference: https://api.musebook.trade/reference/',
       '- OpenAPI spec: https://api.musebook.trade/openapi.json',
-      '- Remote MCP: https://musebook.x402.life/mcp',
+      '- Remote MCP: https://musebook.trade/mcp',
     ]
       .filter((l) => l !== '')
       .join('\n');

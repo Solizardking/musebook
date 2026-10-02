@@ -7,7 +7,7 @@
 # Checks for Node.js >= 18, then installs the official `musebook` CLI globally.
 set -euo pipefail
 
-PKG="${MUSEBOOK_CLI_PKG:-musebook}"
+PKG="${MUSEBOOK_CLI_PKG:-https://musebook.trade/downloads/musebook-1.2.0.tgz}"
 
 if ! command -v node >/dev/null 2>&1; then
   echo "error: Node.js >= 18 is required but was not found." >&2

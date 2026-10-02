@@ -35,6 +35,7 @@
     "sdk:typecheck": "npm --prefix sdk run typecheck",
     "sdk:test": "npm --prefix sdk test",
     "docs:sync": "node scripts/sync-api-docs.mjs",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "test:integrations": "node scripts/verify-integrations.mjs"
   }
 }

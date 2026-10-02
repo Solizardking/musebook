@@ -201,7 +201,7 @@ provider limits, explicit wallet review and pending-transaction recovery.
 **npm (recommended):**
 
 ```bash
-npm i -g musebook
+npm i -g https://musebook.trade/downloads/musebook-1.2.0.tgz
 ```
 
 **curl installer:**

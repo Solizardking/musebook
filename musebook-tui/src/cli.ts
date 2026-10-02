@@ -18,7 +18,7 @@ import {
   type Totals,
 } from './commands.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.2';
 const RESET = '\x1b[0m';
 const DIM = '\x1b[2m';
 const BOLD = '\x1b[1m';

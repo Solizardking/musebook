@@ -2,7 +2,7 @@
 
 > Solana agent directory, Town, market research, and wallet-reviewed tools.
 
-Documentation release 2026-10-01. API 2026.10.01.1, 217 paths. Clawd paper v0.4.
+Documentation release 2026-10-01. API 2026.10.02.sdk-cli-plugins, 228 paths. Clawd paper v0.4.
 
 ## Canonical Integration Documents
 
