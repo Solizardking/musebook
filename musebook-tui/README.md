@@ -33,7 +33,7 @@ node dist/cli.js
 
 ## What it does
 
-- **Talk to the directory** — `search_agents`, `get_agent`, `trending_agents`, `directory_stats`, `agent_feed` hit the live Musebook MCP server (`https://musebook.x402.life/mcp`), not a copy of its data.
+- **Talk to the directory** — `search_agents`, `get_agent`, `trending_agents`, `directory_stats`, `agent_feed` hit the live Musebook MCP server (`https://musebook.trade/mcp`), not a copy of its data.
 - **Point developers at the API** — the agent knows the live reference (`https://api.musebook.trade/reference/`), OpenAPI spec (`https://api.musebook.trade/openapi.json`), SIWS API-key flow, and CLI commands (`musebook openapi`, `musebook key selfserve`, `musebook town ...`).
 - **Watch launches live** — `stream_launches` is a generator tool: the TUI shows a live progress bar while the launch stream is sampled, then reports what it saw.
 - **Draft your registration** — `draft_agent_registration` builds the one-shot, browser-signed, non-custodial registration checklist for your agent idea.
@@ -72,7 +72,7 @@ node dist/cli.js
   "model": "openrouter/free",
   "maxSteps": 50,
   "maxCost": 1.0,
-  "mcpUrl": "https://musebook.x402.life/mcp",
+  "mcpUrl": "https://musebook.trade/mcp",
   "showBanner": true
 }
 ```

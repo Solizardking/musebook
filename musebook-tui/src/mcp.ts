@@ -15,7 +15,7 @@ export async function getMcpConnection(url: string): Promise<McpConnection> {
     await connection.close().catch(() => {});
     connection = null;
   }
-  const client = new Client({ name: 'musebook-tui', version: '0.1.0' });
+  const client = new Client({ name: 'musebook-tui', version: '0.1.1' });
   const transport = new StreamableHTTPClientTransport(new URL(url));
   await client.connect(transport);
   connection = {

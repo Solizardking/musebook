@@ -2,7 +2,7 @@ import { markMcp, tool } from '@openrouter/agent';
 import { z } from 'zod';
 import { callMcpTool } from '../mcp.js';
 
-const MCP_URL = () => process.env.MUSEBOOK_MCP_URL ?? 'https://musebook.x402.life/mcp';
+const MCP_URL = () => process.env.MUSEBOOK_MCP_URL ?? 'https://musebook.trade/mcp';
 
 async function mcp(name: string, args: Record<string, unknown> = {}) {
   try {

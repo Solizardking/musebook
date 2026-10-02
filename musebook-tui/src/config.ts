@@ -32,7 +32,7 @@ const DEFAULTS: Omit<AgentConfig, 'apiKey' | 'systemPrompt'> = {
   model: FREE_ROUTER_MODEL,
   maxSteps: 50,
   maxCost: 1.0,
-  mcpUrl: 'https://musebook.x402.life/mcp',
+  mcpUrl: 'https://musebook.trade/mcp',
   sessionDir: join(homedir(), '.musebook', 'tui', 'sessions'),
   showBanner: true,
   display: {
